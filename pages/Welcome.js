@@ -13,7 +13,7 @@ const Welcome = (props) => {
                 style={{
                     flex: 1
                 }}
-                colors={[COLORS.secondary, COLORS.primary]}
+                colors={[COLORS.primary, COLORS.secondary]}
             >
                 <View style={{ flex: 1 }}>
                     <View>
@@ -117,7 +117,7 @@ const Welcome = (props) => {
                         </View>
 
                         <Button
-                            title="Entrar"
+                            title="Iniciar"
                             onPress={props.onLogin}
                             style={{
                                 marginTop: 22,
@@ -125,7 +125,7 @@ const Welcome = (props) => {
                             }}
                         />
 
-                        <View style={{
+                        {/* <View style={{
                             flexDirection: "row",
                             marginTop: 12,
                             justifyContent: "center"
@@ -135,7 +135,6 @@ const Welcome = (props) => {
                                 color: COLORS.white
                             }}>Não tem uma conta ?</Text>
                             <Pressable
-                                // onPress={() => navigation.navigate("Login")}
                             >
                                 <Text style={{
                                     fontSize: 16,
@@ -145,7 +144,7 @@ const Welcome = (props) => {
                                 }}>Cadastre-se</Text>
                             </Pressable>
 
-                        </View>
+                        </View> */}
                     </View>
                 </View>
             </LinearGradient>

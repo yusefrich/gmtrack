@@ -16,11 +16,13 @@ import Toast from 'react-native-toast-message';
 import Icon from 'react-native-ionicons'
 import ListGroup from '../components/ListGroup';
 import ListButton from '../components/ListButton';
+import { useRoute } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 
-const Selecionar = ({ userData }) => {
+const DeviceDetails = ({ userData }) => {
   const [devices, setDevices] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const route = useRoute();
   const navigation = useNavigation();
 
   const fetchDevices = () => {
@@ -42,7 +44,7 @@ const Selecionar = ({ userData }) => {
           });
           return
       }
-      console.log('devices => ' + JSON.stringify(responseData.data));
+      console.log('devices detailssssss => ' + JSON.stringify(responseData.data));
       setDevices(responseData.data)
       // props.submit({userData: responseData, token: responseData.token, carrousel: rresponseData.data})
     })
@@ -62,14 +64,29 @@ const Selecionar = ({ userData }) => {
     <SafeAreaView style={styles.container}>
         <ScrollView>
           <ListGroup>
-            {devices.map((item)=>{
-                return <ListButton key={item.id} title={item.devicename} icon="car" iconColor="orange" onPress={()=>navigation.push('Detalhes', { device: item })}></ListButton>
-            })}
-            </ListGroup>
-            {/* <Item title='test 1' icon="radio-button-on" /> */}
-            {/* <Item title='test 1' icon="radio-button-on" /> */}
-            {/* <View style={{marginBottom: 15}}></View> */}
-            {/* <Item title='test 1' icon="radio-button-on" /> */}
+            <ListButton title={"IMEI - " + route.params.device.imei} icon="barcode" endicon="copy" iconColor="orange"></ListButton>
+          </ListGroup>
+          <ListGroup>
+            <ListButton title="Centralizar" icon="pin" iconColor="orange" onPress={()=>navigation.push('Veiculo', { device: route.params.device })}></ListButton>
+            <ListButton title="Rota" icon="navigate" iconColor="orange"></ListButton>
+            <ListButton title="Historico" icon="alarm" iconColor="orange"></ListButton>
+          </ListGroup>
+          <ListGroup>
+            <ListButton title="Detalhe" icon="document" iconColor="orange"></ListButton>
+            <ListButton title="Comando" icon="wifi" iconColor="orange"></ListButton>
+            <ListButton title="Histórico de comando" icon="folder-open" iconColor="orange"></ListButton>
+            <ListButton title="Alarmes" icon="alarm" iconColor="orange"></ListButton>
+            <ListButton title="Alerta de cerca" icon="grid" iconColor="orange"></ListButton>
+            <ListButton title="Compartilhar localização" icon="share" iconColor="orange"></ListButton>
+          </ListGroup>
+          <ListGroup>
+            <ListButton title="Configurações" icon="cog" iconColor="orange"></ListButton>
+          </ListGroup>
+
+          {/* <Item title='test 1' icon="radio-button-on" /> */}
+          {/* <Item title='test 1' icon="radio-button-on" /> */}
+          {/* <View style={{marginBottom: 15}}></View> */}
+          {/* <Item title='test 1' icon="radio-button-on" /> */}
         </ScrollView>
     </SafeAreaView>
   );
@@ -151,4 +168,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Selecionar;
+export default DeviceDetails;

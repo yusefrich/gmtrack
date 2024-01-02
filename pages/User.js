@@ -1,19 +1,22 @@
 import React from 'react'
 import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native'
 import Icon from 'react-native-ionicons'
+import ListGroup from '../components/ListGroup';
+import ListButton from '../components/ListButton';
 
 const Item = ({title, icon}) => (
-  <TouchableOpacity style={styles.item}>
+  <TouchableOpacity style={styles.item} activeOpacity={0.85}>
     <View style={styles.itemTitle}>
         {/* <Text style={styles.title}>*</Text> */}
         <Icon style={styles.titleIcon} name={icon} />
         <Text style={styles.title}>{title}</Text>
     </View>
-    <Icon style={{ fontSize: 20 }} name="arrow-dropright" />
+    <Icon style={{ fontSize: 20, marginTop: 5 }} name="arrow-dropright" />
   </TouchableOpacity>
 );
 
-export default UserProfileView = (props) => {
+export default UserProfileView = ({userData, onExit}) => {
+
   return (
     <ScrollView>
         <View style={styles.container}>
@@ -21,34 +24,33 @@ export default UserProfileView = (props) => {
             <View style={styles.headerContent}>
             <Image
                 style={styles.avatar}
-                source={{ uri: 'https://bootdey.com/img/Content/avatar/avatar6.png' }}
+                source={{ uri: 'https://ui-avatars.com/api/?name=' + userData.client.username }}
             />
 
-            <Text style={styles.name}>John Doe </Text>
-            <Text style={styles.userInfo}>jhonnydoe@mail.com </Text>
-            <Text style={styles.userInfo}>Paraíba </Text>
+            <Text style={styles.name}>{userData.client.username}</Text>
+            <Text style={styles.userInfo}>{userData.client.account}</Text>
+            {/* <Text style={styles.userInfo}>Paraíba </Text> */}
             </View>
         </View>
 
         <View style={styles.body}>
-            <View style={{marginBottom: 15}}></View>
-            <Item title='Mensagem' icon="mail" />
-            <View style={{marginBottom: 15}}></View>
-            <Item title='Relatorios gerados' icon="stats" />
-            <Item title='Programar para relatório' icon="list-box" />
-            <Item title='Cerca' icon="analytics" />
-            <Item title='POI' icon="locate" />
-            <View style={{marginBottom: 15}}></View>
-            <Item title='Geral' icon="cog" />
-            <View style={{marginBottom: 15}}></View>
-            <TouchableOpacity style={styles.item} onPress={props.onExit}>
-                <View style={styles.itemTitle}>
-                    {/* <Text style={styles.title}>*</Text> */}
-                    <Icon style={styles.titleIcon} name="exit" />
-                    <Text style={styles.title}>Sair</Text>
-                </View>
-                <Icon style={{ fontSize: 20 }} name="arrow-dropright" />
-            </TouchableOpacity>
+            {/* <View style={{marginBottom: 15}}></View> */}
+            <ListGroup>
+                <ListButton title='Mensagem' icon="mail"></ListButton>
+            </ListGroup>
+            {/* <View style={{marginBottom: 15}}></View> */}
+            <ListGroup>
+                <ListButton title='Relatorios gerados' icon="stats"></ListButton>
+                <ListButton title='Programar para relatório' icon="list-box"></ListButton>
+                <ListButton title='Cerca' icon="analytics"></ListButton>
+                <ListButton title='POI' icon="locate"></ListButton>
+            </ListGroup>
+            <ListGroup>
+                <ListButton title='Geral' icon="cog"></ListButton>
+            </ListGroup>
+            <ListGroup>
+                <ListButton title='Sair' icon="exit" onPress={onExit}></ListButton>
+            </ListGroup>
         </View>
         </View>
     </ScrollView>
@@ -56,23 +58,33 @@ export default UserProfileView = (props) => {
 }
 
 const styles = StyleSheet.create({
+    itemGroup: {
+        width: '96%',
+        borderRadius: 10,
+        overflow: 'hidden',
+        elevation: 5,
+        shadowColor: '#333',
+        marginVertical: 10,
+    },
     item: {
-        backgroundColor: '#eeeeee',
+        backgroundColor: '#ffffff',
         height: 40,
         justifyContent: 'space-between',
         flex: 1,
         flexDirection: 'row',
-        marginVertical: 1,
-        marginHorizontal: 5,
-        padding: 5,
-        borderBottomColor: 'grey',
-        borderBottomWidth: .2,
-        },
+        marginVertical: 0,
+        paddingVertical: 5,
+        paddingHorizontal: 15,
+        borderBottomColor: '#eeeeee',
+        borderBottomWidth: 1.5,
+    },
     itemTitle: {
         flex: 1,
         flexDirection: 'row'
     },
     titleIcon: {
+        fontSize: 20,
+        marginTop: 5,
         marginEnd: 9,
     },
     title: {
@@ -105,7 +117,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     body: {
-        backgroundColor: 'white',
+        backgroundColor: '#eeeeee',
         alignItems: 'center',
     },
     infoContent: {

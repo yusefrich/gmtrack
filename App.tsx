@@ -6,23 +6,13 @@ import 'react-native-gesture-handler';
  * @format
  */
 
-import React, { useState } from 'react';
-import type {PropsWithChildren} from 'react';
+import React, { useEffect, useState } from 'react';
 import Icon from 'react-native-ionicons'
-// import Icon from 'react-native-easy-icon';
-// import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
+  Alert,
   Platform,
-  PermissionsAndroid,
-  Dimensions,
   StyleSheet,
-  Text,
   useColorScheme,
-  View,
-  Image,
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -36,10 +26,19 @@ import Selecionar from './pages/Selecionar';
 import Alarms from './pages/Alarms';
 import Monitor from './pages/Monitor';
 import Toast from 'react-native-toast-message';
+import firebase from '@react-native-firebase/app';
+import messaging from '@react-native-firebase/messaging';
+import {PermissionsAndroid} from 'react-native';
+import { createStackNavigator } from '@react-navigation/stack';
+import DeviceDetails from './pages/DeviceDetails';
+import DeviceMap from './pages/DeviceMap';
 
+const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 // const TopTab = createMaterialTopTabNavigator();
 
+/* FIXME: fix ios configuration for the package @react-native-firebase/app .:watch?v=T5LqJHQ59S8:. */
+/* FIXME: fix ios configuration for the package @react-native-firebase/mesage .:watch?v=T5LqJHQ59S8:. */
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [isLogin, setIsLogin] = useState(false);
@@ -47,6 +46,51 @@ function App(): JSX.Element {
   const [carrouselData, setCarrouselData] = useState([]);
   const [token, setToken] = useState('');
   // const [userData, setUserData] = useState({});
+
+  // const RNfirebaseConfig = {
+  //   apiKey: "........",
+  //   authDomain: "note-app-rn.firebaseapp.com",
+  //   projectId: "note-app-rn",
+  //   storageBucket: "note-app-rn.appspot.com",
+  //   messagingSenderId: ".....",
+  //   appId: "......"
+  // };
+
+  // let app;
+  // if (firebase.apps.length === 0) {
+  //   app = firebase.initializeApp(RNfirebaseConfig )
+  // } else {
+  //   app = firebase.app()
+  // }
+  useEffect(() => {
+    requestUserPermissions()
+  }, []);
+
+  const requestUserPermissions = async() => {
+    if (Platform.OS === 'android') {
+      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+      let tokenFcm = await messaging().getToken();
+      console.log('user token: ' + tokenFcm )
+      messaging().onTokenRefresh(newToken => {
+        console.log('user new token: ' + newToken )
+      })
+    } else {
+      const status = await messaging().requestPermission();
+      const enable = status === 1 || status === 2
+      if (enable) {
+        let tokenFcm = await messaging().getToken();
+        console.log('user token: ' + tokenFcm )
+        messaging().onTokenRefresh(newToken => {
+          console.log('user new token: ' + newToken )
+        })
+      }
+    }
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    });
+
+    return unsubscribe;
+  }
 
   const submitLogin = (payload: any) => {
     setUserData(payload.userData)
@@ -57,10 +101,8 @@ function App(): JSX.Element {
     setUserData({})
     setToken('')
   }
-
-  return (
-    <>
-      <NavigationContainer>
+  const TabNav = () => (
+      <>
         {!isLogin && Object.keys(userData).length === 0 &&
           <Welcome onLogin={()=>setIsLogin(true)} />
         }
@@ -68,10 +110,17 @@ function App(): JSX.Element {
           <Login submit={(value: any)=>submitLogin(value)} />
         }
         {Object.keys(userData).length >= 1 &&
-          <Tab.Navigator>
+          <Tab.Navigator 
+              screenOptions={{
+                tabBarActiveTintColor: '#ecb800',
+                tabBarStyle: {
+                  backgroundColor: '#333'
+                }
+              }}>
             <Tab.Screen
               name="Entrada"
               options={{
+                headerShown: false,
                 tabBarLabel: 'Home',
                 tabBarIcon: ({ color, size }) => (
                     <Icon name="home" style={{color: color}} size={size} />
@@ -97,7 +146,7 @@ function App(): JSX.Element {
                     <Icon name="list" style={{color: color}} size={size} />
                   ),
                 }}
-              component={Selecionar} />
+              children={()=><Selecionar userData={userData} />} />
             <Tab.Screen
               name="Mensagem de alarme"
               options={{
@@ -106,7 +155,8 @@ function App(): JSX.Element {
                     <Icon name="notifications" style={{color: color}} size={size} />
                   ),
                 }}
-              component={Alarms} />
+
+              children={()=><Alarms userData={userData} />} />
             <Tab.Screen
               name="Eu"
               options={{
@@ -115,10 +165,22 @@ function App(): JSX.Element {
                     <Icon name="person" style={{color: color}} size={size} />
                   ),
                 }}
-              children={()=><User carrousel={carrouselData} onExit={()=>logout()} />}
+              children={()=><User userData={userData} onExit={()=>logout()} />}
             />
           </Tab.Navigator>
         }
+      </>
+  );
+
+
+  return (
+    <>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Main" options={{headerShown: false}} component={TabNav} />
+          <Stack.Screen name="Detalhes" children={()=><DeviceDetails userData={userData} />} />
+          <Stack.Screen name="Veiculo" children={()=><DeviceMap userData={userData} />} />
+        </Stack.Navigator>
       </NavigationContainer>
       <Toast />
     </>

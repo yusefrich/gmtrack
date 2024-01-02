@@ -11,8 +11,8 @@ const Login = (props) => {
     // const Login = () => {
     const [isPasswordShown, setIsPasswordShown] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
-    const [email, setEmail] = useState('desenvolvimentoapp');
-    const [password, setPassword] = useState('desenvolvimento00');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     const submitLogin = (payload) => {
         // todo log in on service
@@ -63,21 +63,25 @@ const Login = (props) => {
     }
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.black }}>
             <View style={{ flex: 1, marginHorizontal: 22 }}>
-                <View style={{ marginVertical: 22 }}>
+                <View style={{ marginVertical: 22, alignItems: "center" }}>
+                    <Image
+                        style={{marginTop: 20, marginBottom: 40}}
+                        source={require("../assets/logo.png")}
+                    />
                     <Text style={{
                         fontSize: 22,
                         fontWeight: 'bold',
                         marginVertical: 12,
-                        color: COLORS.black
+                        color: COLORS.primary
                     }}>
                         Bem vindo !! 👋
                     </Text>
 
                     <Text style={{
                         fontSize: 16,
-                        color: COLORS.black
+                        color: COLORS.white
                     }}>Olá, sentimos sua falta, entre aqui com seus dados!</Text>
                 </View>
 
@@ -85,13 +89,14 @@ const Login = (props) => {
                     <Text style={{
                         fontSize: 16,
                         fontWeight: 400,
+                        color: COLORS.primary,
                         marginVertical: 8
                     }}>Usuário</Text>
 
                     <View style={{
                         width: "100%",
                         height: 48,
-                        borderColor: COLORS.black,
+                        borderColor: COLORS.primary,
                         borderWidth: 1,
                         borderRadius: 8,
                         alignItems: "center",
@@ -100,7 +105,7 @@ const Login = (props) => {
                     }}>
                         <TextInput
                             placeholder='Insira seu usuário'
-                            placeholderTextColor={COLORS.black}
+                            placeholderTextColor={COLORS.secondary}
                             onChangeText={newText => setEmail(newText)}
                             defaultValue={email}
                             keyboardType='email-address'
@@ -115,13 +120,14 @@ const Login = (props) => {
                     <Text style={{
                         fontSize: 16,
                         fontWeight: 400,
+                        color: COLORS.primary,
                         marginVertical: 8
                     }}>Senha</Text>
 
                     <View style={{
                         width: "100%",
                         height: 48,
-                        borderColor: COLORS.black,
+                        borderColor: COLORS.primary,
                         borderWidth: 1,
                         borderRadius: 8,
                         alignItems: "center",
@@ -130,7 +136,7 @@ const Login = (props) => {
                     }}>
                         <TextInput
                             placeholder='Insira sua senha'
-                            placeholderTextColor={COLORS.black}
+                            placeholderTextColor={COLORS.secondary}
                             onChangeText={newText => setPassword(newText)}
                             defaultValue={password}
                             secureTextEntry={!isPasswordShown}
