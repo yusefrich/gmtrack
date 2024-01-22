@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'rea
 import Icon from 'react-native-ionicons'
 import ListGroup from '../components/ListGroup';
 import ListButton from '../components/ListButton';
+import COLORS from '../constants/colors';
 
 const Item = ({title, icon}) => (
   <TouchableOpacity style={styles.item} activeOpacity={0.85}>
@@ -14,7 +15,7 @@ const Item = ({title, icon}) => (
     <Icon style={{ fontSize: 20, marginTop: 5 }} name="arrow-dropright" />
   </TouchableOpacity>
 );
-
+const colorBg = COLORS.primary.replace('#', '')
 export default UserProfileView = ({userData, onExit}) => {
 
   return (
@@ -24,7 +25,7 @@ export default UserProfileView = ({userData, onExit}) => {
             <View style={styles.headerContent}>
             <Image
                 style={styles.avatar}
-                source={{ uri: 'https://ui-avatars.com/api/?name=' + userData.client.username }}
+                source={{ uri: 'https://ui-avatars.com/api/?color=FFFFFF&background=' + colorBg + '&name=' + userData.client.username }}
             />
 
             <Text style={styles.name}>{userData.client.username}</Text>
@@ -92,28 +93,28 @@ const styles = StyleSheet.create({
         marginTop: 2,
     },
     header: {
-        backgroundColor: '#DCDCDC',
+        backgroundColor: COLORS.black,
     },
     headerContent: {
         padding: 10,
         alignItems: 'center',
     },
     avatar: {
-        width: 60,
-        height: 60,
+        width: 70,
+        height: 70,
         borderRadius: 63,
         borderWidth: 4,
-        borderColor: 'white',
+        borderColor: COLORS.grey,
         marginBottom: 10,
     },
     name: {
         fontSize: 22,
-        color: '#000000',
+        color: COLORS.white,
         fontWeight: '600',
     },
     userInfo: {
         fontSize: 16,
-        color: '#778899',
+        color: COLORS.blue,
         fontWeight: '600',
     },
     body: {

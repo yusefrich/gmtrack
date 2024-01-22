@@ -17,6 +17,8 @@ import {
 } from 'react-native';
 import Icon from 'react-native-ionicons';
 import Carousel from 'react-native-reanimated-carousel';
+import COLORS from '../constants/colors';
+import HomeButton from '../components/HomeButton';
 
 function Home(params) {
   const width = Dimensions.get('window').width;
@@ -59,89 +61,22 @@ function Home(params) {
           <Text style={styles.sectionTitle}>Acesso Rápido</Text>
         </View>
         <View style={styles.row}>
-          <TouchableOpacity style={styles.blockButton}>
-              <View style={styles.buttonContent}>
-                  {/* <Text style={styles.title}>*</Text> */}
-                  <Icon name="cash" color="#ecb800" />
-                  <View style={{alignItems: 'center'}}>
-                    <Text style={styles.buttonTitle}>Financeiro</Text>
-                  </View>
-              </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.blockButton}>
-              <View style={styles.buttonContent}>
-                  {/* <Text style={styles.title}>*</Text> */}
-                  <Icon name="list" color="#ecb800"/>
-                  <View style={{alignItems: 'center'}}>
-                    <Text style={{color:"#ecb800"}}>Minhas</Text>
-                    <Text style={styles.buttonTitle}>Solicitações</Text>
-                  </View>
-              </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.blockButton}>
-              <View style={styles.buttonContent}>
-                  {/* <Text style={styles.title}>*</Text> */}
-                  <Icon name="cellular" color="#ecb800" />
-                  <View style={{alignItems: 'center'}}>
-                    <Text style={styles.buttonTitle}>Conexão</Text>
-                  </View>
-              </View>
-          </TouchableOpacity>
+          <HomeButton icon="cash" title="Financeiro" />
+          <HomeButton icon="list" subTitle="Minhas" title="Solicitações" />
+          <HomeButton icon="cellular" title="Conexão" />
+          <HomeButton icon="unlock" subTitle="Desbloqueio por" title="Confiança" />
         </View>
         <View style={styles.row}>
-          <TouchableOpacity style={styles.blockButton}>
-              <View style={styles.buttonContent}>
-                  {/* <Text style={styles.title}>*</Text> */}
-                  <Icon name="unlock" color="#ecb800" />
-                  <View style={{alignItems: 'center'}}>
-                    <Text style={{color:"#ecb800"}}>Desbloqueio por</Text>
-                    <Text style={styles.buttonTitle}>Confiança</Text>
-                  </View>
-              </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.blockButton}>
-              <View style={styles.buttonContent}>
-                  {/* <Text style={styles.title}>*</Text> */}
-                  <Icon name="paper" color="#ecb800" />
-                  <View style={{alignItems: 'center'}}>
-                    <Text style={styles.buttonTitle}>Notícias</Text>
-                  </View>
-              </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.blockButton}>
-              <View style={styles.buttonContent}>
-                  {/* <Text style={styles.title}>*</Text> */}
-                  <Icon name="contacts" color="#ecb800" />
-                  <View style={{alignItems: 'center'}}>
-                    <Text style={styles.buttonTitle}>Contato</Text>
-                  </View>
-              </View>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.row}>
-          <TouchableOpacity style={styles.blockButton}>
-              <View style={styles.buttonContent}>
-                  {/* <Text style={styles.title}>*</Text> */}
-                  <Icon name="copy" color="#ecb800" />
-                  <View style={{alignItems: 'center'}}>
-                    <Text style={styles.buttonTitle}>Assinaturas</Text>
-                  </View>
-              </View>
-          </TouchableOpacity>
+          <HomeButton icon="paper" title="Notícias" />
+          <HomeButton icon="contacts" title="Contato" />
+          <HomeButton icon="copy" title="Assinaturas" />
+          <HomeButton />
         </View>
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Atalhos</Text>
         </View>
         <View style={styles.row}>
-          <TouchableOpacity style={styles.blockButton}>
-              <View style={styles.buttonContent}>
-                  {/* <Text style={styles.title}>*</Text> */}
-                  <Icon name="chatboxes" color="#ecb800" />
-                  <View style={{alignItems: 'center'}}>
-                    <Text style={styles.buttonTitle}>Chat</Text>
-                  </View>
-              </View>
-          </TouchableOpacity>
+          <HomeButton icon="chatboxes" title="Chat" />
         </View>
       </View>
     </ScrollView>
@@ -152,7 +87,7 @@ function Home(params) {
 const styles = StyleSheet.create({
   container: {
     padding: 15,
-    backgroundColor: '#585858',
+    backgroundColor: COLORS.white,
     flex: 1
   },
   sectionContainer: {
@@ -161,7 +96,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontWeight: '600',
-    color: '#ecb800',
+    color: COLORS.tertiary,
     fontSize: 20,
   },
   row: {
@@ -171,23 +106,22 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
   buttonTitle: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: '#ecb800',
-    lineHeight: 18,
+    fontSize: 15,
+    fontWeight: '400',
+    color: COLORS.white,
+    lineHeight: 22,
   },
   buttonContent: {
     justifyContent: 'space-between',
     alignItems: 'center',
-    height: 70,
   },
   blockButton: {
-    width: 120,
-    height: 100,
+    width: 80,
+    height: 80,
     borderRadius: 10,
     elevation: 5,
     shadowColor: '#333',
-    backgroundColor: '#333',
+    backgroundColor: COLORS.black,
     justifyContent: 'center',
     alignItems: 'center'
   },

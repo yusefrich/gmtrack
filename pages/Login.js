@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import COLORS from '../constants/colors';
 // import { Ionicons } from "@expo/vector-icons";
 import Icon from 'react-native-ionicons'
+import api from '../services/api'
 import Button from '../components/Button';
 import Toast from 'react-native-toast-message';
 
@@ -11,55 +12,33 @@ const Login = (props) => {
     // const Login = () => {
     const [isPasswordShown, setIsPasswordShown] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('desenvolvimentoapp');// 
+    const [password, setPassword] = useState('desenvolvimento00');
 
-    const submitLogin = (payload) => {
+    const submitLogin = async (payload) => {
         // todo log in on service
-        fetch("https://gmtrack.azael.tech/api/auth/login", {
-            method: "POST",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                account: payload.email,
-                password: payload.password
-            }),
-        })
-        .then((response) => response.json())
-        .then((responseData) => {
-            if (!responseData.token) {
-                Toast.show({
-                    type: 'error',
-                    text1: 'Login inválido'
-                });
-                return
-            }
-            console.log('login => ' + JSON.stringify(responseData));
+        const [data, err] = await api.login(payload)
+        if (!data.token) {
             Toast.show({
-                type: 'success',
-                text1: 'Bem vindo!'
+                type: 'error',
+                text1: 'Login inválido'
             });
-            fetch("https://gmtrack.azael.tech/api/informatives", {
-                headers: {
-                    Authorization: 'Bearer ' + responseData.token,
-                },
-            })
-            .then((rresponse) => rresponse.json())
-            .then((rresponseData) => {
-                if (!Array.isArray(rresponseData.data)) {
-                    Toast.show({
-                        type: 'error',
-                        text1: 'Erro ao buscar informativos'
-                    });
-                    return
-                }
-                console.log('informatives => ' + JSON.stringify(rresponseData));
-                // setUserData(responseData)
-                props.submit({userData: responseData, token: responseData.token, carrousel: rresponseData.data})
-            })
-        })
+            return
+        }
+        // updating user with the fcm token to notification
+        const [updateData, updateErr] = await api.update({token: data.token, tokenFcm: props.tokenFcm})
+        console.log('update return -->', updateData)
+        // fetching informatives, banners, etc...
+        const [infoData, infoErr] = await api.informatives({token: data.token})
+        console.log('informatives => ' + JSON.stringify(infoData));
+        // login successfull
+        props.submit({userData: data, token: data.token, carrousel: infoData.data})
+        console.log('login => ' + JSON.stringify(data));
+        Toast.show({
+            type: 'success',
+            text1: 'Bem vindo!'
+        });
+        return
     }
 
     return (
@@ -89,14 +68,16 @@ const Login = (props) => {
                     <Text style={{
                         fontSize: 16,
                         fontWeight: 400,
-                        color: COLORS.primary,
+                        color: COLORS.white,
                         marginVertical: 8
                     }}>Usuário</Text>
 
                     <View style={{
                         width: "100%",
                         height: 48,
-                        borderColor: COLORS.primary,
+                        borderColor: COLORS.grey,
+                        backgroundColor: COLORS.grey,
+                        elevation: 2,
                         borderWidth: 1,
                         borderRadius: 8,
                         alignItems: "center",
@@ -105,12 +86,13 @@ const Login = (props) => {
                     }}>
                         <TextInput
                             placeholder='Insira seu usuário'
-                            placeholderTextColor={COLORS.secondary}
+                            placeholderTextColor={COLORS.tertiary}
                             onChangeText={newText => setEmail(newText)}
                             defaultValue={email}
                             keyboardType='email-address'
                             style={{
-                                width: "100%"
+                                width: "100%",
+                                color: COLORS.white
                             }}
                         />
                     </View>
@@ -120,15 +102,17 @@ const Login = (props) => {
                     <Text style={{
                         fontSize: 16,
                         fontWeight: 400,
-                        color: COLORS.primary,
+                        color: COLORS.white,
                         marginVertical: 8
                     }}>Senha</Text>
 
                     <View style={{
                         width: "100%",
                         height: 48,
-                        borderColor: COLORS.primary,
+                        borderColor: COLORS.grey,
+                        backgroundColor: COLORS.grey,
                         borderWidth: 1,
+                        elevation: 2,
                         borderRadius: 8,
                         alignItems: "center",
                         justifyContent: "center",
@@ -141,7 +125,8 @@ const Login = (props) => {
                             defaultValue={password}
                             secureTextEntry={!isPasswordShown}
                             style={{
-                                width: "100%"
+                                width: "100%",
+                                color: COLORS.white
                             }}
                         />
 
@@ -181,6 +166,7 @@ const Login = (props) => {
                 <Button
                     onPress={() => submitLogin({email: email, password: password})}
                     title="Login"
+                    textColor={COLORS.black}
                     filled
                     style={{
                         marginTop: 18,

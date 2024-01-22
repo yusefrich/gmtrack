@@ -22,6 +22,7 @@ import { Platform } from 'react-native';
 import { PermissionsAndroid } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 import { useRoute } from '@react-navigation/native';
+import api from '../services/api';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -32,7 +33,7 @@ const DeviceMap = ({ userData }) => {
     const [counter, setCounter] = useState(10);
     const route = useRoute();
 
-    const fetchTrack = () => {
+    const fetchTrack = async () => {
         if (!userData || !userData.token) {
             Toast.show({
                 type: 'error',
@@ -40,42 +41,38 @@ const DeviceMap = ({ userData }) => {
             });
             return
         }
-        fetch("https://gmtrack.azael.tech/api/user/track", {
-            headers: {
-                Authorization: 'Bearer ' + userData.token,
-            },
+
+        
+        const [data, err] = await api.track({
+            token: userData.token
         })
-        .then((response) => response.json())
-        .then((responseData) => {
-            if (!Array.isArray(responseData.data)) {
-                Toast.show({
-                    type: 'error',
-                    text1: 'Erro ao monitorar veículos'
+        console.log('carsa => ' + JSON.stringify(data));
+        if (!err && !Array.isArray(data.data)) {
+            Toast.show({
+                type: 'error',
+                text1: 'Erro ao monitorar veículos'
+            });
+            return
+        }
+        let elements = []
+        data.data.forEach(e => {
+            if (e.device.id === route.params.device.id) {
+                setRegion({
+                    latitude: e.latitude,
+                    longitude: e.longitude,
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421
                 });
+            }
+
+            if (elements.find((item)=>item.device.id === e.device.id)) {
                 return
             }
-            fetchAlarms()
-            console.log('cars => ' + JSON.stringify(responseData.data));
-            let elements = []
-            responseData.data.forEach(e => {
-                if (e.device.id === route.params.device.id) {
-                    setRegion({
-                        latitude: e.latitude,
-                        longitude: e.longitude,
-                        latitudeDelta: 0.0922,
-                        longitudeDelta: 0.0421
-                    });
-                }
-
-                if (elements.find((item)=>item.device.id === e.device.id)) {
-                    return
-                }
-                elements.push(e)
-            })
-            setPins(elements)
+            elements.push(e)
         })
+        setPins(elements)
     }
-    const fetchAlarms = () => {
+    const fetchAlarms = async () => {
         if (!userData || !userData.token) {
             Toast.show({
                 type: 'error',
@@ -84,29 +81,24 @@ const DeviceMap = ({ userData }) => {
             return
         }
         console.log('fetchAlarms being called')
-        fetch("https://gmtrack.azael.tech/api/user/alarms/api", {
-            method: 'GET',
-            headers: {
-                Authorization: 'Bearer ' + userData.token,
-            },
-            body: {
-                "imei": route.params.device.imei,
-                "start_date": "2023-12-22 00:00:00",
-                "end_date": "2023-12-22 23:59:59"
-            }
+        const currentDate = new Date()
+        let yesterday = new Date()
+        yesterday.setHours(currentDate.getHours() - 24)
+        const [data, err] = await api.playback({
+            token: userData.token,
+            imei: route.params.device.imei,
+            start_date: currentDate.toLocaleString('af-ZA'),
+            end_date: yesterday.toLocaleString('af-ZA')
         })
-        .then((response) => response.json())
-        .then((responseData) => {
-            if (!Array.isArray(responseData.data)) {
-                Toast.show({
-                    type: 'error',
-                    text1: 'Erro ao monitorar veículos'
-                });
-                return
-            }
-            console.log('alarms => ' + JSON.stringify(responseData.data));
-            setAlarms(responseData.data)
-        })
+        if (!Array.isArray(data.data)) {
+            Toast.show({
+                type: 'error',
+                text1: 'Erro ao monitorar veículos'
+            });
+            return
+        }
+        console.log('alarms => ' + JSON.stringify(data.data));
+        setAlarms(data.data)
     }
 
     useFocusEffect(
@@ -114,7 +106,7 @@ const DeviceMap = ({ userData }) => {
             let isActive = true;
             console.log('data ', userData)
             fetchTrack()
-
+            fetchAlarms()
             return () => {
                 isActive = false;
             };

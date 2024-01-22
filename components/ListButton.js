@@ -13,7 +13,7 @@ const ListButton = (props) => {
         <TouchableOpacity style={props.subtitle ? styles.itemNoti : styles.item} activeOpacity={0.85} onPress={props.onPress}>
             <View style={styles.itemTitle}>
                 {/* <Text style={styles.title}>*</Text> */}
-                <Icon style={[styles.titleIcon, {color: props.iconColor}]} name={props.icon} />
+                <Icon style={[styles.titleIcon, {color: props.iconColor ? props.iconColor : COLORS.black}]} name={props.icon} />
                 <View>
                     <Text style={styles.title}>{props.title}</Text>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -26,7 +26,7 @@ const ListButton = (props) => {
                 <Icon style={{ fontSize: 20, marginTop: 5 }} name={props.endicon} />
             }
             {!props.endicon &&
-                <Icon style={{ fontSize: 20, marginTop: 5 }} name="arrow-dropright" />
+                <Icon style={{ fontSize: 20, marginTop: 5, color: COLORS.day }} name="arrow-dropright" />
             }
         </TouchableOpacity>
     )

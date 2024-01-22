@@ -12,7 +12,7 @@ import {
 import Icon from 'react-native-ionicons'
 import ListGroup from '../components/ListGroup';
 import ListButton from '../components/ListButton';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
 import api from '../services/api'
 import Toast from 'react-native-toast-message';
 
@@ -28,15 +28,24 @@ const Item = ({title, icon}) => (
   </TouchableOpacity>
 );
 
-const Alarms = ({ userData }) => {
+const DeviceAlarms = ({ userData }) => {
   const [alarms, setAlarms] = useState([]);
+  const route = useRoute();
 
   const fetchAlarms = async () => {
     if (!userData || !userData.token) {
       console.log('token nulo')
       return
     }
-    const [data, err] = await api.alarms({token: userData.token})
+    const currentDate = new Date()
+    let yesterday = new Date()
+    yesterday.setHours(currentDate.getHours() - 24)
+    const [data, err] = await api.alarms({
+      imei: route.params.device.imei,
+      token: userData.token,
+      start_date: currentDate.toLocaleString('af-ZA'),
+      end_date: yesterday.toLocaleString('af-ZA')
+    })
     console.log('Alarms => ' + JSON.stringify(data.data));
     setAlarms(data.data)
   }
@@ -99,4 +108,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Alarms;
+export default DeviceAlarms;

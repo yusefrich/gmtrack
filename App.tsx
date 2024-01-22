@@ -32,6 +32,9 @@ import {PermissionsAndroid} from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import DeviceDetails from './pages/DeviceDetails';
 import DeviceMap from './pages/DeviceMap';
+import DeviceHistory from './pages/DeviceHistory';
+import COLORS from './constants/colors';
+import DeviceAlarms from './pages/DeviceAlarms';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -39,10 +42,13 @@ const Tab = createBottomTabNavigator();
 
 /* FIXME: fix ios configuration for the package @react-native-firebase/app .:watch?v=T5LqJHQ59S8:. */
 /* FIXME: fix ios configuration for the package @react-native-firebase/mesage .:watch?v=T5LqJHQ59S8:. */
+/* FIXME: run pods for https://github.com/react-native-checkbox/react-native-checkbox */
+/* FIXME: run pods for https://github.com/henninghall/react-native-date-picker */
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [isLogin, setIsLogin] = useState(false);
   const [userData, setUserData] = useState({});
+  const [tokenFcm, setTokenFcm] = useState('');
   const [carrouselData, setCarrouselData] = useState([]);
   const [token, setToken] = useState('');
   // const [userData, setUserData] = useState({});
@@ -78,8 +84,9 @@ function App(): JSX.Element {
       const status = await messaging().requestPermission();
       const enable = status === 1 || status === 2
       if (enable) {
-        let tokenFcm = await messaging().getToken();
-        console.log('user token: ' + tokenFcm )
+        let tokenfcm = await messaging().getToken();
+        console.log('user token: ' + tokenfcm )
+        setTokenFcm(tokenfcm)
         messaging().onTokenRefresh(newToken => {
           console.log('user new token: ' + newToken )
         })
@@ -107,14 +114,15 @@ function App(): JSX.Element {
           <Welcome onLogin={()=>setIsLogin(true)} />
         }
         {isLogin && Object.keys(userData).length === 0 &&
-          <Login submit={(value: any)=>submitLogin(value)} />
+          <Login submit={(value: any)=>submitLogin(value)} tokenFcm={tokenFcm} />
         }
         {Object.keys(userData).length >= 1 &&
           <Tab.Navigator 
               screenOptions={{
-                tabBarActiveTintColor: '#ecb800',
+                tabBarActiveTintColor: COLORS.white,
+                tabBarInactiveTintColor: COLORS.day,
                 tabBarStyle: {
-                  backgroundColor: '#333'
+                  backgroundColor: COLORS.black
                 }
               }}>
             <Tab.Screen
@@ -179,7 +187,9 @@ function App(): JSX.Element {
         <Stack.Navigator>
           <Stack.Screen name="Main" options={{headerShown: false}} component={TabNav} />
           <Stack.Screen name="Detalhes" children={()=><DeviceDetails userData={userData} />} />
-          <Stack.Screen name="Veiculo" children={()=><DeviceMap userData={userData} />} />
+          <Stack.Screen name="Centralizar" children={()=><DeviceMap userData={userData} />} />
+          <Stack.Screen name="Historico" children={()=><DeviceHistory userData={userData} />} />
+          <Stack.Screen name="Alarmes" children={()=><DeviceAlarms userData={userData} />} />
         </Stack.Navigator>
       </NavigationContainer>
       <Toast />

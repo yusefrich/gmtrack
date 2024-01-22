@@ -118,6 +118,7 @@ const Welcome = (props) => {
 
                         <Button
                             title="Iniciar"
+                            textColor="#404E4D"
                             onPress={props.onLogin}
                             style={{
                                 marginTop: 22,

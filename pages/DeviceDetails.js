@@ -67,15 +67,15 @@ const DeviceDetails = ({ userData }) => {
             <ListButton title={"IMEI - " + route.params.device.imei} icon="barcode" endicon="copy" iconColor="orange"></ListButton>
           </ListGroup>
           <ListGroup>
-            <ListButton title="Centralizar" icon="pin" iconColor="orange" onPress={()=>navigation.push('Veiculo', { device: route.params.device })}></ListButton>
-            <ListButton title="Rota" icon="navigate" iconColor="orange"></ListButton>
-            <ListButton title="Historico" icon="alarm" iconColor="orange"></ListButton>
+            <ListButton title="Centralizar" icon="pin" iconColor="orange" onPress={()=>navigation.push('Centralizar', { device: route.params.device })}></ListButton>
+            <ListButton title="Rota" icon="navigate" iconColor="orange" onPress={()=>navigation.push('Centralizar', { device: route.params.device })}></ListButton>
+            <ListButton title="Historico" icon="alarm" iconColor="orange" onPress={()=>navigation.push('Historico', { device: route.params.device })}></ListButton>
           </ListGroup>
           <ListGroup>
             <ListButton title="Detalhe" icon="document" iconColor="orange"></ListButton>
             <ListButton title="Comando" icon="wifi" iconColor="orange"></ListButton>
             <ListButton title="Histórico de comando" icon="folder-open" iconColor="orange"></ListButton>
-            <ListButton title="Alarmes" icon="alarm" iconColor="orange"></ListButton>
+            <ListButton title="Alarmes" icon="alarm" iconColor="orange" onPress={()=>navigation.push('Alarmes', { device: route.params.device })}></ListButton>
             <ListButton title="Alerta de cerca" icon="grid" iconColor="orange"></ListButton>
             <ListButton title="Compartilhar localização" icon="share" iconColor="orange"></ListButton>
           </ListGroup>
