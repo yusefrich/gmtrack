@@ -36,6 +36,7 @@ const {width, height} = Dimensions.get('screen');
 const DeviceHistory = ({ userData }) => {
     const [region, setRegion] = useState(null);
     const [pin, setPin] = useState(null);
+    const [stops, setStops] = useState([]);
     const [modalVisible, setModalVisible] = useState(true);
     const [startDate, setStartDate] = useState(new Date())
     const [endDate, setEndDate] = useState(new Date())
@@ -98,12 +99,23 @@ const DeviceHistory = ({ userData }) => {
         })
         console.log('paybacks => ' + JSON.stringify(data));
         const rawPlayback = []
+        const rawStops = []
         data.data.split(';').forEach(e => {
+            // if (rawPlayback[rawPlayback.length - 1].latitude !== parseFloat(e.split(',')[1]) && rawPlayback[rawPlayback.length - 1].longitude !== parseFloat(e.split(',')[0]))
             rawPlayback.push({
                 latitude: parseFloat(e.split(',')[1]),
-                longitude: parseFloat(e.split(',')[0])
+                longitude: parseFloat(e.split(',')[0]),
+                speed: +e.split(',')[3]
             })
+            if (e.split(',')[3] <= 0) {
+                rawStops.push({
+                    latitude: parseFloat(e.split(',')[1]),
+                    longitude: parseFloat(e.split(',')[0]),
+                    speed: +e.split(',')[3]
+                })
+            }
         })
+        setStops(rawStops)
         setPin({
             coordinate: new AnimatedRegion({
                 latitude: rawPlayback[0].latitude,
@@ -112,6 +124,7 @@ const DeviceHistory = ({ userData }) => {
                 longitudeDelta: 0.0421
             }),
             device: route.params.device,
+            speed: rawPlayback[0].speed,
             pos: 0
         })
         setRegion({
@@ -142,10 +155,16 @@ const DeviceHistory = ({ userData }) => {
                 latitudeDelta: 0.0922,
                 longitudeDelta: 0.0421
             }),
+            speed: playback[newPos].speed,
             pos: newPos
         }
         setPin(newPin)
-
+        setRegion({
+            latitude: playback[newPos].latitude,
+            longitude: playback[newPos].longitude,
+            latitudeDelta: 0.01922,
+            longitudeDelta: 0.01421
+        });
         animate(playback[newPos].latitude, playback[newPos].longitude);
     }
     const animate = (latitude, longitude) => {
@@ -153,7 +172,7 @@ const DeviceHistory = ({ userData }) => {
         const newCoordinate = {latitude, longitude};
         if(Platform.OS == 'android'){
             if(markerRef.current){
-                markerRef.current.animateMarkerToCoordinate(newCoordinate, 2000);
+                markerRef.current.animateMarkerToCoordinate(newCoordinate, 400);
             }
         } else {
             pin.coordinate.timing(newCoordinate).start();
@@ -184,7 +203,7 @@ const DeviceHistory = ({ userData }) => {
             if (playback) {
                 getLocation()
             }
-        }, 2500);
+        }, 500);
         return () => clearInterval(interval)
     })
 
@@ -214,6 +233,7 @@ const DeviceHistory = ({ userData }) => {
                 onPress={() => setPin({
                     device: pin.device,
                     coordinate: pin.coordinate,
+                    speed: 0,
                     pos: 0
                 })}>
                 <Icon name="refresh" style={{color: '#333333'}} size={25} />
@@ -352,12 +372,26 @@ const DeviceHistory = ({ userData }) => {
             {pin &&
                 <Marker.Animated key={pin.device.id} coordinate={pin.coordinate} ref={markerRef}>
                     <Image
-                        source={require("../assets/car.png")}
+                        source={+pin.speed <= 0 ? require("../assets/pinparado.png") : require("../assets/pinandando.png")}
                         style={{width: 35, height: 35}}
                     />
                 </Marker.Animated>
             }
-
+            {stops.map((item)=>{
+                return <Marker key={item.id} coordinate={
+                    {
+                        latitude: item.latitude,
+                        longitude: item.longitude,
+                        latitudeDelta: 0.0922,
+                        longitudeDelta: 0.0421
+                    }
+                }>
+                    <Image
+                        source={require("../assets/pinponto.png")}
+                        style={{width: 35, height: 35}}
+                    />
+                </Marker>
+            })}
         </MapView>
     </View>
   );

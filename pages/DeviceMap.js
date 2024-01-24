@@ -156,7 +156,7 @@ const DeviceMap = ({ userData }) => {
                     }
                 }>
                     <Image
-                        source={require("../assets/car.png")}
+                        source={+item.speed <= 0 ? require("../assets/pinparado.png") : require("../assets/pinandando.png")}
                         style={{width: 35, height: 35}}
                     />
                 </Marker>
