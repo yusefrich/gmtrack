@@ -12,6 +12,7 @@ import {
   Dimensions,
   Image,
   View,
+  Pressable,
 } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -23,6 +24,8 @@ import { PermissionsAndroid } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 import { useRoute } from '@react-navigation/native';
 import api from '../services/api';
+import COLORS from '../constants/colors';
+import Icon from 'react-native-ionicons';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -31,6 +34,8 @@ const DeviceMap = ({ userData }) => {
     const [pins, setPins] = useState([]);
     const [alarms, setAlarms] = useState([]);
     const [counter, setCounter] = useState(10);
+    const [mapType, setMapType] = useState('standard');
+    const [hasTraffic, setHasTraffic] = useState(false);
     const route = useRoute();
 
     const fetchTrack = async () => {
@@ -50,7 +55,7 @@ const DeviceMap = ({ userData }) => {
         if (!err && !Array.isArray(data.data)) {
             Toast.show({
                 type: 'error',
-                text1: 'Erro ao monitorar veículos'
+                text1: 'Erro ao buscar dados do veiculo'
             });
             return
         }
@@ -84,16 +89,18 @@ const DeviceMap = ({ userData }) => {
         const currentDate = new Date()
         let yesterday = new Date()
         yesterday.setHours(currentDate.getHours() - 24)
-        const [data, err] = await api.playback({
+        const [data, err] = await api.alarmsRange({
             token: userData.token,
             imei: route.params.device.imei,
             start_date: currentDate.toLocaleString('af-ZA'),
             end_date: yesterday.toLocaleString('af-ZA')
         })
+        console.log('alarms data => ' + JSON.stringify(data));
+        console.log('alarms err => ' + JSON.stringify(err));
         if (!Array.isArray(data.data)) {
             Toast.show({
                 type: 'error',
-                text1: 'Erro ao monitorar veículos'
+                text1: JSON.stringify(data)
             });
             return
         }
@@ -131,6 +138,21 @@ const DeviceMap = ({ userData }) => {
         <View style={{padding: 5, bottom: 10, position: 'absolute', zIndex: 2, backgroundColor: '#eeeeee', borderRadius: 10}}>
             <Text style={{color: '#333333'}}>Atualizando em {counter}...</Text>
         </View>
+        <View style={{padding: 5, top: 5, left: 5, position: 'absolute', zIndex: 2}}>
+            <Pressable
+                style={[modalStyles.button, modalStyles.buttonOpen, mapType === 'hybrid' ? {backgroundColor: COLORS.blue} : {backgroundColor: COLORS.white}]}
+                onPress={() => mapType === 'hybrid' ? setMapType('standard') : setMapType('hybrid')}>
+                <Icon name="map" style={mapType === 'hybrid' ? {color: COLORS.black} : {color: COLORS.gray}} size={25} />
+            </Pressable>
+        </View>
+        <View style={{padding: 5, top: 65, left: 5, position: 'absolute', zIndex: 2}}>
+            <Pressable
+                style={[modalStyles.button, hasTraffic ? {backgroundColor: COLORS.blue} : {backgroundColor: COLORS.white}]}
+                onPress={() => setHasTraffic(!hasTraffic)}>
+                <Icon name="navigate" style={hasTraffic ? {color: COLORS.black} : {color: COLORS.gray}} size={25} />
+            </Pressable>
+        </View>
+
         <MapView
             onMapReady={()=>{
                 Platform.OS === 'android' ?
@@ -139,6 +161,9 @@ const DeviceMap = ({ userData }) => {
                 })
                 : ''
             }}
+            mapType={mapType}
+            mode="TRANSIT"
+            showsTraffic={hasTraffic}
             showsUserLocation={true}
             style={{width: width, height: height - 100}}
             region={region}
@@ -166,4 +191,17 @@ const DeviceMap = ({ userData }) => {
     </View>
   );
 }
+const modalStyles = StyleSheet.create({
+  //checkbox
+  button: {
+    borderRadius: 100,
+    padding: 10,
+    paddingHorizontal: 13,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: '#fafafa',
+  }
+});
+
 export default DeviceMap

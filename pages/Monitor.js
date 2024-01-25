@@ -12,15 +12,20 @@ import {
   Dimensions,
   Image,
   View,
+  Pressable,
 } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import DropDownPicker from 'react-native-dropdown-picker';
+import Icon from 'react-native-ionicons'
 import { useFocusEffect } from '@react-navigation/native';
 import { Text } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { Platform } from 'react-native';
 import { PermissionsAndroid } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
+import COLORS from '../constants/colors';
+import MapViewDirections from 'react-native-maps-directions';
+const GOOGLE_MAPS_APIKEY = 'AIzaSyA-Ew6eAREVRxCrhgTousUnQJ-C-rXCNvM';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -28,6 +33,8 @@ const Monitor = ({ userData }) => {
     const [region, setRegion] = useState(null);
     const [pins, setPins] = useState([]);
     const [counter, setCounter] = useState(10);
+    const [mapType, setMapType] = useState('standard');
+    const [hasTraffic, setHasTraffic] = useState(false);
 
     const fetchTrack = () => {
         if (!userData || !userData.token) {
@@ -104,6 +111,20 @@ const Monitor = ({ userData }) => {
         <View style={{padding: 5, bottom: 10, position: 'absolute', zIndex: 2, backgroundColor: '#eeeeee', borderRadius: 10}}>
             <Text style={{color: '#333333'}}>Atualizando em {counter}...</Text>
         </View>
+        <View style={{padding: 5, top: 5, left: 5, position: 'absolute', zIndex: 2}}>
+            <Pressable
+                style={[modalStyles.button, modalStyles.buttonOpen, mapType === 'hybrid' ? {backgroundColor: COLORS.blue} : {backgroundColor: COLORS.white}]}
+                onPress={() => mapType === 'hybrid' ? setMapType('standard') : setMapType('hybrid')}>
+                <Icon name="map" style={mapType === 'hybrid' ? {color: COLORS.black} : {color: COLORS.gray}} size={25} />
+            </Pressable>
+        </View>
+        <View style={{padding: 5, top: 65, left: 5, position: 'absolute', zIndex: 2}}>
+            <Pressable
+                style={[modalStyles.button, hasTraffic ? {backgroundColor: COLORS.blue} : {backgroundColor: COLORS.white}]}
+                onPress={() => setHasTraffic(!hasTraffic)}>
+                <Icon name="navigate" style={hasTraffic ? {color: COLORS.black} : {color: COLORS.gray}} size={25} />
+            </Pressable>
+        </View>
         <MapView
             onMapReady={()=>{
                 Platform.OS === 'android' ?
@@ -113,8 +134,11 @@ const Monitor = ({ userData }) => {
                 : ''
             }}
             showsUserLocation={true}
+            mapType={mapType}
+            mode="TRANSIT"
             style={{width: width, height: height - 150}}
             region={region}
+            showsTraffic={hasTraffic}
             zoomControlEnabled={true}
             minZoomLevel={9}
             loadingEnabled={true}
@@ -139,4 +163,17 @@ const Monitor = ({ userData }) => {
     </View>
   );
 }
+const modalStyles = StyleSheet.create({
+  //checkbox
+  button: {
+    borderRadius: 100,
+    padding: 10,
+    paddingHorizontal: 13,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: '#fafafa',
+  }
+});
+
 export default Monitor

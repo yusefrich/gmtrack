@@ -39,7 +39,7 @@ function Home(params) {
                 snapDirection: 'left',
                 stackInterval: 8,
               }}
-              onSnapToItem={(index) => console.log('current index:', index)}
+              // onSnapToItem={(index) => console.log('current index:', index)}
               renderItem={({ item }) => (
                   <View
                       style={{

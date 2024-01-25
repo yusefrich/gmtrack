@@ -45,6 +45,8 @@ const DeviceHistory = ({ userData }) => {
     const [checkboxKey, setCheckboxKey] = useState('')
     const [playback, setPlayback] = useState(null);
     const [playerStatus, setPlayerStatus] = useState(true);
+    const [mapType, setMapType] = useState('standard');
+    const [hasTraffic, setHasTraffic] = useState(false);
     // route
     const route = useRoute();
     // refs
@@ -239,6 +241,20 @@ const DeviceHistory = ({ userData }) => {
                 <Icon name="refresh" style={{color: '#333333'}} size={25} />
             </Pressable>
         </View>
+        <View style={{padding: 5, top: 5, left: 5, position: 'absolute', zIndex: 2}}>
+            <Pressable
+                style={[modalStyles.button, modalStyles.buttonOpen, mapType === 'hybrid' ? {backgroundColor: COLORS.blue} : {backgroundColor: COLORS.white}]}
+                onPress={() => mapType === 'hybrid' ? setMapType('standard') : setMapType('hybrid')}>
+                <Icon name="map" style={mapType === 'hybrid' ? {color: COLORS.black} : {color: COLORS.gray}} size={25} />
+            </Pressable>
+        </View>
+        <View style={{padding: 5, top: 65, left: 5, position: 'absolute', zIndex: 2}}>
+            <Pressable
+                style={[modalStyles.button, hasTraffic ? {backgroundColor: COLORS.blue} : {backgroundColor: COLORS.white}]}
+                onPress={() => setHasTraffic(!hasTraffic)}>
+                <Icon name="navigate" style={hasTraffic ? {color: COLORS.black} : {color: COLORS.gray}} size={25} />
+            </Pressable>
+        </View>
         <Modal
             animationType="slide"
             transparent={true}
@@ -350,6 +366,9 @@ const DeviceHistory = ({ userData }) => {
             style={{width: width, height: height - 100}}
             region={region}
             zoomControlEnabled={true}
+            mapType={mapType}
+            mode="TRANSIT"
+            showsTraffic={hasTraffic}
             minZoomLevel={9}
             loadingEnabled={true}
         >

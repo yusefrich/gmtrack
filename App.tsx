@@ -35,9 +35,11 @@ import DeviceMap from './pages/DeviceMap';
 import DeviceHistory from './pages/DeviceHistory';
 import COLORS from './constants/colors';
 import DeviceAlarms from './pages/DeviceAlarms';
+import { MMKVLoader, useMMKVStorage } from 'react-native-mmkv-storage';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+const storage = new MMKVLoader().initialize();
 // const TopTab = createMaterialTopTabNavigator();
 
 /* FIXME: fix ios configuration for the package @react-native-firebase/app .:watch?v=T5LqJHQ59S8:. */
@@ -46,11 +48,11 @@ const Tab = createBottomTabNavigator();
 /* FIXME: run pods for https://github.com/henninghall/react-native-date-picker */
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
-  const [isLogin, setIsLogin] = useState(false);
   const [userData, setUserData] = useState({});
   const [tokenFcm, setTokenFcm] = useState('');
   const [carrouselData, setCarrouselData] = useState([]);
   const [token, setToken] = useState('');
+  const [isLogin, setIsLogin] = useMMKVStorage('isLogin', storage, false);
   // const [userData, setUserData] = useState({});
 
   // const RNfirebaseConfig = {
