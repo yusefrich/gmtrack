@@ -25,6 +25,7 @@ import { PermissionsAndroid } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 import COLORS from '../constants/colors';
 import MapViewDirections from 'react-native-maps-directions';
+import Map from '../components/Map';
 const GOOGLE_MAPS_APIKEY = 'AIzaSyA-Ew6eAREVRxCrhgTousUnQJ-C-rXCNvM';
 
 const {width, height} = Dimensions.get('screen');
@@ -32,8 +33,9 @@ const {width, height} = Dimensions.get('screen');
 const Monitor = ({ userData }) => {
     const [region, setRegion] = useState(null);
     const [pins, setPins] = useState([]);
+    const [mapKey, setMapKey] = useState(1);
     const [counter, setCounter] = useState(10);
-    const [mapType, setMapType] = useState('standard');
+    const [currentTimeout, setCurrentTimeout] = useState(null);
     const [hasTraffic, setHasTraffic] = useState(false);
 
     const fetchTrack = () => {
@@ -58,19 +60,19 @@ const Monitor = ({ userData }) => {
                 });
                 return
             }
-            console.log('cars => ' + JSON.stringify(responseData.data));
+            // console.log('cars => ' + JSON.stringify(responseData.data));
             let elements = []
             responseData.data.forEach(e => {
                 if (elements.find((item)=>item.device.id === e.device.id)) {
                     return
                 }
                 elements.push(e)
-                // setRegion({
-                //     latitude: e.latitude,
-                //     longitude: e.longitude,
-                //     latitudeDelta: 0.0922,
-                //     longitudeDelta: 0.0421
-                // });
+                setRegion({
+                    latitude: e.latitude,
+                    longitude: e.longitude,
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421
+                });
             })
             setPins(elements)
             // props.submit({userData: responseData, token: responseData.token, carrousel: rresponseData.data})
@@ -79,16 +81,16 @@ const Monitor = ({ userData }) => {
     useFocusEffect(
         React.useCallback(() => {
             let isActive = true;
-            console.log('data ', userData)
+            // console.log('data ', userData)
             fetchTrack()
-            Geolocation.getCurrentPosition(info => {
-                setRegion({
-                    latitude: info.coords.latitude,
-                    longitude: info.coords.longitude,
-                    latitudeDelta: 0.0922,
-                    longitudeDelta: 0.0421
-                });
-            })
+            // Geolocation.getCurrentPosition(info => {
+            //     setRegion({
+            //         latitude: info.coords.latitude,
+            //         longitude: info.coords.longitude,
+            //         latitudeDelta: 0.0922,
+            //         longitudeDelta: 0.0421
+            //     });
+            // })
 
             return () => {
                 isActive = false;
@@ -98,69 +100,82 @@ const Monitor = ({ userData }) => {
     );
     useEffect(() => {
         if (counter > 0) {
-            setTimeout(() => setCounter(counter - 1), 1000);
+            const timeout = setTimeout(() => setCounter(counter - 1), 1000);
+            setCurrentTimeout(timeout)
         } else {
             setCounter(10)
+            setMapKey(mapKey + 1)
             fetchTrack()
         }
     }, [counter]);
 
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <View style={{padding: 5, bottom: 10, position: 'absolute', zIndex: 2, backgroundColor: '#eeeeee', borderRadius: 10}}>
-            <Text style={{color: '#333333'}}>Atualizando em {counter}...</Text>
-        </View>
-        <View style={{padding: 5, top: 5, left: 5, position: 'absolute', zIndex: 2}}>
-            <Pressable
-                style={[modalStyles.button, modalStyles.buttonOpen, mapType === 'hybrid' ? {backgroundColor: COLORS.blue} : {backgroundColor: COLORS.white}]}
-                onPress={() => mapType === 'hybrid' ? setMapType('standard') : setMapType('hybrid')}>
-                <Icon name="map" style={mapType === 'hybrid' ? {color: COLORS.black} : {color: COLORS.gray}} size={25} />
-            </Pressable>
-        </View>
-        <View style={{padding: 5, top: 65, left: 5, position: 'absolute', zIndex: 2}}>
-            <Pressable
-                style={[modalStyles.button, hasTraffic ? {backgroundColor: COLORS.blue} : {backgroundColor: COLORS.white}]}
-                onPress={() => setHasTraffic(!hasTraffic)}>
-                <Icon name="navigate" style={hasTraffic ? {color: COLORS.black} : {color: COLORS.gray}} size={25} />
-            </Pressable>
-        </View>
-        <MapView
-            onMapReady={()=>{
-                Platform.OS === 'android' ?
-                PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then(()=>{
-                    console.log('Usuario aceitou')
-                })
-                : ''
-            }}
-            showsUserLocation={true}
-            mapType={mapType}
-            mode="TRANSIT"
-            style={{width: width, height: height - 150}}
-            region={region}
-            showsTraffic={hasTraffic}
-            zoomControlEnabled={true}
-            minZoomLevel={9}
-            loadingEnabled={true}
-        >
-            {pins.map((item)=>{
-                return <Marker key={item.device.id} coordinate={
-                    {
-                        latitude: item.latitude,
-                        longitude: item.longitude,
-                        latitudeDelta: 0.0922,
-                        longitudeDelta: 0.0421
-                    }
-                }>
-                    <Image
-                        source={+item.speed <= 0 ? require("../assets/pinparado.png") : require("../assets/pinandando.png")}
-                        style={{width: 35, height: 35}}
-                    />
-                </Marker>
-            })}
+    <Map
+        switchMapType
+        switcTraffic
+        counter={counter}
+        pins={pins}
+        refreshCb={()=>{
+            clearTimeout(currentTimeout);
+            setCounter(0);
+        }}
+    />
+    // region={region}
+    // <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    //     <View style={{padding: 5, bottom: 10, position: 'absolute', zIndex: 2, backgroundColor: '#eeeeee', borderRadius: 10}}>
+    //         <Text style={{color: '#333333'}}>Atualizando em {counter}...</Text>
+    //     </View>
+    //     <View style={{padding: 5, top: 5, left: 5, position: 'absolute', zIndex: 2}}>
+    //         <Pressable
+    //             style={[modalStyles.button, modalStyles.buttonOpen, mapType === 'hybrid' ? {backgroundColor: COLORS.blue} : {backgroundColor: COLORS.white}]}
+    //             onPress={() => mapType === 'hybrid' ? setMapType('standard') : setMapType('hybrid')}>
+    //             <Icon name="map" style={mapType === 'hybrid' ? {color: COLORS.black} : {color: COLORS.gray}} size={25} />
+    //         </Pressable>
+    //     </View>
+    //     <View style={{padding: 5, top: 65, left: 5, position: 'absolute', zIndex: 2}}>
+    //         <Pressable
+    //             style={[modalStyles.button, hasTraffic ? {backgroundColor: COLORS.blue} : {backgroundColor: COLORS.white}]}
+    //             onPress={() => setHasTraffic(!hasTraffic)}>
+    //             <Icon name="navigate" style={hasTraffic ? {color: COLORS.black} : {color: COLORS.gray}} size={25} />
+    //         </Pressable>
+    //     </View>
+    //     <MapView
+    //         onMapReady={()=>{
+    //             Platform.OS === 'android' ?
+    //             PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then(()=>{
+    //                 console.log('Usuario aceitou')
+    //             })
+    //             : ''
+    //         }}
+    //         showsUserLocation={true}
+    //         mapType={mapType}
+    //         mode="TRANSIT"
+    //         style={{width: width, height: height - 150}}
+    //         region={region}
+    //         showsTraffic={hasTraffic}
+    //         zoomControlEnabled={true}
+    //         minZoomLevel={9}
+    //         loadingEnabled={true}
+    //     >
+    //         {pins.map((item)=>{
+    //             return <Marker key={item.device.id} coordinate={
+    //                 {
+    //                     latitude: item.latitude,
+    //                     longitude: item.longitude,
+    //                     latitudeDelta: 0.0922,
+    //                     longitudeDelta: 0.0421
+    //                 }
+    //             }>
+    //                 <Image
+    //                     source={+item.speed <= 0 ? require("../assets/pinparado.png") : require("../assets/pinandando.png")}
+    //                     style={{width: 35, height: 35}}
+    //                 />
+    //             </Marker>
+    //         })}
 
-        </MapView>
-    </View>
+    //     </MapView>
+    // </View>
   );
 }
 const modalStyles = StyleSheet.create({

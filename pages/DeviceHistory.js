@@ -34,6 +34,7 @@ import DatePicker from 'react-native-date-picker';
 const {width, height} = Dimensions.get('screen');
 
 const DeviceHistory = ({ userData }) => {
+    const speeds = [1, 2, 4, 8]
     const [region, setRegion] = useState(null);
     const [pin, setPin] = useState(null);
     const [stops, setStops] = useState([]);
@@ -47,6 +48,8 @@ const DeviceHistory = ({ userData }) => {
     const [playerStatus, setPlayerStatus] = useState(true);
     const [mapType, setMapType] = useState('standard');
     const [hasTraffic, setHasTraffic] = useState(false);
+    const [deg, setDeg] = useState(0);
+    const [currentSpeed, setCurrentSpeed] = useState(0);
     // route
     const route = useRoute();
     // refs
@@ -99,7 +102,7 @@ const DeviceHistory = ({ userData }) => {
             start_date: startDate.toLocaleString('af-ZA'),
             end_date: endDate.toLocaleString('af-ZA')
         })
-        console.log('paybacks => ' + JSON.stringify(data));
+        // console.log('paybacks => ' + JSON.stringify(data));
         const rawPlayback = []
         const rawStops = []
         data.data.split(';').forEach(e => {
@@ -107,7 +110,8 @@ const DeviceHistory = ({ userData }) => {
             rawPlayback.push({
                 latitude: parseFloat(e.split(',')[1]),
                 longitude: parseFloat(e.split(',')[0]),
-                speed: +e.split(',')[3]
+                speed: +e.split(',')[3],
+                course: e.split(',')[4]
             })
             if (e.split(',')[3] <= 0) {
                 rawStops.push({
@@ -136,6 +140,7 @@ const DeviceHistory = ({ userData }) => {
             longitudeDelta: 0.0421
         });
         setPlayback(rawPlayback)
+        console.log('raw play ', rawPlayback)
         setAlarms(data.data)
     }
     const getLocation = () => {
@@ -167,14 +172,15 @@ const DeviceHistory = ({ userData }) => {
             latitudeDelta: 0.01922,
             longitudeDelta: 0.01421
         });
+        setDeg(playback[newPos].course)
         animate(playback[newPos].latitude, playback[newPos].longitude);
     }
     const animate = (latitude, longitude) => {
-        console.log('mooving to', JSON.stringify({latitude, longitude, pos: pin.pos}))
+        // console.log('mooving to', JSON.stringify({latitude, longitude, pos: pin.pos}))
         const newCoordinate = {latitude, longitude};
         if(Platform.OS == 'android'){
             if(markerRef.current){
-                markerRef.current.animateMarkerToCoordinate(newCoordinate, 400);
+                markerRef.current.animateMarkerToCoordinate(newCoordinate, 1000 / speeds[currentSpeed]);
             }
         } else {
             pin.coordinate.timing(newCoordinate).start();
@@ -185,7 +191,7 @@ const DeviceHistory = ({ userData }) => {
     useFocusEffect(
         React.useCallback(() => {
             let isActive = true;
-            console.log('data ', userData)
+            // console.log('data ', userData)
             // const initialRoute = useRoute()
             // setRegion({
             //     latitude: initialRoute.params.device.latitude,
@@ -205,7 +211,7 @@ const DeviceHistory = ({ userData }) => {
             if (playback) {
                 getLocation()
             }
-        }, 500);
+        }, 1000 / speeds[currentSpeed]);
         return () => clearInterval(interval)
     })
 
@@ -227,6 +233,15 @@ const DeviceHistory = ({ userData }) => {
                 style={[modalStyles.button, modalStyles.buttonOpen, {paddingHorizontal: 15}]}
                 onPress={() => setPlayerStatus(!playerStatus)}>
                 <Icon name={playerStatus ? 'pause' : 'play'} style={{color: '#333333'}} size={25} />
+            </Pressable>
+        </View>
+        <View style={{padding: 5, bottom: 290, right: 10, position: 'absolute', zIndex: 2}}>
+            <Pressable
+                style={[modalStyles.button, modalStyles.buttonOpen, {paddingHorizontal: 15}]}
+                onPress={() => {
+                    setCurrentSpeed((currentSpeed + 1) < speeds.length ? currentSpeed + 1 : 0)
+                }}>
+                <Text>{speeds[currentSpeed]}x</Text>
             </Pressable>
         </View>
         <View style={{padding: 5, bottom: 230, right: 10, position: 'absolute', zIndex: 2}}>
@@ -391,9 +406,13 @@ const DeviceHistory = ({ userData }) => {
             {pin &&
                 <Marker.Animated key={pin.device.id} coordinate={pin.coordinate} ref={markerRef}>
                     <Image
+                        source={+pin.speed <= 0 ? require("../assets/carroparado.png") : require("../assets/carroandando.png")}
+                        style={{width: 35, height: 35, transform: [{ rotate: deg + 'deg'}]}}
+                    />
+                    {/* <Image
                         source={+pin.speed <= 0 ? require("../assets/pinparado.png") : require("../assets/pinandando.png")}
                         style={{width: 35, height: 35}}
-                    />
+                    /> */}
                 </Marker.Animated>
             }
             {stops.map((item)=>{
