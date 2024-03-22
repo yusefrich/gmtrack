@@ -13,6 +13,7 @@ import Icon from 'react-native-ionicons'
 import ListGroup from '../components/ListGroup';
 import ListButton from '../components/ListButton';
 import { useFocusEffect, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import api from '../services/api'
 import Toast from 'react-native-toast-message';
 
@@ -31,6 +32,7 @@ const Item = ({title, icon}) => (
 const DeviceAlarms = ({ userData }) => {
   const [alarms, setAlarms] = useState([]);
   const route = useRoute();
+  const navigation = useNavigation();
 
   const fetchAlarms = async () => {
     if (!userData || !userData.token) {
@@ -65,7 +67,7 @@ const DeviceAlarms = ({ userData }) => {
         <ScrollView>
             <ListGroup>
               {alarms.map((item)=>{
-                  return <ListButton key={item.id} title={item.device.devicename} subtitle={item.type} time={item.created_at} icon="radio-button-on" iconColor="orange"></ListButton>
+                  return <ListButton key={item.id} title={item.device.devicename} subtitle={item.type} time={item.created_at} icon="radio-button-on" iconColor="orange" onPress={()=>navigation.push('Alarme', { alarm: item })}></ListButton>
               })}
               {/* <ListButton title='Mensagem teste' icon="radio-button-on" iconColor="orange"></ListButton> */}
             </ListGroup>

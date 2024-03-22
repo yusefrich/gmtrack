@@ -11,59 +11,97 @@ import {
   Modal,
   Pressable,
 } from 'react-native';
+import GmIcon from '../components/GmIcon';
 import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import Icon from 'react-native-ionicons'
 import ListGroup from '../components/ListGroup';
 import ListButton from '../components/ListButton';
 import { useNavigation } from '@react-navigation/native';
+import api from '../services/api';
 
 const Selecionar = ({ userData }) => {
   const [devices, setDevices] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [onFocus, setOnFocus] = useState(false);
+  const [counter, setCounter] = useState(10);
+  const [currentTimeout, setCurrentTimeout] = useState(null);
   const navigation = useNavigation();
 
-  const fetchDevices = () => {
-    if (!userData || !userData.token) {
-      console.log('token nulo')
-      return
-    }
-    fetch("https://gmtrack.azael.tech/api/user/devices", {
-      headers: {
-          Authorization: 'Bearer ' + userData.token,
-      }
-    })
-    .then((response) => response.json())
-    .then((responseData) => {
-      if (!Array.isArray(responseData.data)) {
+  const fetchUserTrack = async () => {
+    console.log('fetching user track')
+      const [data, err] = await api.userTrack(userData)
+      console.log('data', data)
+      console.log('err', err)
+      if (err) {
           Toast.show({
               type: 'error',
-              text1: 'Erro ao buscar seus veiculos'
+              text1: 'Erro ao monitorar veiculos: ' + err.message
           });
+          console.error('detal error => ', err);
           return
       }
-      console.log('devices => ' + JSON.stringify(responseData.data));
-      setDevices(responseData.data)
-      // props.submit({userData: responseData, token: responseData.token, carrousel: rresponseData.data})
-    })
+      console.log('cars => ' + JSON.stringify(data));
+      // console.log('devices => ' + JSON.stringify(data));
+      setDevices(data)
+  }
+  const carStatus = (acc, speed) => {
+    switch (acc) {
+      case 0:
+        return 'Parado'
+      case 1:
+        if (speed > 0) {
+          return 'Em movimento'
+        }
+        return 'Motor Ligado'
+      default:
+        return 'Sem sinal'
+    }
   }
   useFocusEffect(
       React.useCallback(() => {
-          let isActive = true;
-          fetchDevices()
+          console.log('on focus')
+          setOnFocus(true)
+          fetchUserTrack();
+          setCounter(10);
           return () => {
+            setOnFocus(false)
+              clearTimeout(currentTimeout)
               isActive = false;
           };
 
       }, [])
   );
+  useEffect(() => {
+      if (!onFocus) {
+        return
+      }
+      if (counter > 0) {
+          const timeout = setTimeout(() => setCounter(counter - 1), 1000);
+          setCurrentTimeout(timeout)
+      } else {
+          setCounter(10)
+          fetchUserTrack()
+      }
+  }, [counter, onFocus]);
 
   return (
     <SafeAreaView style={styles.container}>
+        <View style={{padding: 5, bottom: 10, left: '30%', position: 'absolute', zIndex: 2, backgroundColor: '#eeeeee', borderRadius: 10}}>
+            <Text style={{color: '#333333'}}>Atualizando em {counter}...</Text>
+        </View>
         <ScrollView>
           <ListGroup>
             {devices.map((item)=>{
-                return <ListButton key={item.id} title={item.devicename} icon="car" iconColor="orange" onPress={()=>navigation.push('Detalhes', { device: item })}></ListButton>
+                return <ListButton
+                          key={item.imei}
+                          title={item.device.devicename}
+                          subtitle={carStatus(item.accstatus, item.speed) + ` (${new Date(item.acctime * 1000).toUTCString().match(/(\d\d:\d\d:\d\d)/)[0]})`}
+                          custom_icon={
+                            <GmIcon name="carro" size={30} acc={item.accstatus} speed={item.speed} />
+                          }
+                          iconColor="orange"
+                          onPress={()=>navigation.push('Detalhes', { device: item })}>
+                        </ListButton>
             })}
             </ListGroup>
             {/* <Item title='test 1' icon="radio-button-on" /> */}

@@ -6,6 +6,7 @@ import 'react-native-gesture-handler';
  * @format
  */
 
+// import {GEOCODING_KEY} from '@env'
 import React, { useEffect, useState } from 'react';
 import Icon from 'react-native-ionicons'
 import {
@@ -38,13 +39,16 @@ import DeviceAlarms from './pages/DeviceAlarms';
 import { MMKVLoader, useMMKVStorage } from 'react-native-mmkv-storage';
 import Geocoder from 'react-native-geocoding';
 import DeviceTerminal from './pages/DeviceTerminal';
+import AlarmDetail from './pages/AlarmDetail';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const storage = new MMKVLoader().initialize();
-Geocoder.init("AIzaSyA-Ew6eAREVRxCrhgTousUnQJ-C-rXCNvM", {language : "pt"})
+Geocoder.init(process.env.GEOCODING_KEY, {language : "pt"})
 // const TopTab = createMaterialTopTabNavigator();
 
+/* FIXME: ios setup https://react-native-async-storage.github.io/async-storage/docs/install */
+/* FIXME: ios setup https://github.com/react-native-clipboard/clipboard#react-native-communityclipboard */
 /* FIXME: fix ios configuration for the package @react-native-firebase/app .:watch?v=T5LqJHQ59S8:. */
 /* FIXME: fix ios configuration for the package @react-native-firebase/mesage .:watch?v=T5LqJHQ59S8:. */
 /* FIXME: run pods for https://github.com/react-native-checkbox/react-native-checkbox */
@@ -199,6 +203,7 @@ function App(): JSX.Element {
           <Stack.Screen name="Centralizar" children={()=><DeviceMap userData={userData} />} />
           <Stack.Screen name="Historico" children={()=><DeviceHistory userData={userData} />} />
           <Stack.Screen name="Alarmes" children={()=><DeviceAlarms userData={userData} />} />
+          <Stack.Screen name="Alarme" children={()=><AlarmDetail userData={userData} />} />
         </Stack.Navigator>
       </NavigationContainer>
       <Toast />

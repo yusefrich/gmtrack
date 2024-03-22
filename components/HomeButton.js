@@ -5,26 +5,36 @@ import Icon from 'react-native-ionicons';
 
 const HomeButton = (props) => {
     const iconName = props.icon;
+    const customIcon = props.custom_icon;
     const title = props.title;
+    const white = props.white;
     const subTitle = props.subTitle;
 
     return (
-        <TouchableOpacity>
-            {title &&
-                <View style={[styles.blockButton]}>
-                    <View style={styles.buttonContent}>
-                        {/* <Text style={styles.title}>*</Text> */}
-                        <Icon name={iconName} color={COLORS.white} />
-                    </View>
-                </View>
-            }
-            {!title && <View style={{width: 80}}></View>}
-            <View style={{alignItems: 'center'}}>
-                {subTitle && 
-                    <Text style={{color: COLORS.black, fontSize: 12}}>{subTitle}</Text>
+        <TouchableOpacity onPress={props.onPress}>
+          {title &&
+            <View style={[styles.blockButton, white ? styles.bgwhite : styles.bgdark]}>
+              <View style={styles.buttonContent}>
+                {/* <Text style={styles.title}>*</Text> */}
+                {!customIcon &&
+                  <Icon name={iconName} color={white ? COLORS.primary : COLORS.white} />
                 }
-                <Text style={styles.buttonTitle}>{title}</Text>
+                {customIcon}
+                {white && 
+                  <Text style={styles.buttonTitle}>{title}</Text>
+                }
+              </View>
             </View>
+          }
+          {!title && <View style={{width: 80}}></View>}
+          {!white &&
+            <View style={{alignItems: 'center'}}>
+              {subTitle && 
+                <Text style={{color: COLORS.black, fontSize: 12}}>{subTitle}</Text>
+              }
+              <Text style={styles.buttonTitle}>{title}</Text>
+            </View>
+          }
         </TouchableOpacity>
     )
 }
@@ -46,10 +56,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     elevation: 5,
     shadowColor: '#333',
-    backgroundColor: COLORS.grey,
     justifyContent: 'center',
     alignItems: 'center'
   },
+  bgwhite: {
+    backgroundColor: COLORS.pure
+  },
+  bgdark: {
+    backgroundColor: COLORS.grey
+  }
 
 })
 export default HomeButton

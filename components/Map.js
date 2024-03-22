@@ -1,9 +1,9 @@
-import { Text, TouchableOpacity, StyleSheet, View, Pressable, Image, Dimensions, PermissionsAndroid, Platform, Alert } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { Text, TouchableOpacity, StyleSheet, View, Pressable, Image, Dimensions, PermissionsAndroid, Platform, Alert, Modal } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
 import Icon from 'react-native-ionicons'
 import COLORS from '../constants/colors'
 import { useNavigation } from '@react-navigation/native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, Polyline } from 'react-native-maps';
 import GmIcon from './GmIcon';
 import Geocoder from 'react-native-geocoding';
 import { Linking } from 'react-native';
@@ -14,10 +14,23 @@ const Map = (props) => {
     // const filledBgColor = props.color || COLORS.primary;
     // const outlinedColor = COLORS.white;
     // const bgColor = props.filled ? filledBgColor : outlinedColor;
-    let counter = props.counter;
-    const pins = props.pins;
+    let counter = props.counter || false;
+    const refresh = props.refresh || false;
+    const pinTitle = props.pinTitle || false;
+    const pins = props.pins || false;
+    const alarm = props.alarm || false;
+    const playback = props.playback || false;
     const switchMapType = props.switchMapType;
     const switcTraffic = props.switcTraffic;
+    const speeds = [1, 2, 4, 8]
+    const [currentPlaybackSpeed, setCurrentPlaybackSpeed] = useState(0);
+    const [pausePlayback, setPausePlayback] = useState(false);
+    const [playbackPos, setPlaybackPos] = useState(-1);
+    const [playbackKm, setPlaybackKm] = useState(0);
+    const [playbackCarSpeed, setPlaybackCarSpeed] = useState(0);
+    const [mapViewCurrentRegion, setMapViewCurrentRegion] = useState(0);
+    const [playbackCourse, setPlaybackCourse] = useState(0);
+    const [playbackGpsTime, setPlaybackGpsTime] = useState(null);
     // const navigation = useNavigation();
     const [region, setRegion] = useState(null);
     // const [pins, setPins] = useState(props.pins);
@@ -29,6 +42,7 @@ const Map = (props) => {
     const [showPoi, setShowPoi] = useState(false);
     // const [counter, setCounter] = useState(10);
     const navigation = useNavigation();
+    const markerRef = useRef()
 
     const showInfo = (pin) => {
         if (!pin || !pin.device) {
@@ -112,6 +126,7 @@ const Map = (props) => {
                         setInfo({pin: pins[focusPin.index + 1], status: true, location: json.results[0].formatted_address})
                     })
                     .catch(error => console.warn(error));
+                console.log('lat', lat)
                 setRegion({
                     latitude: pins[focusPin.index + 1].latitude,
                     longitude: pins[focusPin.index + 1].longitude,
@@ -166,6 +181,126 @@ const Map = (props) => {
             }
         }
     }
+    const getLocation = () => {
+        let newPos = playbackPos
+        if (pausePlayback) {
+            return
+        }
+        if (!playback.route[newPos]) {
+            return
+        }
+        if (newPos >= playback.route.length) {
+            setPlaybackPos(0)
+            return
+        }
+        // const newPin = {
+        //     device: route.params.device,
+        //     latitude: playback[newPos].latitude,
+        //     longitude: playback[newPos].longitude,
+        //     coordinate: new AnimatedRegion({
+        //         latitude: playback[newPos].latitude,
+        //         longitude: playback[newPos].longitude,
+        //         latitudeDelta: 0.0922,
+        //         longitudeDelta: 0.0421
+        //     }),
+        //     speed: playback[newPos].speed,
+        //     course: playback[newPos].course,
+        //     pos: newPos
+        // }
+        let lat_min = mapViewCurrentRegion.latitude - (mapViewCurrentRegion.latitudeDelta / 2);
+        let lat_max = mapViewCurrentRegion.latitude + (mapViewCurrentRegion.latitudeDelta / 2);
+
+        let lng_min = mapViewCurrentRegion.longitude - (mapViewCurrentRegion.longitudeDelta / 2);
+        let lng_max = mapViewCurrentRegion.longitude + (mapViewCurrentRegion.longitudeDelta / 2);
+
+        if(playbackPos === 0 || (playback.route[newPos].latitude<lat_min || playback.route[newPos].latitude>lat_max) || (playback.route[newPos].longitude<lng_min || playback.route[newPos].longitude>lng_max)){
+            setRegion({
+                latitude: playback.route[newPos].latitude,
+                longitude: playback.route[newPos].longitude,
+                latitudeDelta: 0.0022,
+                longitudeDelta: 0.0021
+            });
+        }
+        setPlaybackCarSpeed(playback.route[newPos].speed)
+        setPlaybackGpsTime(new Date(playback.route[newPos].gpstime * 1000).toLocaleString())
+        if (playback.route[newPos - 1]) {
+            setPlaybackKm(playbackKm + distance(playback.route[newPos - 1].latitude, playback.route[newPos - 1].longitude, playback.route[newPos].latitude, playback.route[newPos].longitude))
+        }
+        animate(playback.route[newPos].latitude, playback.route[newPos].longitude, playback.route[newPos].course);
+    }
+
+    const animate = (latitude, longitude, course) => {
+        // console.log('mooving to', JSON.stringify({latitude, longitude, pos: pin.pos}))
+        const newCoordinate = {latitude, longitude};
+        if(Platform.OS == 'android'){
+            if(markerRef.current){
+                markerRef.current.animateMarkerToCoordinate(newCoordinate, 1000 / speeds[currentPlaybackSpeed]);
+            }
+        } else {
+            pin.coordinate.timing(newCoordinate).start();
+        }
+        setTimeout(() => {
+            console.log('timeout loop')
+            setPlaybackPos(playbackPos + 1)
+            setPlaybackCourse(course)
+        }, 1000 / speeds[currentPlaybackSpeed]);
+        // setAnimateCoord({latitude, longitude})
+    }
+    const getAnchorPoint = (item) => {
+        if (info.status && info.pin.device.id === item.device.id && showText) {
+            return { x: 0.5, y: 0.9}
+        }
+        if (info.status && info.pin.device.id === item.device.id) {
+            return { x: 0.5, y: 0.88}
+        }
+        if (showText) {
+            return { x: 0.5, y: 0.735}
+        }
+        return { x: 0.5, y: 0.5 } 
+    }
+    const distance = (lat1, lon1, lat2, lon2) => {
+      const R = 6371; // km
+      const dLat = deg2rad(lat2-lat1);
+      const dLon = deg2rad(lon2-lon1);
+      let l1 = deg2rad(lat1);
+      let l2 = deg2rad(lat2);
+
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(l1) * Math.cos(l2); 
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+      const d = R * c;
+      return d;
+    }
+    const deg2rad = (deg) => {
+        return deg * (Math.PI/180)
+    }
+    const showFilter = () => {
+        props.playbackFilterCb()
+        setPausePlayback(true)
+    }
+    const onRegionChange = (theRegion) => {
+        setMapViewCurrentRegion(theRegion)
+    }
+    const getCurrentPlaybackSliderPosition = () => {
+        const porc = (playbackPos * 100) / playback.route.length
+        return porc + '%'
+    }
+    useEffect(() => {
+        // console.log('useEffect being called', pins)
+        // setPins(props.pins)
+        if (!alarm) {
+            return
+        }
+        setRegion({
+            latitude: parseFloat(alarm.lat),
+            longitude: parseFloat(alarm.long),
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421
+        });
+        if (props.region) {
+            setRegion(props.region)
+        }
+    }, [alarm]);
     useEffect(() => {
         // console.log('useEffect being called', pins)
         // setPins(props.pins)
@@ -190,7 +325,7 @@ const Map = (props) => {
             })
             const lat = minLat + ((maxLat - minLat) / 2)
             const long = minLong + ((maxLong - minLong) / 2)
-            if (!focusPin) {
+            if (!focusPin && pins.length > 1) {
                 setRegion({
                     latitude: lat,
                     longitude: long,
@@ -198,24 +333,89 @@ const Map = (props) => {
                     longitudeDelta: (maxLong - minLong) * 1.5
                 })
             }
+            if (!focusPin && pins.length === 1) {
+                setRegion({
+                    latitude: pins[0].latitude,
+                    longitude: pins[0].longitude,
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421
+                });
+            }
         }
         if (props.region) {
             setRegion(props.region)
         }
     }, [pins]);
+    useEffect(() => {
+        if (playback) {
+            console.log('new poss loop', playbackPos)
+            getLocation()
+        }
+    }, [playbackPos, pausePlayback])
+    useEffect(() => {
+        if (playback) {
+            console.log('playback loop', playback.route.length)
+            setPausePlayback(false)
+            setPlaybackPos(0)
+        }
+    }, [playback])
 
     return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <View style={{padding: 5, top: 10, left: 5, position: 'absolute', zIndex: 2, backgroundColor: '#eeeeee', borderRadius: 10}}>
-                <Text style={{color: '#333333'}}>Atualizando em {counter}...</Text>
-            </View>
-            <View style={{padding: 5, top: 45, left: 5, position: 'absolute', zIndex: 2}}>
-                <Pressable
-                    style={[styles.whiteButton]}
-                    onPress={() => {setShowText(!showText)}}>
-                    <GmIcon name="text" size={20} color={showText ? "orange" : "black"} />
-                </Pressable>
-            </View>
+            {counter &&
+                <View style={{padding: 5, top: 10, left: 5, position: 'absolute', zIndex: 2, backgroundColor: '#eeeeee', borderRadius: 10}}>
+                    <Text style={{color: '#333333'}}>Atualizando em {counter}...</Text>
+                </View>
+            }
+            {playback &&
+                <View style={{padding: 5, top: 10, left: 10, width: '82%', height: 40, position: 'absolute', zIndex: 2, backgroundColor: '#33333395', borderRadius: 10}}>
+                    <View style={{flex: 1, flexDirection: 'row', position: 'relative'}}>
+                        <Pressable style={{padding: 5, paddingLeft: 10}} onPress={() => setPausePlayback(!pausePlayback)}>
+                            {!pausePlayback &&
+                                <Icon name="pause" style={{color: COLORS.white}} size={20} />
+                            }
+                            {pausePlayback &&
+                                <Icon name="play" style={{color: COLORS.white}} size={20} />
+                            }
+                        </Pressable>
+                        <View style={{width: '80%', position: 'relative', marginTop: 2, marginLeft: 20}}>
+                            <View style={{width: getCurrentPlaybackSliderPosition(), position: 'relative', height: 5, marginTop: 10, backgroundColor: COLORS.primary}}></View>
+                            <Icon name="car" style={{position: 'absolute', left: getCurrentPlaybackSliderPosition(), color: COLORS.white}} size={24} />
+                        </View>
+                    </View>
+                </View>
+            }
+            {playback &&
+                <View style={{padding: 5, top: 55, right: 5, position: 'absolute', zIndex: 2}}>
+                    <Pressable
+                        style={[styles.transparentButton, { backgroundColor: 'rgba(0, 0, 0, .8)' }]}
+                        onPress={() => {
+                            setCurrentPlaybackSpeed((currentPlaybackSpeed + 1) < speeds.length ? currentPlaybackSpeed + 1 : 0)
+                        }}>
+                        {/* <GmIcon name="map" size={20} color={mapType === 'hybrid' ? "orange" : "white"} /> */}
+                        <Text style={{color: '#ffffff', paddingHorizontal: 2}}>{speeds[currentPlaybackSpeed]}x</Text>
+                    </Pressable>
+                </View>
+            }
+            {playback &&
+                <View style={{padding: 5, top: 95, right: 5, position: 'absolute', zIndex: 2}}>
+                    <Pressable
+                        style={[styles.transparentButton, { backgroundColor: 'rgba(0, 0, 0, .8)' }]}
+                        onPress={() => showFilter()}>
+                        {/* <GmIcon name="map" size={20} color={mapType === 'hybrid' ? "orange" : "white"} /> */}
+                        <Icon name="funnel" style={{color: '#ffffff', paddingHorizontal: 1}} size={20} />
+                    </Pressable>
+                </View>
+            }
+            {pinTitle &&
+                <View style={{padding: 5, top: 45, left: 5, position: 'absolute', zIndex: 2}}>
+                    <Pressable
+                        style={[styles.whiteButton]}
+                        onPress={() => {setShowText(!showText)}}>
+                        <GmIcon name="text" size={20} color={showText ? "orange" : "black"} />
+                    </Pressable>
+                </View>
+            }
             <View style={{padding: 5, top: 85, left: 5, position: 'absolute', zIndex: 2}}>
                 <Pressable
                     style={[styles.whiteButton]}
@@ -223,15 +423,16 @@ const Map = (props) => {
                     <GmIcon name="poi" size={20} color={showPoi ? "orange" : "black"} />
                 </Pressable>
             </View>
-
-            <View style={{padding: 5, top: 55, right: 5, position: 'absolute', zIndex: 2}}>
-                <Pressable
-                    style={[styles.transparentButton, {backgroundColor: 'rgba(0, 0, 0, .8)'}]}
-                    onPress={() => props.refreshCb()}>
-                    <GmIcon name="rotate" size={20} color="white" />
-                    {/* <Icon name="navigate" style={hasTraffic ? {color: COLORS.black} : {color: COLORS.gray}} size={25} /> */}
-                </Pressable>
-            </View>
+            {refresh &&
+                <View style={{padding: 5, top: 55, right: 5, position: 'absolute', zIndex: 2}}>
+                    <Pressable
+                        style={[styles.transparentButton, {backgroundColor: 'rgba(0, 0, 0, .8)'}]}
+                        onPress={() => props.refreshCb()}>
+                        <GmIcon name="rotate" size={20} color="white" />
+                        {/* <Icon name="navigate" style={hasTraffic ? {color: COLORS.black} : {color: COLORS.gray}} size={25} /> */}
+                    </Pressable>
+                </View>
+            }
             {switcTraffic && 
                 <View style={{padding: 5, top: 95, right: 5, position: 'absolute', zIndex: 2}}>
                     <Pressable
@@ -295,20 +496,57 @@ const Map = (props) => {
                     <Text style={{color: 'white'}}>{info.location}</Text>
                 </View>
             }
-            <View style={{padding: 5, top: '50%', left: 5, position: 'absolute', zIndex: 2}}>
-                <Pressable
-                    style={[styles.whiteButton]}
-                    onPress={() => updateFocusPin('prev')}>
-                    <GmIcon name="arrow-left" size={20} color="black" />
-                </Pressable>
-            </View>
-            <View style={{padding: 5, top: '50%', right: 5, position: 'absolute', zIndex: 2}}>
-                <Pressable
-                    style={[styles.whiteButton]}
-                    onPress={() => updateFocusPin('next')}>
-                    <GmIcon name="arrow-right" size={20} color="black" />
-                </Pressable>
-            </View>
+
+            {pins && pins.length > 1 &&
+                <View style={{padding: 5, top: '50%', left: 5, position: 'absolute', zIndex: 2}}>
+                    <Pressable
+                        style={[styles.whiteButton]}
+                        onPress={() => updateFocusPin('prev')}>
+                        <GmIcon name="arrow-left" size={20} color="black" />
+                    </Pressable>
+                </View>
+            }
+            {pins && pins.length > 1 &&
+                <View style={{padding: 5, top: '50%', right: 5, position: 'absolute', zIndex: 2}}>
+                    <Pressable
+                        style={[styles.whiteButton]}
+                        onPress={() => updateFocusPin('next')}>
+                        <GmIcon name="arrow-right" size={20} color="black" />
+                    </Pressable>
+                </View>
+            }
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={playback && getCurrentPlaybackSliderPosition() === '100%'}
+                onRequestClose={() => {
+                    setPlaybackPos(0)
+                }}
+            >
+                <View style={modalStyles.centeredView}>
+                    <View style={modalStyles.modalView}>
+                        <Text style={[modalStyles.modalText, {fontSize: 20}]}>Informações!</Text>
+                        <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'black', fontWeight: 'bold'}}>Hora inicial: {props.startAt}</Text>
+                        <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'black', fontWeight: 'bold'}}>Hora final: {props.finishAt}</Text>
+                        <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'black', fontWeight: 'bold'}}>Quilometragem: {playbackKm.toFixed(2)} KM</Text>
+
+                        <View style={{alignSelf: 'center', paddingTop: 20, flexDirection: 'row'}}>
+                            <Pressable
+                                style={[modalStyles.button, modalStyles.buttonActive, {marginRight: 10}]}
+                                onPress={() => { setPlaybackPos(0) }}
+                                >
+                                <Text style={modalStyles.textStyle}>Repetir</Text>
+                            </Pressable>
+                            <Pressable
+                                style={[modalStyles.button, modalStyles.buttonActive]}
+                                onPress={() => showFilter()}
+                                >
+                                <Text style={modalStyles.textStyle}>OK</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
 
             <MapView
                 onMapReady={()=>{
@@ -318,18 +556,97 @@ const Map = (props) => {
                     })
                     : ''
                 }}
+                onRegionChange={(region)=>onRegionChange(region)}
                 showsUserLocation={true}
                 mapType={mapType}
                 mode="TRANSIT"
-                style={{width: width, height: height - 150}}
+                style={playback || alarm ? {width, height: height - 100} : {width: width, height: height - 150}}
                 region={region}
                 showsTraffic={hasTraffic}
                 zoomControlEnabled={true}
                 minZoomLevel={9}
                 loadingEnabled={true}
             >
-                {pins.map((item, index)=>{
-                    return <Marker
+                {playback && 
+                    <Polyline
+                        coordinates={playback.route}
+                        strokeColor='#6495ED' // fallback for when `strokeColors` is not supported by the map-provider
+                        mode="DRIVING"
+                        strokeColors={[
+                            '#7F0000',
+                            '#00000000', // no color, creates a "long" gradient between the previous and next coordinate
+                            '#B24112',
+                            '#E5845C',
+                            '#238C23',
+                            '#7F0000'
+                        ]}
+                        strokeWidth={6}
+                    />
+                }
+                {playback && playback.stops.map((item, index)=>{
+                    return <Marker key={'stop_' + index} coordinate={
+                        {
+                            latitude: item.latitude,
+                            longitude: item.longitude,
+                            latitudeDelta: 0.0922,
+                            longitudeDelta: 0.0421
+                        }
+                    }>
+                        <Image
+                            source={require("../assets/pinponto.png")}
+                            style={{width: 35, height: 35}}
+                        />
+                    </Marker>
+                })}
+                {alarm &&
+                    <Marker
+                        key={'alarm_' + alarm.device.id}
+                        coordinate={{
+                            latitude: parseFloat(alarm.lat),
+                            longitude: parseFloat(alarm.long),
+                            latitudeDelta: 0.0922,
+                            longitudeDelta: 0.0421
+                        }}
+                    >
+                        <View style={{position: 'relative', overflow: 'visible'}}>
+                            <View style={{backgroundColor: '#33333390', borderColor: '#333333', borderWidth: 1, borderRadius: 5, height: 110}}>
+                                <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'white', fontWeight: 'bold'}}>{alarm.device.devicename}</Text>
+                                <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'white', fontWeight: 'bold'}}>Tipo de alarme: {alarm.type}</Text>
+                                <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'white', fontWeight: 'bold'}}>Hora GPS: {alarm.gps_time}</Text>
+                                <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'white', fontWeight: 'bold'}}>Hora do alarme: {alarm.system_time}</Text>
+                            </View>
+                            <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                                <Image
+                                    source={require("../assets/pinparado.png")}
+                                    style={{width: 35, height: 35}}
+                                />
+                            </View>
+                        </View>
+                    </Marker>
+                }
+                {pins && pins[0] && playback &&
+                    <Marker.Animated key={pins[0].device.id} anchor={{ x: 0.5, y: 0.88}} coordinate={pins[0].coordinate} ref={markerRef}>
+                        <View style={{position: 'relative', overflow: 'visible'}}>
+                            <View style={{backgroundColor: '#33333390', borderColor: '#333333', borderWidth: 1, borderRadius: 5, height: 110}}>
+                                <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'white', fontWeight: 'bold'}}>Hora GPS: {playbackGpsTime}</Text>
+                                <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'white', fontWeight: 'bold'}}>Velocidade: {playbackCarSpeed}Km/h</Text>
+                                <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'white', fontWeight: 'bold'}}>trageto: {playbackCourse}°</Text>
+                                <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'white', fontWeight: 'bold'}}>quilometragem: {playbackKm.toFixed(2)} KM</Text>
+                            </View>
+                            <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                                <Image
+                                    source={playbackCarSpeed <= 0 ? require("../assets/carroparado.png") : require("../assets/carroandando.png")}
+                                    style={{width: 35, height: 35, transform: [{ rotate: playbackCourse + 'deg'}]}}
+                                />
+                            </View>
+                        </View>
+                    </Marker.Animated>
+                }
+                {pins && !playback && pins.map((item, index)=>{
+                    if (!item || !item.coordinate) {
+                        return <></>
+                    }
+                    return <Marker.Animated
                             key={item.device.id}
                             onPress={() => {
                                 showInfo(item)
@@ -343,39 +660,34 @@ const Map = (props) => {
                                     longitudeDelta: 0.0421
                                 })
                             }}
-                            anchor={{ x: 0, y: 1}}
+                            anchor={getAnchorPoint(item)}
                             style={{overflow: 'visible'}}
                             coordinate={
-                                {
-                                    latitude: item.latitude,
-                                    longitude: item.longitude,
-                                    latitudeDelta: 0.0922,
-                                    longitudeDelta: 0.0421
-                                }
+                                item.coordinate
                             }
                         >
                             <View style={{position: 'relative', overflow: 'visible'}}>
                                 {info.status && info.pin.device.id === item.device.id &&
-                                    <View style={{backgroundColor: '#33333390', borderColor: '#333333', borderWidth: 1, borderRadius: 5}}>
+                                    <View style={{backgroundColor: '#33333390', borderColor: '#333333', borderWidth: 1, borderRadius: 5, height: 110}}>
                                         <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'white', fontWeight: 'bold'}}>{item.device.devicename}({item.device.devicetype})</Text>
                                         <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'white', fontWeight: 'bold'}}>tempo: {item.gpstime}</Text>
                                         <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'white', fontWeight: 'bold'}}>estado: {+item.speed <= 0 ? 'Parado' : 'Em movimento'}</Text>
                                         <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'white', fontWeight: 'bold'}}>motor: {+item.speed <= 0 ? 'Ligado' : 'Desligado'}</Text>
                                     </View>
                                 }
-                                <View style={{flex: 1, flexDirection: 'row'}}>
+                                {showText &&
+                                    <View style={{backgroundColor: '#fafafa', borderColor: '#333333', borderWidth: 1, borderRadius: 5, height: 30}}>
+                                        <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, fontWeight: 'bold'}}>{item.device.devicename}</Text>
+                                    </View>
+                                }
+                                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                                     <Image
                                         source={+item.speed <= 0 ? require("../assets/carroparado.png") : require("../assets/carroandando.png")}
                                         style={{width: 35, height: 35, transform: [{ rotate: item.course + 'deg'}]}}
                                     />
-                                    {showText && 
-                                        <View style={{backgroundColor: '#fafafa', borderColor: '#333333', borderWidth: 1, borderRadius: 5}}>
-                                            <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, fontWeight: 'bold'}}>{item.device.devicename}</Text>
-                                        </View>
-                                    }
                                 </View>
                             </View>
-                        </Marker>
+                        </Marker.Animated>
                 })}
             </MapView>
         </View>
@@ -396,4 +708,70 @@ const styles = StyleSheet.create({
         elevation: 2
     },
 })
+const modalStyles = StyleSheet.create({
+  //checkbox
+  dateButton: {
+    padding: 10,
+    backgroundColor: COLORS.primary,
+    borderRadius: 10,
+    elevation: 2
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    marginBottom: 5,
+  },
+  checkbox: {
+    alignSelf: 'center',
+  },
+  label: {
+    margin: 8,
+  },
+  //modal
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 15,
+    alignItems: 'flex-start',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 100,
+    padding: 10,
+    paddingHorizontal: 13,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: '#fafafa',
+  },
+  buttonClose: {
+    backgroundColor: COLORS.white,
+  },
+  buttonActive: {
+    backgroundColor: COLORS.primary,
+  },
+  textStyle: {
+    color: COLORS.black,
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+});
+
+
 export default Map

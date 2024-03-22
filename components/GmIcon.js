@@ -6,6 +6,8 @@ const GmIcon = (props) => {
     const iconName = props.name;
     const size = props.size;
     const color = props.color;
+    const acc = props.acc;
+    const speed = props.speed;
 
     return (
         <>
@@ -41,6 +43,18 @@ const GmIcon = (props) => {
             }
             {iconName === 'terminal' &&
                 <Image source={require('../assets/icons/terminal-solid.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+            }
+            {iconName === 'carro' && acc === 0 &&
+                <Image source={require('../assets/carroparado.png')} style={[{width: size, height: size, resizeMode: 'contain'}]} />
+            }
+            {iconName === 'carro' && acc === 1 && speed <= 0 &&
+                <Image source={require('../assets/carroosioso.png')} style={[{width: size, height: size, resizeMode: 'contain'}]} />
+            }
+            {iconName === 'carro' && acc === 1 && speed > 0 &&
+                <Image source={require('../assets/carroandando.png')} style={[{width: size, height: size, resizeMode: 'contain'}]} />
+            }
+            {iconName === 'carro' && (acc === -1 || acc === null || speed === null) &&
+                <Image source={require('../assets/carrooff.png')} style={[{width: size, height: size, resizeMode: 'contain'}]} />
             }
         </>
     )

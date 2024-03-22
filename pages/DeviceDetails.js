@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Clipboard from '@react-native-clipboard/clipboard';
 import {
   SafeAreaView,
   View,
@@ -18,41 +19,20 @@ import ListGroup from '../components/ListGroup';
 import ListButton from '../components/ListButton';
 import { useRoute } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
+import HomeButton from '../components/HomeButton';
+import GmIcon from '../components/GmIcon';
+import COLORS from '../constants/colors';
 
 const DeviceDetails = ({ userData }) => {
-  const [devices, setDevices] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const route = useRoute();
   const navigation = useNavigation();
 
-  const fetchDevices = () => {
-    if (!userData || !userData.token) {
-      console.log('token nulo')
-      return
-    }
-    fetch("https://gmtrack.azael.tech/api/user/devices", {
-      headers: {
-          Authorization: 'Bearer ' + userData.token,
-      }
-    })
-    .then((response) => response.json())
-    .then((responseData) => {
-      if (!Array.isArray(responseData.data)) {
-          Toast.show({
-              type: 'error',
-              text1: 'Erro ao buscar seus veiculos'
-          });
-          return
-      }
-      console.log('devices detailssssss => ' + JSON.stringify(responseData.data));
-      setDevices(responseData.data)
-      // props.submit({userData: responseData, token: responseData.token, carrousel: rresponseData.data})
-    })
-  }
   useFocusEffect(
       React.useCallback(() => {
           let isActive = true;
-          fetchDevices()
+          navigation.setOptions({ title: route.params.device.device.devicename })
+          // fetchDevices()
           return () => {
               isActive = false;
           };
@@ -64,18 +44,19 @@ const DeviceDetails = ({ userData }) => {
     <SafeAreaView style={styles.container}>
         <ScrollView>
           <ListGroup>
-            <ListButton title={"IMEI - " + route.params.device.imei} icon="barcode" endicon="copy" iconColor="orange"></ListButton>
+            <ListButton title={"IMEI - " + route.params.device.device.imei} icon="barcode" endicon="copy" iconColor="orange" onPress={()=>Clipboard.setString(route.params.device.device.imei)}></ListButton>
           </ListGroup>
-          <ListGroup>
-            <ListButton title="Centralizar" icon="pin" iconColor="orange" onPress={()=>navigation.push('Centralizar', { device: route.params.device })}></ListButton>
-            <ListButton title="Rota" icon="navigate" iconColor="orange" onPress={()=>navigation.push('Centralizar', { device: route.params.device })}></ListButton>
-            <ListButton title="Historico" icon="alarm" iconColor="orange" onPress={()=>navigation.push('Historico', { device: route.params.device })}></ListButton>
-          </ListGroup>
+          <View style={styles.row}>
+            <HomeButton icon="navigate" white title="Rastrear" />
+            <HomeButton icon="play" white title="Histórico" onPress={()=>navigation.push('Historico', { device: route.params.device.device })}/>
+            <HomeButton icon="paper" white title="Detalhe" />
+            <HomeButton custom_icon={<GmIcon name="terminal" size={30} color={COLORS.primary} />} white title="Comando" />
+          </View>
           <ListGroup>
             <ListButton title="Detalhe" icon="document" iconColor="orange"></ListButton>
             <ListButton title="Comando" icon="wifi" iconColor="orange"></ListButton>
             <ListButton title="Histórico de comando" icon="folder-open" iconColor="orange"></ListButton>
-            <ListButton title="Alarmes" icon="alarm" iconColor="orange" onPress={()=>navigation.push('Alarmes', { device: route.params.device })}></ListButton>
+            <ListButton title="Alarmes" icon="alarm" iconColor="orange" onPress={()=>navigation.push('Alarmes', { device: route.params.device.device })}></ListButton>
             <ListButton title="Alerta de cerca" icon="grid" iconColor="orange"></ListButton>
             <ListButton title="Compartilhar localização" icon="share" iconColor="orange"></ListButton>
           </ListGroup>
@@ -156,6 +137,13 @@ const styles = StyleSheet.create({
     },
     buttonClose: {
       backgroundColor: '#2196F3',
+    },
+    row: {
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      width: '95%',
+      marginBottom: 10
     },
     textStyle: {
       color: 'white',

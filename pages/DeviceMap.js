@@ -39,28 +39,17 @@ const DeviceMap = ({ userData }) => {
     const route = useRoute();
 
     const fetchTrack = async () => {
-        if (!userData || !userData.token) {
+        const [data, err] = await api.userTrack(userData)
+        if (err) {
             Toast.show({
                 type: 'error',
-                text1: 'Houve um erro, realize o login novamente!'
+                text1: 'Erro ao monitorarr veiculos: ' + err.message
             });
             return
         }
-
-        
-        const [data, err] = await api.track({
-            token: userData.token
-        })
         console.log('carsa => ' + JSON.stringify(data));
-        if (!err && !Array.isArray(data.data)) {
-            Toast.show({
-                type: 'error',
-                text1: 'Erro ao buscar dados do veiculo'
-            });
-            return
-        }
-        let elements = []
-        data.data.forEach(e => {
+        const elements = []
+        data.forEach(e => {
             if (e.device.id === route.params.device.id) {
                 setRegion({
                     latitude: e.latitude,

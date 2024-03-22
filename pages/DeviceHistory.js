@@ -30,6 +30,7 @@ import { useRoute } from '@react-navigation/native';
 import api from '../services/api'
 import COLORS from '../constants/colors'
 import DatePicker from 'react-native-date-picker';
+import Map from '../components/Map';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -50,6 +51,8 @@ const DeviceHistory = ({ userData }) => {
     const [hasTraffic, setHasTraffic] = useState(false);
     const [deg, setDeg] = useState(0);
     const [currentSpeed, setCurrentSpeed] = useState(0);
+    const [animateCoord, setAnimateCoord] = useState(null);
+    const [devicePlayback, setDevicePlayback] = useState(null);
     // route
     const route = useRoute();
     // refs
@@ -102,7 +105,24 @@ const DeviceHistory = ({ userData }) => {
             start_date: startDate.toLocaleString('af-ZA'),
             end_date: endDate.toLocaleString('af-ZA')
         })
+        if (err) {
+            Toast.show({
+                type: 'error',
+                text1: 'Erro ao buscar historico: ' + err.message
+            });
+            console.error('detal error => ', err);
+            return
+        }
+        if (!data.data || data.data === "") {
+            Toast.show({
+                type: 'info',
+                text1: 'Nenhum historico encontrado entre as datas selecionadas'
+            });
+            // console.error('detal error => ', err);
+            return
+        }
         // console.log('paybacks => ' + JSON.stringify(data));
+        setModalVisible(false)
         const rawPlayback = []
         const rawStops = []
         data.data.split(';').forEach(e => {
@@ -110,6 +130,7 @@ const DeviceHistory = ({ userData }) => {
             rawPlayback.push({
                 latitude: parseFloat(e.split(',')[1]),
                 longitude: parseFloat(e.split(',')[0]),
+                gpstime: parseFloat(e.split(',')[2]),
                 speed: +e.split(',')[3],
                 course: e.split(',')[4]
             })
@@ -122,6 +143,12 @@ const DeviceHistory = ({ userData }) => {
             }
         })
         setStops(rawStops)
+        console.log('raw', {
+            token: userData.token,
+            imei: route.params.device.imei,
+            start_date: startDate.toLocaleString('af-ZA'),
+            end_date: endDate.toLocaleString('af-ZA')
+        })
         setPin({
             coordinate: new AnimatedRegion({
                 latitude: rawPlayback[0].latitude,
@@ -129,6 +156,9 @@ const DeviceHistory = ({ userData }) => {
                 latitudeDelta: 0.0922,
                 longitudeDelta: 0.0421
             }),
+            latitude: rawPlayback[0].latitude,
+            course: rawPlayback[0].course,
+            longitude: rawPlayback[0].longitude,
             device: route.params.device,
             speed: rawPlayback[0].speed,
             pos: 0
@@ -140,8 +170,9 @@ const DeviceHistory = ({ userData }) => {
             longitudeDelta: 0.0421
         });
         setPlayback(rawPlayback)
-        console.log('raw play ', rawPlayback)
-        setAlarms(data.data)
+        setDevicePlayback({route: rawPlayback, stops: rawStops})
+        // console.log('raw play ', rawPlayback)
+        // setAlarms(data.data)
     }
     const getLocation = () => {
         if (!playerStatus) {
@@ -156,6 +187,8 @@ const DeviceHistory = ({ userData }) => {
         }
         const newPin = {
             device: route.params.device,
+            latitude: playback[newPos].latitude,
+            longitude: playback[newPos].longitude,
             coordinate: new AnimatedRegion({
                 latitude: playback[newPos].latitude,
                 longitude: playback[newPos].longitude,
@@ -163,6 +196,7 @@ const DeviceHistory = ({ userData }) => {
                 longitudeDelta: 0.0421
             }),
             speed: playback[newPos].speed,
+            course: playback[newPos].course,
             pos: newPos
         }
         setPin(newPin)
@@ -177,14 +211,15 @@ const DeviceHistory = ({ userData }) => {
     }
     const animate = (latitude, longitude) => {
         // console.log('mooving to', JSON.stringify({latitude, longitude, pos: pin.pos}))
-        const newCoordinate = {latitude, longitude};
-        if(Platform.OS == 'android'){
-            if(markerRef.current){
-                markerRef.current.animateMarkerToCoordinate(newCoordinate, 1000 / speeds[currentSpeed]);
-            }
-        } else {
-            pin.coordinate.timing(newCoordinate).start();
-        }
+        // const newCoordinate = {latitude, longitude};
+        // if(Platform.OS == 'android'){
+        //     if(markerRef.current){
+        //         markerRef.current.animateMarkerToCoordinate(newCoordinate, 1000 / speeds[currentSpeed]);
+        //     }
+        // } else {
+        //     pin.coordinate.timing(newCoordinate).start();
+        // }
+        setAnimateCoord({latitude, longitude})
     }
 
 
@@ -209,11 +244,11 @@ const DeviceHistory = ({ userData }) => {
     useEffect(() => {
         const interval = setInterval(() => {
             if (playback) {
-                getLocation()
+                // getLocation()
             }
         }, 1000 / speeds[currentSpeed]);
         return () => clearInterval(interval)
-    })
+    },)
 
 
   return (
@@ -221,21 +256,21 @@ const DeviceHistory = ({ userData }) => {
         <View style={{padding: 5, bottom: 40, position: 'absolute', zIndex: 2, backgroundColor: '#333333', borderRadius: 10}}>
             <Text style={{color: '#eeeeee'}}>{route.params.device.devicename}</Text>
         </View>
-        <View style={{padding: 5, bottom: 120, right: 5, position: 'absolute', zIndex: 2}}>
+        {/* <View style={{padding: 5, bottom: 120, right: 5, position: 'absolute', zIndex: 2}}>
             <Pressable
                 style={[modalStyles.button, modalStyles.buttonOpen]}
                 onPress={() => setModalVisible(true)}>
                 <Icon name="funnel" style={{color: '#333333'}} size={35} />
             </Pressable>
-        </View>
-        <View style={{padding: 5, bottom: 180, right: 10, position: 'absolute', zIndex: 2}}>
+        </View> */}
+        {/* <View style={{padding: 5, bottom: 180, right: 10, position: 'absolute', zIndex: 2}}>
             <Pressable
                 style={[modalStyles.button, modalStyles.buttonOpen, {paddingHorizontal: 15}]}
                 onPress={() => setPlayerStatus(!playerStatus)}>
                 <Icon name={playerStatus ? 'pause' : 'play'} style={{color: '#333333'}} size={25} />
             </Pressable>
-        </View>
-        <View style={{padding: 5, bottom: 290, right: 10, position: 'absolute', zIndex: 2}}>
+        </View> */}
+        {/* <View style={{padding: 5, bottom: 290, right: 10, position: 'absolute', zIndex: 2}}>
             <Pressable
                 style={[modalStyles.button, modalStyles.buttonOpen, {paddingHorizontal: 15}]}
                 onPress={() => {
@@ -243,33 +278,35 @@ const DeviceHistory = ({ userData }) => {
                 }}>
                 <Text>{speeds[currentSpeed]}x</Text>
             </Pressable>
-        </View>
-        <View style={{padding: 5, bottom: 230, right: 10, position: 'absolute', zIndex: 2}}>
+        </View> */}
+        {/* <View style={{padding: 5, bottom: 230, right: 10, position: 'absolute', zIndex: 2}}>
             <Pressable
                 style={[modalStyles.button, modalStyles.buttonOpen, {paddingHorizontal: 15}]}
                 onPress={() => setPin({
                     device: pin.device,
+                    latitude: pin.latitude,
+                    longitude: pin.longitude,
                     coordinate: pin.coordinate,
                     speed: 0,
                     pos: 0
                 })}>
                 <Icon name="refresh" style={{color: '#333333'}} size={25} />
             </Pressable>
-        </View>
-        <View style={{padding: 5, top: 5, left: 5, position: 'absolute', zIndex: 2}}>
+        </View> */}
+        {/* <View style={{padding: 5, top: 5, left: 5, position: 'absolute', zIndex: 2}}>
             <Pressable
                 style={[modalStyles.button, modalStyles.buttonOpen, mapType === 'hybrid' ? {backgroundColor: COLORS.blue} : {backgroundColor: COLORS.white}]}
                 onPress={() => mapType === 'hybrid' ? setMapType('standard') : setMapType('hybrid')}>
                 <Icon name="map" style={mapType === 'hybrid' ? {color: COLORS.black} : {color: COLORS.gray}} size={25} />
             </Pressable>
-        </View>
-        <View style={{padding: 5, top: 65, left: 5, position: 'absolute', zIndex: 2}}>
+        </View> */}
+        {/* <View style={{padding: 5, top: 65, left: 5, position: 'absolute', zIndex: 2}}>
             <Pressable
                 style={[modalStyles.button, hasTraffic ? {backgroundColor: COLORS.blue} : {backgroundColor: COLORS.white}]}
                 onPress={() => setHasTraffic(!hasTraffic)}>
                 <Icon name="navigate" style={hasTraffic ? {color: COLORS.black} : {color: COLORS.gray}} size={25} />
             </Pressable>
-        </View>
+        </View> */}
         <Modal
             animationType="slide"
             transparent={true}
@@ -357,19 +394,36 @@ const DeviceHistory = ({ userData }) => {
                             setEndDayOpen(false)
                         }}
                     />
-                    <View style={{alignSelf: 'center', paddingTop: 20}}>
+                    <View style={{alignSelf: 'center', paddingTop: 20, flexDirection: 'row'}}>
                         <Pressable
-                            style={[modalStyles.button, modalStyles.buttonClose]}
+                            style={[modalStyles.button, modalStyles.buttonClose, {marginRight: 10}]}
                             onPress={() => { setModalVisible(!modalVisible);fetchPlayback() }}
-                        >
+                            >
+                            <Text style={modalStyles.textStyle}>Cancelar</Text>
+                        </Pressable>
+                        <Pressable
+                            style={[modalStyles.button, modalStyles.buttonActive]}
+                            onPress={() => { fetchPlayback() }}
+                            >
                             <Text style={modalStyles.textStyle}>Reproduzir</Text>
                         </Pressable>
                     </View>
                 </View>
             </View>
         </Modal>
+        <Map
+            switchMapType
+            pins={pin ? [pin] : null}
+            playbackFilterCb={()=>{
+                setModalVisible(true);
+            }}
+            startAt={startDate.toLocaleString()}
+            finishAt={endDate.toLocaleString()}
+            animate={animateCoord}
+            playback={devicePlayback}
+        />
 
-        <MapView
+        {/* <MapView
             onMapReady={()=>{
                 Platform.OS === 'android' ?
                 PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then(()=>{
@@ -409,10 +463,6 @@ const DeviceHistory = ({ userData }) => {
                         source={+pin.speed <= 0 ? require("../assets/carroparado.png") : require("../assets/carroandando.png")}
                         style={{width: 35, height: 35, transform: [{ rotate: deg + 'deg'}]}}
                     />
-                    {/* <Image
-                        source={+pin.speed <= 0 ? require("../assets/pinparado.png") : require("../assets/pinandando.png")}
-                        style={{width: 35, height: 35}}
-                    /> */}
                 </Marker.Animated>
             }
             {stops.map((item)=>{
@@ -430,7 +480,7 @@ const DeviceHistory = ({ userData }) => {
                     />
                 </Marker>
             })}
-        </MapView>
+        </MapView> */}
     </View>
   );
 }
@@ -484,6 +534,9 @@ const modalStyles = StyleSheet.create({
     backgroundColor: '#fafafa',
   },
   buttonClose: {
+    backgroundColor: COLORS.white,
+  },
+  buttonActive: {
     backgroundColor: COLORS.primary,
   },
   textStyle: {

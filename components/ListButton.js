@@ -6,14 +6,20 @@ import Icon from 'react-native-ionicons';
 const ListButton = (props) => {
     const filledBgColor = props.color || COLORS.primary;
     const outlinedColor = COLORS.white;
+    const ionIcon = props.ion_icon || props.icon;
+    const customIcon = props.custom_icon;
     const bgColor = props.filled ? filledBgColor : outlinedColor;
     const textColor = props.filled ? COLORS.white : COLORS.primary;
 
     return (
         <TouchableOpacity style={props.subtitle ? styles.itemNoti : styles.item} activeOpacity={0.85} onPress={props.onPress}>
             <View style={styles.itemTitle}>
-                {/* <Text style={styles.title}>*</Text> */}
-                <Icon style={[styles.titleIcon, {color: props.iconColor ? props.iconColor : COLORS.black}]} name={props.icon} />
+                {customIcon &&
+                    <View style={props.subtitle ? {paddingTop: 10} : {}}>{customIcon}</View>
+                }
+                {ionIcon && 
+                    <Icon style={[styles.titleIcon, {color: props.iconColor ? props.iconColor : COLORS.black}]} name={ionIcon} />
+                }
                 <View>
                     <Text style={styles.title}>{props.title}</Text>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>

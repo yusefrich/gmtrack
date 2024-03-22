@@ -14,7 +14,7 @@ import {
   View,
   Pressable,
 } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { AnimatedRegion, Marker } from 'react-native-maps';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Icon from 'react-native-ionicons'
 import { useFocusEffect } from '@react-navigation/native';
@@ -26,7 +26,7 @@ import Geolocation from '@react-native-community/geolocation';
 import COLORS from '../constants/colors';
 import MapViewDirections from 'react-native-maps-directions';
 import Map from '../components/Map';
-const GOOGLE_MAPS_APIKEY = 'AIzaSyA-Ew6eAREVRxCrhgTousUnQJ-C-rXCNvM';
+import api from '../services/api';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -38,45 +38,41 @@ const Monitor = ({ userData }) => {
     const [currentTimeout, setCurrentTimeout] = useState(null);
     const [hasTraffic, setHasTraffic] = useState(false);
 
-    const fetchTrack = () => {
-        if (!userData || !userData.token) {
+    const fetchTrack = async () => {
+        const [data, err] = await api.userTrack(userData)
+        if (err) {
             Toast.show({
                 type: 'error',
-                text1: 'Houve um erro, realize o login novamente!'
+                text1: 'Erro ao monitorar veiculos: ' + err.message
             });
+            console.error('detal error => ', err);
             return
         }
-        fetch("https://gmtrack.azael.tech/api/user/track", {
-            headers: {
-                Authorization: 'Bearer ' + userData.token,
-            },
-        })
-        .then((response) => response.json())
-        .then((responseData) => {
-            if (!Array.isArray(responseData.data)) {
-                Toast.show({
-                    type: 'error',
-                    text1: 'Erro ao monitorar veículos'
-                });
+        console.log('cars => ' + JSON.stringify(data));
+        const elements = []
+        data.forEach(e => {
+            if (elements.find((item)=>item.device.id === e.device.id)) {
                 return
             }
-            // console.log('cars => ' + JSON.stringify(responseData.data));
-            let elements = []
-            responseData.data.forEach(e => {
-                if (elements.find((item)=>item.device.id === e.device.id)) {
-                    return
-                }
-                elements.push(e)
-                setRegion({
-                    latitude: e.latitude,
-                    longitude: e.longitude,
+            const pin = {
+                ...e,
+                coordinate: new AnimatedRegion({
+                    latitude: parseFloat(e.latitude),
+                    longitude: parseFloat(e.longitude),
                     latitudeDelta: 0.0922,
                     longitudeDelta: 0.0421
-                });
-            })
-            setPins(elements)
-            // props.submit({userData: responseData, token: responseData.token, carrousel: rresponseData.data})
+                })
+            }
+            elements.push(pin)
+            setRegion({
+                latitude: e.latitude,
+                longitude: e.longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421
+            });
         })
+        setPins(elements)
+        // props.submit({userData: responseData, token: responseData.token, carrousel: rresponseData.data})
     }
     useFocusEffect(
         React.useCallback(() => {
@@ -111,9 +107,12 @@ const Monitor = ({ userData }) => {
 
 
   return (
+    // <></>
     <Map
         switchMapType
         switcTraffic
+        refresh
+        pinTitle
         counter={counter}
         pins={pins}
         refreshCb={()=>{
