@@ -62,7 +62,9 @@ const AlarmDetail = ({ userData }) => {
     useFocusEffect(
         React.useCallback(() => {
             let isActive = true;
-            setPin(route.params.alarm)
+            {route.params &&
+              setPin(route.params.alarm)
+            }
             // console.log('data ', userData)
             // const initialRoute = useRoute()
             // setRegion({

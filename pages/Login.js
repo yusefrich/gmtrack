@@ -12,13 +12,15 @@ const Login = (props) => {
     // const Login = () => {
     const [isPasswordShown, setIsPasswordShown] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
+    const [loading, setLoading] = useState(false);// 
     const [email, setEmail] = useState('desenvolvimentoapp');// 
     const [password, setPassword] = useState('desenvolvimento00');
 
     const submitLogin = async (payload) => {
-        // todo log in on service
+        setLoading(true)
         const [data, err] = await api.login(payload)
         if (!data.token) {
+            setLoading(false)
             Toast.show({
                 type: 'error',
                 text1: 'Login inválido'
@@ -34,6 +36,7 @@ const Login = (props) => {
         // login successfull
         props.submit({userData: data, token: data.token, carrousel: infoData.data})
         console.log('login => ' + JSON.stringify(data));
+        setLoading(false)
         Toast.show({
             type: 'success',
             text1: 'Bem vindo!'
@@ -162,18 +165,30 @@ const Login = (props) => {
 
                     <Text>Remenber Me</Text>
                 </View> */}
-
-                <Button
-                    onPress={() => submitLogin({email: email, password: password})}
-                    title="Login"
-                    textColor={COLORS.black}
-                    filled
-                    style={{
-                        marginTop: 18,
-                        marginBottom: 4,
-                    }}
-                />
-
+                {!loading && 
+                    <Button
+                        onPress={() => submitLogin({email: email, password: password})}
+                        title="Login"
+                        textColor={COLORS.black}
+                        filled
+                        style={{
+                            marginTop: 18,
+                            marginBottom: 4,
+                        }}
+                    />
+                }
+                {loading && 
+                    <Button
+                        title="Entrando..."
+                        textColor={COLORS.black}
+                        filled
+                        style={{
+                            marginTop: 18,
+                            marginBottom: 4,
+                            opacity: .2 
+                        }}
+                    />
+                }
                 <View style={{
                     flexDirection: "row",
                     justifyContent: "center",

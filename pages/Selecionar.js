@@ -40,7 +40,7 @@ const Selecionar = ({ userData }) => {
           console.error('detal error => ', err);
           return
       }
-      console.log('cars => ' + JSON.stringify(data));
+      // console.log('cars => ', data);
       // console.log('devices => ' + JSON.stringify(data));
       setDevices(data)
   }

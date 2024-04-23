@@ -73,10 +73,12 @@ const styles = StyleSheet.create({
         marginEnd: 9,
     },
     title: {
+        color: COLORS.black,
         fontSize: 17,
         marginTop: 2,
     },
     subtitle: {
+        color: COLORS.black,
         fontSize: 12,
         marginTop: 2,
     },

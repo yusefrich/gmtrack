@@ -9,6 +9,7 @@ import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { ScrollView } from 'react-native';
 import { Text } from 'react-native';
+import { WebView } from 'react-native-webview';
 import {
   StyleSheet,
   Dimensions,
@@ -18,17 +19,18 @@ import {
 import Icon from 'react-native-ionicons';
 import Carousel from 'react-native-reanimated-carousel';
 import COLORS from '../constants/colors';
-import { useNavigation } from '@react-navigation/native';
 import HomeButton from '../components/HomeButton';
 
-function Home(params) {
-  const navigation = useNavigation();
+function Chat(params) {
   const width = Dimensions.get('window').width;
+  const height = Dimensions.get('window').height;
   return (
-    <ScrollView>
+    // <ScrollView>
       <View style={styles.container}>
-        <View style={{borderRadius: 10, marginBottom: 10}}>
-          <Carousel
+        <View style={{borderRadius: 10, marginBottom: 10, height: height - 80, width: '100%'}}>
+          {/* <Text>Ola mundo</Text> */}
+          <WebView onPress={()=>console.log('teste')} source={{ uri: 'https://gmtrack.vtcall.chat/livechat' }} style={{ flex: 1, height: '100%', width: '100%' }} />
+          {/* <Carousel
               loop
               width={width - 30}
               height={(width / 1.5) - 10}
@@ -57,9 +59,9 @@ function Home(params) {
                     />
                   </View>
               )}
-          />
+          /> */}
         </View>
-        <View style={styles.sectionContainer}>
+        {/* <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Acesso Rápido</Text>
         </View>
         <View style={styles.row}>
@@ -72,23 +74,24 @@ function Home(params) {
           <HomeButton icon="paper" title="Notícias" />
           <HomeButton icon="contacts" title="Contato" />
           <HomeButton icon="copy" title="Assinaturas" />
+          <HomeButton icon="play" white title="Histórico" onPress={()=>navigation.push('Chat')}/>
           <HomeButton />
         </View>
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Atalhos</Text>
         </View>
         <View style={styles.row}>
-          <HomeButton icon="chatboxes" title="Chat" onPress={()=>navigation.push('Chat')}/>
-        </View>
+          <HomeButton icon="chatboxes" title="Chat" />
+        </View> */}
       </View>
-    </ScrollView>
+    // </ScrollView>
   );
 }
 
 
 const styles = StyleSheet.create({
   container: {
-    padding: 15,
+    // padding: 15,
     backgroundColor: COLORS.white,
     flex: 1
   },
@@ -133,4 +136,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Home;
+export default Chat;

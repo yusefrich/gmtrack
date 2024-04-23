@@ -1,4 +1,6 @@
 import {BASE_URL} from '@env'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+// import { useNavigation } from '@react-navigation/native';
 
 const api = {
     async login (payload) {
@@ -19,6 +21,15 @@ const api = {
                                 {
                                     return response.json();
                                 }
+                                if (response.status === 401) {
+                                    // navigate the user to the login screen
+                                    try {
+                                        AsyncStorage.setItem('isLogged', 'no');
+                                    } catch (e) {
+                                        console.error('(login failed) async storage cant be accessed erro: ', e)
+                                        // saving error
+                                    }
+                                }
                                 return { error: true, message: 'ERROR: ' + response.status, response };
                             })
                             .then(async (result) => {
@@ -26,7 +37,12 @@ const api = {
                                 if (result.error) {
                                     return [null, result]
                                 }
-
+                                try {
+                                    AsyncStorage.setItem('isLogged', 'yes');
+                                } catch (e) {
+                                    console.error('(login success) async storage cant be accessed erro: ', e)
+                                    // saving error
+                                }
                                 return [result, null]
                             })
                             console.log('return')
@@ -49,6 +65,15 @@ const api = {
                                 {
                                     return response.json();
                                 }
+                                if (response.status === 401) {
+                                    // navigate the user to the login screen
+                                    try {
+                                        AsyncStorage.setItem('isLogged', 'no');
+                                    } catch (e) {
+                                        console.error('(update failed) async storage cant be accessed erro: ', e)
+                                        // saving error
+                                    }
+                                }
                                 return { error: true, message: 'ERROR: ' + response.status, response };
                             })
                             .then(async (result) => {
@@ -70,6 +95,15 @@ const api = {
                                 if(response.ok)
                                 {
                                     return response.json();
+                                }
+                                if (response.status === 401) {
+                                    // navigate the user to the login screen
+                                    try {
+                                        AsyncStorage.setItem('isLogged', 'no');
+                                    } catch (e) {
+                                        console.error('(informatives failed) async storage cant be accessed erro: ', e)
+                                        // saving error
+                                    }
                                 }
                                 return { error: true, message: 'ERROR: ' + response.status, response };
                             })
@@ -101,6 +135,15 @@ const api = {
                                 {
                                     return response.json();
                                 }
+                                if (response.status === 401) {
+                                    // navigate the user to the login screen
+                                    try {
+                                        AsyncStorage.setItem('isLogged', 'no');
+                                    } catch (e) {
+                                        console.error('(alarmsRange failed) async storage cant be accessed erro: ', e)
+                                        // saving error
+                                    }
+                                }
                                 return { error: true, message: 'ERROR: ' + response.status, response };
                             })
                             .then(async (result) => {
@@ -125,6 +168,15 @@ const api = {
                                 if(response.ok)
                                 {
                                     return response.json();
+                                }
+                                if (response.status === 401) {
+                                    // navigate the user to the login screen
+                                    try {
+                                        AsyncStorage.setItem('isLogged', 'no');
+                                    } catch (e) {
+                                        console.error('(userDevices failed) async storage cant be accessed erro: ', e)
+                                        // saving error
+                                    }
                                 }
                                 return { error: true, message: 'ERROR: ' + response.status, response };
                             })
@@ -154,6 +206,16 @@ const api = {
                                 {
                                     return response.json();
                                 }
+                                if (response.status === 401) {
+                                    // navigate the user to the login screen
+                                    console.log('setting logged to no')
+                                    try {
+                                        AsyncStorage.setItem('isLogged', 'no');
+                                    } catch (e) {
+                                        console.error('(userTrack failed) async storage cant be accessed erro: ', e)
+                                        // saving error
+                                    }
+                                }
                                 return { error: true, message: 'ERROR: ' + response.status, response };
                             })
                             .then(async (result) => {
@@ -181,6 +243,15 @@ const api = {
                                 if(response.ok)
                                 {
                                     return response.json();
+                                }
+                                if (response.status === 401) {
+                                    // navigate the user to the login screen
+                                    try {
+                                        AsyncStorage.setItem('isLogged', 'no');
+                                    } catch (e) {
+                                        console.error('(alarms failed) async storage cant be accessed erro: ', e)
+                                        // saving error
+                                    }
                                 }
                                 return { error: true, message: 'ERROR: ' + response.status, response };
                             })
@@ -211,6 +282,15 @@ const api = {
                                 if(response.ok)
                                 {
                                     return response.json();
+                                }
+                                if (response.status === 401) {
+                                    // navigate the user to the login screen
+                                    try {
+                                        AsyncStorage.setItem('isLogged', 'no');
+                                    } catch (e) {
+                                        console.error('(playback failed) async storage cant be accessed erro: ', e)
+                                        // saving error
+                                    }
                                 }
                                 return { error: true, message: 'ERROR: ' + response.status, response };
                             })

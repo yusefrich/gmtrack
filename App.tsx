@@ -15,7 +15,7 @@ import {
   StyleSheet,
   useColorScheme,
 } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Home from './pages/Home';
@@ -40,6 +40,8 @@ import { MMKVLoader, useMMKVStorage } from 'react-native-mmkv-storage';
 import Geocoder from 'react-native-geocoding';
 import DeviceTerminal from './pages/DeviceTerminal';
 import AlarmDetail from './pages/AlarmDetail';
+import Chat from './pages/Chat';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -56,6 +58,7 @@ Geocoder.init(process.env.GEOCODING_KEY, {language : "pt"})
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [userData, setUserData] = useState({});
+  const [isLogged, setIsLogged] = useState(false);
   const [username, setUsername] = useState('Monitor');
   const [tokenFcm, setTokenFcm] = useState('');
   const [carrouselData, setCarrouselData] = useState([]);
@@ -78,10 +81,20 @@ function App(): JSX.Element {
   // } else {
   //   app = firebase.app()
   // }
-  useEffect(() => {
-    requestUserPermissions()
-  }, []);
 
+  const getIsLogged = async () => {
+    try {
+      const value = await AsyncStorage.getItem('isLogged');
+      if (value !== null) {
+        // value previously stored
+        setIsLogged(value === 'yes')
+      }
+    } catch (e) {
+      // error reading value
+      console.error(e)
+      setIsLogged(false)
+    }
+  };
   const requestUserPermissions = async() => {
     if (Platform.OS === 'android') {
       PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
@@ -118,16 +131,34 @@ function App(): JSX.Element {
   const logout = () => {
     setUserData({})
     setToken('')
+    try {
+        AsyncStorage.setItem('isLogged', 'no');
+    } catch (e) {
+        console.error('(logout) async storage cant be accessed erro: ', e)
+        // saving error
+    }
   }
+  useEffect(() => {
+    try {
+        AsyncStorage.setItem('isLogged', 'no');
+    } catch (e) {
+        console.error('(app) async storage cant be accessed erro: ', e)
+        // saving error
+    }
+    requestUserPermissions()
+  }, []);
+  useEffect(() => {
+    getIsLogged()
+  })
   const TabNav = () => (
       <>
         {!isLogin && Object.keys(userData).length === 0 &&
           <Welcome onLogin={()=>setIsLogin(true)} />
         }
-        {isLogin && Object.keys(userData).length === 0 &&
+        {isLogin && (Object.keys(userData).length === 0 || !isLogged) &&
           <Login submit={(value: any)=>submitLogin(value)} tokenFcm={tokenFcm} />
         }
-        {Object.keys(userData).length >= 1 &&
+        {Object.keys(userData).length >= 1 && isLogged &&
           <Tab.Navigator 
               screenOptions={{
                 tabBarActiveTintColor: COLORS.white,
@@ -204,6 +235,7 @@ function App(): JSX.Element {
           <Stack.Screen name="Historico" children={()=><DeviceHistory userData={userData} />} />
           <Stack.Screen name="Alarmes" children={()=><DeviceAlarms userData={userData} />} />
           <Stack.Screen name="Alarme" children={()=><AlarmDetail userData={userData} />} />
+          <Stack.Screen name="Chat" children={()=><Chat />} />
         </Stack.Navigator>
       </NavigationContainer>
       <Toast />

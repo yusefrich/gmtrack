@@ -126,7 +126,7 @@ const Map = (props) => {
                         setInfo({pin: pins[focusPin.index + 1], status: true, location: json.results[0].formatted_address})
                     })
                     .catch(error => console.warn(error));
-                console.log('lat', lat)
+                // console.log('lat', lat)
                 setRegion({
                     latitude: pins[focusPin.index + 1].latitude,
                     longitude: pins[focusPin.index + 1].longitude,
@@ -225,6 +225,16 @@ const Map = (props) => {
         setPlaybackGpsTime(new Date(playback.route[newPos].gpstime * 1000).toLocaleString())
         if (playback.route[newPos - 1]) {
             setPlaybackKm(playbackKm + distance(playback.route[newPos - 1].latitude, playback.route[newPos - 1].longitude, playback.route[newPos].latitude, playback.route[newPos].longitude))
+            // todo: the rotation must be between the points
+            const ax = playback.route[newPos - 1].latitude
+            const ay = playback.route[newPos - 1].longitude
+            const bx = playback.route[newPos].latitude
+            const by = playback.route[newPos].longitude
+            const course = Math.atan2(by-ay, bx-ax) * 180 / Math.PI
+            console.log('new course', {ax, ay, bx, by})
+            setPlaybackCourse(course)
+        } else {
+            setPlaybackCourse(playback.route[newPos].course)
         }
         animate(playback.route[newPos].latitude, playback.route[newPos].longitude, playback.route[newPos].course);
     }
@@ -242,7 +252,7 @@ const Map = (props) => {
         setTimeout(() => {
             console.log('timeout loop')
             setPlaybackPos(playbackPos + 1)
-            setPlaybackCourse(course)
+            // setPlaybackCourse(course)
         }, 1000 / speeds[currentPlaybackSpeed]);
         // setAnimateCoord({latitude, longitude})
     }
@@ -305,27 +315,27 @@ const Map = (props) => {
         // console.log('useEffect being called', pins)
         // setPins(props.pins)
         if (pins) {
-            let maxLat = null
-            let maxLong = null
-            let minLat = null
-            let minLong = null
-            pins.forEach(el => {
-                if (parseFloat(el.latitude) > maxLat || !maxLat) {
-                    maxLat = parseFloat(el.latitude)
-                }
-                if (parseFloat(el.latitude) < minLat || !minLat) {
-                    minLat = parseFloat(el.latitude)
-                }
-                if (parseFloat(el.longitude) > maxLong || !maxLong) {
-                    maxLong = parseFloat(el.longitude)
-                }
-                if (parseFloat(el.longitude) < minLong || !minLong) {
-                    minLong = parseFloat(el.longitude)
-                }
-            })
-            const lat = minLat + ((maxLat - minLat) / 2)
-            const long = minLong + ((maxLong - minLong) / 2)
             if (!focusPin && pins.length > 1) {
+                let maxLat = null
+                let maxLong = null
+                let minLat = null
+                let minLong = null
+                pins.forEach(el => {
+                    if (parseFloat(el.latitude) > maxLat || !maxLat) {
+                        maxLat = parseFloat(el.latitude)
+                    }
+                    if (parseFloat(el.latitude) < minLat || !minLat) {
+                        minLat = parseFloat(el.latitude)
+                    }
+                    if (parseFloat(el.longitude) > maxLong || !maxLong) {
+                        maxLong = parseFloat(el.longitude)
+                    }
+                    if (parseFloat(el.longitude) < minLong || !minLong) {
+                        minLong = parseFloat(el.longitude)
+                    }
+                })
+                const lat = minLat + ((maxLat - minLat) / 2)
+                const long = minLong + ((maxLong - minLong) / 2)
                 setRegion({
                     latitude: lat,
                     longitude: long,

@@ -48,7 +48,7 @@ const Monitor = ({ userData }) => {
             console.error('detal error => ', err);
             return
         }
-        console.log('cars => ' + JSON.stringify(data));
+        // console.log('cars => ', data);
         const elements = []
         data.forEach(e => {
             if (elements.find((item)=>item.device.id === e.device.id)) {
