@@ -66,21 +66,21 @@ function App(): JSX.Element {
   const [isLogin, setIsLogin] = useMMKVStorage('isLogin', storage, false);
   // const [userData, setUserData] = useState({});
 
-  // const RNfirebaseConfig = {
-  //   apiKey: "........",
-  //   authDomain: "note-app-rn.firebaseapp.com",
-  //   projectId: "note-app-rn",
-  //   storageBucket: "note-app-rn.appspot.com",
-  //   messagingSenderId: ".....",
-  //   appId: "......"
-  // };
+  const RNfirebaseConfig = {
+    apiKey: "........",
+    authDomain: "note-app-rn.firebaseapp.com",
+    projectId: "note-app-rn",
+    storageBucket: "note-app-rn.appspot.com",
+    messagingSenderId: ".....",
+    appId: "......"
+  };
 
-  // let app;
-  // if (firebase.apps.length === 0) {
-  //   app = firebase.initializeApp(RNfirebaseConfig )
-  // } else {
-  //   app = firebase.app()
-  // }
+  let app;
+  if (firebase.apps.length === 0) {
+    app = firebase.initializeApp(RNfirebaseConfig )
+  } else {
+    app = firebase.app()
+  }
 
   const getIsLogged = async () => {
     try {
