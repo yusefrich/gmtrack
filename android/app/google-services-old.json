@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "705367142114",
-    "project_id": "teak-citadel-415615",
-    "storage_bucket": "teak-citadel-415615.appspot.com"
+    "project_number": "828167766152",
+    "project_id": "gmtrack-406816",
+    "storage_bucket": "gmtrack-406816.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:705367142114:android:9d02e0b786bb38347478bb",
+        "mobilesdk_app_id": "1:828167766152:android:0785c3ea033401a389df3d",
         "android_client_info": {
           "package_name": "com.gmtrack"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyA9_AVBb8NOI9ojjE7p9KhZtqs_q1ylJy4"
+          "current_key": "AIzaSyCyTrdz9RrOAIjpbvMfhLx2ofZ7-_Eb_1k"
         }
       ],
       "services": {

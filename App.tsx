@@ -36,10 +36,13 @@ import DeviceHistory from './pages/DeviceHistory';
 import COLORS from './constants/colors';
 import DeviceAlarms from './pages/DeviceAlarms';
 import { MMKVLoader, useMMKVStorage } from 'react-native-mmkv-storage';
+import Geocoder from 'react-native-geocoding';
+import DeviceTerminal from './pages/DeviceTerminal';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const storage = new MMKVLoader().initialize();
+Geocoder.init("AIzaSyA-Ew6eAREVRxCrhgTousUnQJ-C-rXCNvM", {language : "pt"})
 // const TopTab = createMaterialTopTabNavigator();
 
 /* FIXME: fix ios configuration for the package @react-native-firebase/app .:watch?v=T5LqJHQ59S8:. */
@@ -49,6 +52,7 @@ const storage = new MMKVLoader().initialize();
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [userData, setUserData] = useState({});
+  const [username, setUsername] = useState('Monitor');
   const [tokenFcm, setTokenFcm] = useState('');
   const [carrouselData, setCarrouselData] = useState([]);
   const [token, setToken] = useState('');
@@ -103,6 +107,7 @@ function App(): JSX.Element {
 
   const submitLogin = (payload: any) => {
     setUserData(payload.userData)
+    setUsername(payload.userData.client.username)
     setToken(payload.token)
     setCarrouselData(payload.carrousel)
   }
@@ -139,9 +144,10 @@ function App(): JSX.Element {
               children={()=><Home carrousel={carrouselData} loading={false}/>}
             />
             <Tab.Screen
-              name="Monitor"
+              name={username}
               options={{
                 tabBarLabel: 'Monitor',
+                headerTitleAlign: 'center',
                 tabBarIcon: ({ color, size }) => (
                     <Icon name="globe" style={{color: color}} size={size} />
                   ),
@@ -189,6 +195,7 @@ function App(): JSX.Element {
         <Stack.Navigator>
           <Stack.Screen name="Main" options={{headerShown: false}} component={TabNav} />
           <Stack.Screen name="Detalhes" children={()=><DeviceDetails userData={userData} />} />
+          <Stack.Screen name="Comandos" children={()=><DeviceTerminal userData={userData} />} />
           <Stack.Screen name="Centralizar" children={()=><DeviceMap userData={userData} />} />
           <Stack.Screen name="Historico" children={()=><DeviceHistory userData={userData} />} />
           <Stack.Screen name="Alarmes" children={()=><DeviceAlarms userData={userData} />} />
