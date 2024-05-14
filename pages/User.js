@@ -25,11 +25,11 @@ export default UserProfileView = ({userData, onExit}) => {
             <View style={styles.headerContent}>
             <Image
                 style={styles.avatar}
-                source={{ uri: 'https://ui-avatars.com/api/?color=FFFFFF&background=' + colorBg + '&name=' + userData.client.username }}
+                source={{ uri: 'https://ui-avatars.com/api/?color=FFFFFF&background=' + colorBg + '&name=' + userData.client.Nome }}
             />
 
-            <Text style={styles.name}>{userData.client.username}</Text>
-            <Text style={styles.userInfo}>{userData.client.account}</Text>
+            <Text style={styles.name}>{userData.client.Nome}</Text>
+            <Text style={styles.userInfo}>{userData.client.Fantasia}</Text>
             {/* <Text style={styles.userInfo}>Paraíba </Text> */}
             </View>
         </View>

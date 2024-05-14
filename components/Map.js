@@ -574,6 +574,7 @@ const Map = (props) => {
                 region={region}
                 showsTraffic={hasTraffic}
                 zoomControlEnabled={true}
+                rotateEnabled={false}
                 minZoomLevel={9}
                 loadingEnabled={true}
             >
@@ -644,10 +645,58 @@ const Map = (props) => {
                                 <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'white', fontWeight: 'bold'}}>quilometragem: {playbackKm.toFixed(2)} KM</Text>
                             </View>
                             <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                                <Image
+                                {(+playbackCourse <= 22 || +playbackCourse > 338) && 
+                                    <Image
+                                        source={require("../assets/carro360/04.png")}
+                                        style={{width: 35, height: 35}}
+                                    />
+                                }
+                                {(+playbackCourse <= 67 && +playbackCourse > 22) && 
+                                    <Image
+                                        source={require("../assets/carro360/05.png")}
+                                        style={{width: 35, height: 35}}
+                                    />
+                                }
+                                {(+playbackCourse <= 112 && +playbackCourse > 67) && 
+                                    <Image
+                                        source={require("../assets/carro360/06.png")}
+                                        style={{width: 35, height: 35}}
+                                    />
+                                }
+                                {(+playbackCourse <= 157 && +playbackCourse > 112) && 
+                                    <Image
+                                        source={require("../assets/carro360/07.png")}
+                                        style={{width: 35, height: 35}}
+                                    />
+                                }
+                                {(+playbackCourse <= 202 && +playbackCourse > 157) && 
+                                    <Image
+                                        source={require("../assets/carro360/00.png")}
+                                        style={{width: 35, height: 35}}
+                                    />
+                                }
+                                {(+playbackCourse <= 247 && +playbackCourse > 202) && 
+                                    <Image
+                                        source={require("../assets/carro360/01.png")}
+                                        style={{width: 35, height: 35}}
+                                    />
+                                }
+                                {(+playbackCourse <= 290 && +playbackCourse > 247) && 
+                                    <Image
+                                        source={require("../assets/carro360/02.png")}
+                                        style={{width: 35, height: 35}}
+                                    />
+                                }
+                                {(+playbackCourse <= 338 && +playbackCourse > 290) && 
+                                    <Image
+                                        source={require("../assets/carro360/03.png")}
+                                        style={{width: 35, height: 35}}
+                                    />
+                                }
+                                {/* <Image
                                     source={playbackCarSpeed <= 0 ? require("../assets/carroparado.png") : require("../assets/carroandando.png")}
                                     style={{width: 35, height: 35, transform: [{ rotate: playbackCourse + 'deg'}]}}
-                                />
+                                /> */}
                             </View>
                         </View>
                     </Marker.Animated>
@@ -681,6 +730,7 @@ const Map = (props) => {
                                     <View style={{backgroundColor: '#33333390', borderColor: '#333333', borderWidth: 1, borderRadius: 5, height: 110}}>
                                         <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'white', fontWeight: 'bold'}}>{item.device.devicename}({item.device.devicetype})</Text>
                                         <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'white', fontWeight: 'bold'}}>tempo: {item.gpstime}</Text>
+                                        <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'white', fontWeight: 'bold'}}>course: {item.course} deg</Text>
                                         <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'white', fontWeight: 'bold'}}>estado: {+item.speed <= 0 ? 'Parado' : 'Em movimento'}</Text>
                                         <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'white', fontWeight: 'bold'}}>motor: {+item.speed <= 0 ? 'Ligado' : 'Desligado'}</Text>
                                     </View>
@@ -691,10 +741,58 @@ const Map = (props) => {
                                     </View>
                                 }
                                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                                    <Image
+                                    {(+item.course <= 22 || +item.course > 338) && 
+                                        <Image
+                                            source={require("../assets/carro360/04.png")}
+                                            style={{width: 35, height: 35}}
+                                        />
+                                    }
+                                    {(+item.course <= 67 && +item.course > 22) && 
+                                        <Image
+                                            source={require("../assets/carro360/03.png")}
+                                            style={{width: 35, height: 35}}
+                                        />
+                                    }
+                                    {(+item.course <= 112 && +item.course > 67) && 
+                                        <Image
+                                            source={require("../assets/carro360/02.png")}
+                                            style={{width: 35, height: 35}}
+                                        />
+                                    }
+                                    {(+item.course <= 157 && +item.course > 112) && 
+                                        <Image
+                                            source={require("../assets/carro360/01.png")}
+                                            style={{width: 35, height: 35}}
+                                        />
+                                    }
+                                    {(+item.course <= 202 && +item.course > 157) && 
+                                        <Image
+                                            source={require("../assets/carro360/00.png")}
+                                            style={{width: 35, height: 35}}
+                                        />
+                                    }
+                                    {(+item.course <= 247 && +item.course > 202) && 
+                                        <Image
+                                            source={require("../assets/carro360/07.png")}
+                                            style={{width: 35, height: 35}}
+                                        />
+                                    }
+                                    {(+item.course <= 290 && +item.course > 247) && 
+                                        <Image
+                                            source={require("../assets/carro360/06.png")}
+                                            style={{width: 35, height: 35}}
+                                        />
+                                    }
+                                    {(+item.course <= 338 && +item.course > 290) && 
+                                        <Image
+                                            source={require("../assets/carro360/05.png")}
+                                            style={{width: 35, height: 35}}
+                                        />
+                                    }
+                                    {/* <Image
                                         source={+item.speed <= 0 ? require("../assets/carroparado.png") : require("../assets/carroandando.png")}
                                         style={{width: 35, height: 35, transform: [{ rotate: item.course + 'deg'}]}}
-                                    />
+                                    /> */}
                                 </View>
                             </View>
                         </Marker.Animated>
