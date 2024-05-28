@@ -1,4 +1,4 @@
-import { View, Text, Pressable, Image, SafeAreaView, ScrollView } from 'react-native'
+import { View, Text, Pressable, Image, SafeAreaView, ScrollView, ImageBackground, StyleSheet } from 'react-native'
 import React from 'react'
 // import type {PropsWithChildren} from 'react';
 // import { LinearGradient } from "expo-linear-gradient";
@@ -9,30 +9,17 @@ import Button from '../components/Button';
 const Welcome = (props) => {
 
     return (
-            <LinearGradient
-                style={{
-                    flex: 1
-                }}
-                colors={[COLORS.primary, COLORS.secondary]}
-            >
+            // <LinearGradient
+            //     style={{
+            //         flex: 1
+            //     }}
+            //     colors={[COLORS.primary, COLORS.secondary]}
+            // >
+            <ImageBackground source={require("../assets/splash-bg.png")} style={styles.splash}>
                 <View style={{ flex: 1 }}>
-                    <View>
-                        {/* <Image
-                            source={require("../assets/hero1.jpg")}
-                            style={{
-                                height: 100,
-                                width: 100,
-                                borderRadius: 20,
-                                position: "absolute",
-                                top: 10,
-                                transform: [
-                                    { translateX: 20 },
-                                    { translateY: 50 },
-                                    { rotate: "-15deg" }
-                                ]
-                            }}
-                        /> */}
 
+
+                    <View>
                         {/* <Image
                             source={require("../assets/hero3.jpg")}
                             style={{
@@ -91,20 +78,21 @@ const Welcome = (props) => {
                         paddingHorizontal: 22,
                         position: "absolute",
                         top: 200,
+                        flex: 1,
+                        justify: 'center',
                         width: "100%"
                     }}>
-                        <Text style={{
-                            fontSize: 50,
-                            fontWeight: 'bold',
-                            color: COLORS.white
-                        }}>Vamos começar</Text>
+                        <Image
+                            source={require("../assets/logo-full.png")}
+                            style={{width: '100%', objectFit: 'contain'}}
+                        />
                         {/* <Text style={{
                             fontSize: 46,
                             fontWeight: 'bold',
                             color: COLORS.white
                         }}>Started</Text> */}
 
-                        <View style={{ marginVertical: 22 }}>
+                        {/* <View style={{ marginVertical: 22 }}>
                             <Text style={{
                                 fontSize: 16,
                                 color: COLORS.white,
@@ -114,12 +102,13 @@ const Welcome = (props) => {
                                 fontSize: 16,
                                 color: COLORS.white,
                             }}>Seguro, e confortavel</Text>
-                        </View>
+                        </View> */}
 
                         <Button
                             title="Iniciar"
                             textColor="#404E4D"
                             onPress={props.onLogin}
+                            background={COLORS.primary}
                             style={{
                                 marginTop: 22,
                                 width: "100%"
@@ -148,8 +137,16 @@ const Welcome = (props) => {
                         </View> */}
                     </View>
                 </View>
-            </LinearGradient>
+            </ImageBackground>
+            // </LinearGradient>
     )
 }
 
+const styles = StyleSheet.create({
+    splash: {
+        flex: 1,
+        resizeMode: 'cover',
+        justifyContent: 'center',
+    }
+})
 export default Welcome

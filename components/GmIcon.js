@@ -11,6 +11,18 @@ const GmIcon = (props) => {
 
     return (
         <>
+            {iconName === 'alertas' &&
+                <Image source={require('../assets/icons/alertas.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+            }
+            {iconName === 'selecionar' &&
+                <Image source={require('../assets/icons/selecionar.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+            }
+            {iconName === 'monitor' &&
+                <Image source={require('../assets/icons/monitor.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+            }
+            {iconName === 'home' &&
+                <Image source={require('../assets/icons/home.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+            }
             {iconName === 'traffic' &&
                 <Image source={require('../assets/icons/traffic-light-solid.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
             }

@@ -1,4 +1,4 @@
-import { View, Text, Image , Pressable, TextInput, TouchableOpacity } from 'react-native'
+import { View, Text, Image , Pressable, TextInput, TouchableOpacity, ImageBackground, StyleSheet } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from "react-native-safe-area-context";
 import COLORS from '../constants/colors';
@@ -45,170 +45,172 @@ const Login = (props) => {
     }
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.black }}>
-            <View style={{ flex: 1, marginHorizontal: 22 }}>
-                <View style={{ marginVertical: 22, alignItems: "center" }}>
-                    <Image
-                        style={{marginTop: 20, marginBottom: 40}}
-                        source={require("../assets/logo.png")}
-                    />
-                    <Text style={{
-                        fontSize: 22,
-                        fontWeight: 'bold',
-                        marginVertical: 12,
-                        color: COLORS.primary
-                    }}>
-                        Bem vindo !! 👋
-                    </Text>
-
-                    <Text style={{
-                        fontSize: 16,
-                        color: COLORS.white
-                    }}>Olá, sentimos sua falta, entre aqui com seus dados!</Text>
-                </View>
-
-                <View style={{ marginBottom: 12 }}>
-                    <Text style={{
-                        fontSize: 16,
-                        fontWeight: 400,
-                        color: COLORS.white,
-                        marginVertical: 8
-                    }}>Usuário</Text>
-
-                    <View style={{
-                        width: "100%",
-                        height: 48,
-                        borderColor: COLORS.grey,
-                        backgroundColor: COLORS.grey,
-                        elevation: 2,
-                        borderWidth: 1,
-                        borderRadius: 8,
-                        alignItems: "center",
-                        justifyContent: "center",
-                        paddingLeft: 22
-                    }}>
-                        <TextInput
-                            placeholder='Insira seu usuário'
-                            placeholderTextColor={COLORS.tertiary}
-                            onChangeText={newText => setEmail(newText)}
-                            defaultValue={email}
-                            keyboardType='email-address'
-                            style={{
-                                width: "100%",
-                                color: COLORS.white
-                            }}
+        <ImageBackground source={require("../assets/splash-bg.png")} style={styles.splash}>
+            <SafeAreaView style={{ flex: 1 }}>
+                <View style={{ flex: 1, marginHorizontal: 22 }}>
+                    <View style={{ marginVertical: 22, alignItems: "center" }}>
+                        <Image
+                            style={{marginTop: 20, marginBottom: 40}}
+                            source={require("../assets/logo-nova.png")}
                         />
-                    </View>
-                </View>
-
-                <View style={{ marginBottom: 12 }}>
-                    <Text style={{
-                        fontSize: 16,
-                        fontWeight: 400,
-                        color: COLORS.white,
-                        marginVertical: 8
-                    }}>Senha</Text>
-
-                    <View style={{
-                        width: "100%",
-                        height: 48,
-                        borderColor: COLORS.grey,
-                        backgroundColor: COLORS.grey,
-                        borderWidth: 1,
-                        elevation: 2,
-                        borderRadius: 8,
-                        alignItems: "center",
-                        justifyContent: "center",
-                        paddingLeft: 22
-                    }}>
-                        <TextInput
-                            placeholder='Insira sua senha'
-                            placeholderTextColor={COLORS.secondary}
-                            onChangeText={newText => setPassword(newText)}
-                            defaultValue={password}
-                            secureTextEntry={!isPasswordShown}
-                            style={{
-                                width: "100%",
-                                color: COLORS.white
-                            }}
-                        />
-
-                        <TouchableOpacity
-                            onPress={() => setIsPasswordShown(!isPasswordShown)}
-                            style={{
-                                position: "absolute",
-                                right: 12
-                            }}
-                        >
-                            {
-                                isPasswordShown == true ? (
-                                    <Icon name="eye-off" size={24} color={COLORS.black} />
-                                ) : (
-                                    <Icon name="eye" size={24} color={COLORS.black} />
-                                )
-                            }
-
-                        </TouchableOpacity>
-                    </View>
-                </View>
-
-                {/* <View style={{
-                    flexDirection: 'row',
-                    marginVertical: 6
-                }}>
-                    <CheckBox
-                        style={{ marginRight: 8 }}
-                        value={isChecked}
-                        onValueChange={setIsChecked}
-                        color={isChecked ? COLORS.primary : undefined}
-                    />
-
-                    <Text>Remenber Me</Text>
-                </View> */}
-                {!loading && 
-                    <Button
-                        onPress={() => submitLogin({email: email, password: password})}
-                        title="Login"
-                        textColor={COLORS.black}
-                        filled
-                        style={{
-                            marginTop: 18,
-                            marginBottom: 4,
-                        }}
-                    />
-                }
-                {loading && 
-                    <Button
-                        title="Entrando..."
-                        textColor={COLORS.black}
-                        filled
-                        style={{
-                            marginTop: 18,
-                            marginBottom: 4,
-                            opacity: .2 
-                        }}
-                    />
-                }
-                <View style={{
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    marginVertical: 22
-                }}>
-                    {/* <Text style={{ fontSize: 16, color: COLORS.black }}>Don't have an account ? </Text>
-                    <Pressable
-                        // onPress={() => navigation.navigate("Signup")}
-                    >
                         <Text style={{
                             fontSize: 16,
-                            color: COLORS.primary,
-                            fontWeight: "bold",
-                            marginLeft: 6
-                        }}>Register</Text>
-                    </Pressable> */}
+                            color: COLORS.white
+                        }}>Versãp 0.1 (beta)</Text>
+                    </View>
+
+                    <View style={{ marginBottom: 12 }}>
+                        <Text style={{
+                            fontSize: 16,
+                            fontWeight: 400,
+                            color: COLORS.white,
+                            marginVertical: 8
+                        }}>Conta</Text>
+
+                        <View style={{
+                            width: "100%",
+                            height: 48,
+                            borderColor: COLORS.black,
+                            backgroundColor: COLORS.black,
+                            elevation: 2,
+                            borderWidth: 1,
+                            borderRadius: 8,
+                            alignItems: "center",
+                            justifyContent: "center",
+                            paddingLeft: 22
+                        }}>
+                            <TextInput
+                                placeholder='Insira seu usuário'
+                                placeholderTextColor={COLORS.black}
+                                onChangeText={newText => setEmail(newText)}
+                                defaultValue={email}
+                                keyboardType='email-address'
+                                style={{
+                                    width: "100%",
+                                    color: COLORS.white
+                                }}
+                            />
+                        </View>
+                    </View>
+
+                    <View style={{ marginBottom: 12 }}>
+                        <Text style={{
+                            fontSize: 16,
+                            fontWeight: 400,
+                            color: COLORS.white,
+                            marginVertical: 8
+                        }}>Senha</Text>
+
+                        <View style={{
+                            width: "100%",
+                            height: 48,
+                            borderColor: COLORS.black,
+                            backgroundColor: COLORS.black,
+                            borderWidth: 1,
+                            elevation: 2,
+                            borderRadius: 8,
+                            alignItems: "center",
+                            justifyContent: "center",
+                            paddingLeft: 22
+                        }}>
+                            <TextInput
+                                placeholder='Insira sua senha'
+                                placeholderTextColor={COLORS.secondary}
+                                onChangeText={newText => setPassword(newText)}
+                                defaultValue={password}
+                                secureTextEntry={!isPasswordShown}
+                                style={{
+                                    width: "100%",
+                                    color: COLORS.white
+                                }}
+                            />
+
+                            <TouchableOpacity
+                                onPress={() => setIsPasswordShown(!isPasswordShown)}
+                                style={{
+                                    position: "absolute",
+                                    right: 12
+                                }}
+                            >
+                                {
+                                    isPasswordShown == true ? (
+                                        <Icon name="eye-off" size={24} color={COLORS.white} />
+                                    ) : (
+                                        <Icon name="eye" size={24} color={COLORS.white} />
+                                    )
+                                }
+
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
+                    {/* <View style={{
+                        flexDirection: 'row',
+                        marginVertical: 6
+                    }}>
+                        <CheckBox
+                            style={{ marginRight: 8 }}
+                            value={isChecked}
+                            onValueChange={setIsChecked}
+                            color={isChecked ? COLORS.primary : undefined}
+                        />
+
+                        <Text>Remenber Me</Text>
+                    </View> */}
+                    {!loading && 
+                        <Button
+                            onPress={() => submitLogin({email: email, password: password})}
+                            title="Login"
+                            textColor={COLORS.black}
+                            background={COLORS.primary}
+                            filled
+                            style={{
+                                marginTop: 18,
+                                marginBottom: 4,
+                            }}
+                        />
+                    }
+                    {loading && 
+                        <Button
+                            title="Entrando..."
+                            textColor={COLORS.black}
+                            background={COLORS.primary}
+                            filled
+                            style={{
+                                marginTop: 18,
+                                marginBottom: 4,
+                                opacity: .2 
+                            }}
+                        />
+                    }
+                    <View style={{
+                        flexDirection: "row",
+                        justifyContent: "center",
+                        marginVertical: 22
+                    }}>
+                        {/* <Text style={{ fontSize: 16, color: COLORS.black }}>Don't have an account ? </Text>
+                        <Pressable
+                            // onPress={() => navigation.navigate("Signup")}
+                        >
+                            <Text style={{
+                                fontSize: 16,
+                                color: COLORS.primary,
+                                fontWeight: "bold",
+                                marginLeft: 6
+                            }}>Register</Text>
+                        </Pressable> */}
+                    </View>
                 </View>
-            </View>
-        </SafeAreaView>
+            </SafeAreaView>
+        </ImageBackground>
     )
 }
 
+const styles = StyleSheet.create({
+    splash: {
+        flex: 1,
+        resizeMode: 'cover',
+        justifyContent: 'center',
+    }
+})
 export default Login

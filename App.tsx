@@ -13,6 +13,7 @@ import {
   Alert,
   Platform,
   StyleSheet,
+  View,
   useColorScheme,
 } from 'react-native';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
@@ -42,6 +43,7 @@ import DeviceTerminal from './pages/DeviceTerminal';
 import AlarmDetail from './pages/AlarmDetail';
 import Chat from './pages/Chat';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import GmIcon from './components/GmIcon';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -83,8 +85,10 @@ function App(): JSX.Element {
   }
 
   const getIsLogged = async () => {
+    console.log('get is logged being called')
     try {
       const value = await AsyncStorage.getItem('isLogged');
+      console.log('is logged', value)
       if (value !== null) {
         // value previously stored
         setIsLogged(value === 'yes')
@@ -99,7 +103,7 @@ function App(): JSX.Element {
     if (Platform.OS === 'android') {
       PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
       let tokenFcm = await messaging().getToken();
-      console.log('user token: ' + tokenFcm )
+      console.log('user fcm token: ' + tokenFcm )
       messaging().onTokenRefresh(newToken => {
         console.log('user new token: ' + newToken )
       })
@@ -108,7 +112,7 @@ function App(): JSX.Element {
       const enable = status === 1 || status === 2
       if (enable) {
         let tokenfcm = await messaging().getToken();
-        console.log('user token: ' + tokenfcm )
+        console.log('user fcm token: ' + tokenfcm )
         setTokenFcm(tokenfcm)
         messaging().onTokenRefresh(newToken => {
           console.log('user new token: ' + newToken )
@@ -161,10 +165,11 @@ function App(): JSX.Element {
         {Object.keys(userData).length >= 1 && isLogged &&
           <Tab.Navigator 
               screenOptions={{
-                tabBarActiveTintColor: COLORS.white,
+                tabBarActiveTintColor: COLORS.primary,
                 tabBarInactiveTintColor: COLORS.day,
                 tabBarStyle: {
-                  backgroundColor: COLORS.black
+                  backgroundColor: COLORS.black,
+                  height: 70
                 }
               }}>
             <Tab.Screen
@@ -172,8 +177,11 @@ function App(): JSX.Element {
               options={{
                 headerShown: false,
                 tabBarLabel: 'Home',
-                tabBarIcon: ({ color, size }) => (
-                    <Icon name="home" style={{color: color}} size={size} />
+                tabBarIcon: ({ color, size, focused}) => (
+                    // <Icon name="home" style={{color: color}} size={size} />
+                    <View style={{padding: 10, backgroundColor: focused ? '#544C0F' : '#3E3F4A', borderRadius: 15 }}>
+                      <GmIcon name="home" size={size} color={color} />
+                    </View>
                   ),
                 }}
               children={()=><Home carrousel={carrouselData} loading={false}/>}
@@ -183,8 +191,11 @@ function App(): JSX.Element {
               options={{
                 tabBarLabel: 'Monitor',
                 headerTitleAlign: 'center',
-                tabBarIcon: ({ color, size }) => (
-                    <Icon name="globe" style={{color: color}} size={size} />
+                tabBarIcon: ({ color, size, focused }) => (
+                    // <Icon name="globe" style={{color: color}} size={size} />
+                    <View style={{padding: 10, backgroundColor: focused ? '#544C0F' : '#3E3F4A', borderRadius: 15 }}>
+                      <GmIcon name="monitor" size={size} color={color} />
+                    </View>
                   ),
                 }}
               children={()=><Monitor userData={userData} />}
@@ -193,8 +204,11 @@ function App(): JSX.Element {
               name="Selecionar"
               options={{
                 tabBarLabel: 'Selecionar',
-                tabBarIcon: ({ color, size }) => (
-                    <Icon name="list" style={{color: color}} size={size} />
+                tabBarIcon: ({ color, size, focused }) => (
+                    // <Icon name="list" style={{color: color}} size={size} />
+                    <View style={{padding: 10, backgroundColor: focused ? '#544C0F' : '#3E3F4A', borderRadius: 15 }}>
+                      <GmIcon name="selecionar" size={size} color={color} />
+                    </View>
                   ),
                 }}
               children={()=><Selecionar userData={userData} />} />
@@ -202,13 +216,16 @@ function App(): JSX.Element {
               name="Mensagem de alarme"
               options={{
                 tabBarLabel: 'Alarmes',
-                tabBarIcon: ({ color, size }) => (
-                    <Icon name="notifications" style={{color: color}} size={size} />
+                tabBarIcon: ({ color, size, focused }) => (
+                    // <Icon name="notifications" style={{color: color}} size={size} />
+                    <View style={{padding: 10, backgroundColor: focused ? '#544C0F' : '#3E3F4A', borderRadius: 15 }}>
+                      <GmIcon name="alertas" size={size} color={color} />
+                    </View>
                   ),
                 }}
 
               children={()=><Alarms userData={userData} />} />
-            <Tab.Screen
+            {/* <Tab.Screen
               name="Eu"
               options={{
                 tabBarLabel: 'Eu',
@@ -217,7 +234,7 @@ function App(): JSX.Element {
                   ),
                 }}
               children={()=><User userData={userData} onExit={()=>logout()} />}
-            />
+            /> */}
           </Tab.Navigator>
         }
       </>

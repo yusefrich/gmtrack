@@ -3,14 +3,14 @@ const COLORS = {
     white: "#F7F7FF",
     pure: "#FFFFFF",
     fog: "#dedee5",
-    black: "#404E4D",
+    black: "#1E1F24",
     night: "#151515",
-    primary: "#ecb800",
+    primary: "#FBDE04",
     secondary: "#c79d08",
     tertiary: "#333333",
     blue: "#BDD5EA",
     grey: "#586F6B",
-    day: "#759791"
+    day: "#C3C3C7"
 }
 
 export default COLORS;
