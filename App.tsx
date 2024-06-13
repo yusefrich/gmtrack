@@ -44,6 +44,8 @@ import AlarmDetail from './pages/AlarmDetail';
 import Chat from './pages/Chat';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import GmIcon from './components/GmIcon';
+import Financeiro from './pages/Financeiro';
+import MinhasFaturas from './pages/MinhasFaturas';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -120,17 +122,17 @@ function App(): JSX.Element {
       }
     }
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+      Alert.alert('' + remoteMessage?.notification?.title, remoteMessage?.notification?.body);
     });
 
     return unsubscribe;
   }
 
   const submitLogin = (payload: any) => {
-    setUserData(payload.userData)
+    setCarrouselData(payload.carrousel)
     setUsername(payload.userData.client.Nome)
     setToken(payload.token)
-    setCarrouselData(payload.carrousel)
+    setUserData(payload.userData)
   }
   const logout = () => {
     setUserData({})
@@ -152,23 +154,25 @@ function App(): JSX.Element {
     requestUserPermissions()
   }, []);
   useEffect(() => {
-    getIsLogged()
+    // getIsLogged()
   })
   const TabNav = () => (
       <>
         {!isLogin && Object.keys(userData).length === 0 &&
           <Welcome onLogin={()=>setIsLogin(true)} />
         }
-        {isLogin && (Object.keys(userData).length === 0 || !isLogged) &&
+        {isLogin && Object.keys(userData).length === 0 &&
           <Login submit={(value: any)=>submitLogin(value)} tokenFcm={tokenFcm} />
         }
-        {Object.keys(userData).length >= 1 && isLogged &&
+        {Object.keys(userData).length >= 1 &&
           <Tab.Navigator 
               screenOptions={{
                 tabBarActiveTintColor: COLORS.primary,
                 tabBarInactiveTintColor: COLORS.day,
                 tabBarStyle: {
                   backgroundColor: COLORS.black,
+                  borderColor: COLORS.black,
+                  // elevation: 5,
                   height: 70
                 }
               }}>
@@ -176,10 +180,10 @@ function App(): JSX.Element {
               name="Entrada"
               options={{
                 headerShown: false,
-                tabBarLabel: 'Home',
+                tabBarLabel: '',
                 tabBarIcon: ({ color, size, focused}) => (
                     // <Icon name="home" style={{color: color}} size={size} />
-                    <View style={{padding: 10, backgroundColor: focused ? '#544C0F' : '#3E3F4A', borderRadius: 15 }}>
+                    <View style={{padding: 10, marginTop: 15, backgroundColor: focused ? COLORS.dawn : COLORS.grey, borderRadius: 15 }}>
                       <GmIcon name="home" size={size} color={color} />
                     </View>
                   ),
@@ -189,11 +193,11 @@ function App(): JSX.Element {
             <Tab.Screen
               name={username}
               options={{
-                tabBarLabel: 'Monitor',
+                tabBarLabel: '',
                 headerTitleAlign: 'center',
                 tabBarIcon: ({ color, size, focused }) => (
                     // <Icon name="globe" style={{color: color}} size={size} />
-                    <View style={{padding: 10, backgroundColor: focused ? '#544C0F' : '#3E3F4A', borderRadius: 15 }}>
+                    <View style={{padding: 10, marginTop: 15, backgroundColor: focused ? COLORS.dawn : COLORS.grey, borderRadius: 15 }}>
                       <GmIcon name="monitor" size={size} color={color} />
                     </View>
                   ),
@@ -203,10 +207,10 @@ function App(): JSX.Element {
             <Tab.Screen
               name="Selecionar"
               options={{
-                tabBarLabel: 'Selecionar',
+                tabBarLabel: '',
                 tabBarIcon: ({ color, size, focused }) => (
                     // <Icon name="list" style={{color: color}} size={size} />
-                    <View style={{padding: 10, backgroundColor: focused ? '#544C0F' : '#3E3F4A', borderRadius: 15 }}>
+                    <View style={{padding: 10, marginTop: 15, backgroundColor: focused ? COLORS.dawn : COLORS.grey, borderRadius: 15 }}>
                       <GmIcon name="selecionar" size={size} color={color} />
                     </View>
                   ),
@@ -215,10 +219,10 @@ function App(): JSX.Element {
             <Tab.Screen
               name="Mensagem de alarme"
               options={{
-                tabBarLabel: 'Alarmes',
+                tabBarLabel: '',
                 tabBarIcon: ({ color, size, focused }) => (
                     // <Icon name="notifications" style={{color: color}} size={size} />
-                    <View style={{padding: 10, backgroundColor: focused ? '#544C0F' : '#3E3F4A', borderRadius: 15 }}>
+                    <View style={{padding: 10, marginTop: 15, backgroundColor: focused ? COLORS.dawn : COLORS.grey, borderRadius: 15 }}>
                       <GmIcon name="alertas" size={size} color={color} />
                     </View>
                   ),
@@ -253,6 +257,20 @@ function App(): JSX.Element {
           <Stack.Screen name="Alarmes" children={()=><DeviceAlarms userData={userData} />} />
           <Stack.Screen name="Alarme" children={()=><AlarmDetail userData={userData} />} />
           <Stack.Screen name="Chat" children={()=><Chat />} />
+          <Stack.Screen name="Financeiro" children={()=><Financeiro userData={userData} />} options={{
+            title: 'Financeiro',
+            headerTintColor: COLORS.day,
+            headerStyle: {
+              backgroundColor: '#202125',
+            }
+          }} />
+          <Stack.Screen name="Faturas" children={()=><MinhasFaturas userData={userData} />} options={{
+            title: 'Minhas Faturas',
+            headerTintColor: COLORS.day,
+            headerStyle: {
+              backgroundColor: '#202125',
+            }
+          }} />
         </Stack.Navigator>
       </NavigationContainer>
       <Toast />

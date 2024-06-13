@@ -1,6 +1,19 @@
 import { Text, TouchableOpacity, StyleSheet, Image } from 'react-native'
 import React from 'react'
 import COLORS from '../constants/colors'
+// import { SvgUri } from 'react-native-svg';
+import Bell from '../assets/icons/bell.svg';
+import Marker from '../assets/icons/marker.svg';
+import Hands from '../assets/icons/hands.svg';
+import Wp from '../assets/icons/wp.svg';
+import Boleto from '../assets/icons/boleto.svg';
+import Monitor from '../assets/icons/monitor.svg';
+import Selecionar from '../assets/icons/selecionar.svg';
+import Home from '../assets/icons/home.svg';
+import Warning from '../assets/icons/warning.svg';
+import Paper from '../assets/icons/paper.svg';
+import ChevronRight from '../assets/icons/chevron-right.svg';
+import LoopPayment from '../assets/icons/loop-payment.svg';
 
 const GmIcon = (props) => {
     const iconName = props.name;
@@ -11,17 +24,44 @@ const GmIcon = (props) => {
 
     return (
         <>
+            {iconName === 'chevron-rigth' &&
+                <ChevronRight width={size} height={size} style={{color: color}} />
+            }
+            {iconName === 'warning' &&
+                <Warning width={size} height={size} style={{color: color}} />
+            }
+            {iconName === 'loop-payment' &&
+                <LoopPayment width={size} height={size} style={{color: color}} />
+            }
+            {iconName === 'paper' &&
+                <Paper width={size} height={size} style={{color: color}} />
+            }
             {iconName === 'alertas' &&
-                <Image source={require('../assets/icons/alertas.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+                <Bell width={size} height={size} style={{color: color}} />
+            }
+            {iconName === 'marker' &&
+                <Marker width={size} height={size} style={{color: color}} />
+            }
+            {iconName === 'boleto' &&
+                <Boleto width={size} height={size} style={{color: color}} />
+            }
+            {iconName === 'hands' &&
+                <Hands width={size} height={size} style={{color: color}} />
+            }
+            {iconName === 'wp' &&
+                <Wp width={size} height={size} style={{color: color}} />
             }
             {iconName === 'selecionar' &&
-                <Image source={require('../assets/icons/selecionar.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+                <Selecionar width={size} height={size} style={{color: color}} />
+                // <Image source={require('../assets/icons/selecionar.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
             }
             {iconName === 'monitor' &&
-                <Image source={require('../assets/icons/monitor.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+                <Monitor width={size} height={size} style={{color: color}} />
+                // <Image source={require('../assets/icons/monitor.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
             }
             {iconName === 'home' &&
-                <Image source={require('../assets/icons/home.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+                <Home width={size} height={size} style={{color: color}} />
+                // <Image source={require('../assets/icons/home.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
             }
             {iconName === 'traffic' &&
                 <Image source={require('../assets/icons/traffic-light-solid.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />

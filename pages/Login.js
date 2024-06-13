@@ -13,8 +13,8 @@ const Login = (props) => {
     const [isPasswordShown, setIsPasswordShown] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
     const [loading, setLoading] = useState(false);// 
-    const [email, setEmail] = useState('desenvolvimentoapp');// 
-    const [password, setPassword] = useState('desenvolvimento00');
+    const [email, setEmail] = useState('desenvolvimentoapp');// desenvolvimentoapp 08723289457
+    const [password, setPassword] = useState('desenvolvimento00');//desenvolvimento00 J4mmer$0nqwewq
 
     const submitLogin = async (payload) => {
         setLoading(true)
@@ -27,14 +27,22 @@ const Login = (props) => {
             });
             return
         }
+        console.log('login return -->', data)
         // updating user with the fcm token to notification
         const [updateData, updateErr] = await api.update({token: data.token, tokenFcm: props.tokenFcm})
         console.log('update return -->', updateData)
         // fetching informatives, banners, etc...
-        const [infoData, infoErr] = await api.informatives({token: data.token})
-        console.log('informatives => ' + JSON.stringify(infoData));
+        const [infoMainData, infoMainErr] = await api.informativesMain({token: data.token})
+        const [infoActionData, infoActionErr] = await api.informativesAction({token: data.token})
+        const [infoOffersData, infoOffersErr] = await api.informativesOffers({token: data.token})
+        // console.log('informatives => ' + JSON.stringify(infoData));
+        const infoData = {
+            main: infoMainData?.data,
+            action: infoActionData?.data,
+            offers: infoOffersData?.data
+        }
         // login successfull
-        props.submit({userData: data, token: data.token, carrousel: infoData.data})
+        props.submit({userData: data, token: data.token, carrousel: infoData})
         console.log('login => ' + JSON.stringify(data));
         setLoading(false)
         Toast.show({

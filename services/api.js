@@ -85,8 +85,8 @@ const api = {
                             })
         return [data, err];
     },
-    async informatives (payload) {
-        let [data, err] = await fetch(BASE_URL + "/informatives", {
+    async informativesMain (payload) {
+        let [data, err] = await fetch(BASE_URL + "/informatives/main", {
                                 headers: {
                                     Authorization: 'Bearer ' + payload.token,
                                 }
@@ -116,6 +116,130 @@ const api = {
                             })
         return [data, err];
     },
+    async informativesAction (payload) {
+        let [data, err] = await fetch(BASE_URL + "/informatives/action", {
+                                headers: {
+                                    Authorization: 'Bearer ' + payload.token,
+                                }
+                            })
+                            .then(function(response) {// first then()
+                                if(response.ok)
+                                {
+                                    return response.json();
+                                }
+                                if (response.status === 401) {
+                                    // navigate the user to the login screen
+                                    try {
+                                        AsyncStorage.setItem('isLogged', 'no');
+                                    } catch (e) {
+                                        console.error('(informatives failed) async storage cant be accessed erro: ', e)
+                                        // saving error
+                                    }
+                                }
+                                return { error: true, message: 'ERROR: ' + response.status, response };
+                            })
+                            .then(async (result) => {
+                                if (result.error) {
+                                    return [null, result]
+                                }
+
+                                return [result, null]
+                            })
+        return [data, err];
+    },
+    async informativesOffers (payload) {
+        let [data, err] = await fetch(BASE_URL + "/informatives/offers", {
+                                headers: {
+                                    Authorization: 'Bearer ' + payload.token,
+                                }
+                            })
+                            .then(function(response) {// first then()
+                                if(response.ok)
+                                {
+                                    return response.json();
+                                }
+                                if (response.status === 401) {
+                                    // navigate the user to the login screen
+                                    try {
+                                        AsyncStorage.setItem('isLogged', 'no');
+                                    } catch (e) {
+                                        console.error('(informatives failed) async storage cant be accessed erro: ', e)
+                                        // saving error
+                                    }
+                                }
+                                return { error: true, message: 'ERROR: ' + response.status, response };
+                            })
+                            .then(async (result) => {
+                                if (result.error) {
+                                    return [null, result]
+                                }
+
+                                return [result, null]
+                            })
+        return [data, err];
+    },
+    async bills (payload) {
+        let [data, err] = await fetch(BASE_URL + "/user/bills", {
+                                headers: {
+                                    Authorization: 'Bearer ' + payload.token,
+                                }
+                            })
+                            .then(function(response) {// first then()
+                                if(response.ok)
+                                {
+                                    return response.json();
+                                }
+                                if (response.status === 401) {
+                                    // navigate the user to the login screen
+                                    try {
+                                        AsyncStorage.setItem('isLogged', 'no');
+                                    } catch (e) {
+                                        console.error('(bills failed) async storage cant be accessed erro: ', e)
+                                        // saving error
+                                    }
+                                }
+                                return { error: true, message: 'ERROR: ' + response.status, response };
+                            })
+                            .then(async (result) => {
+                                if (result.error) {
+                                    return [null, result]
+                                }
+
+                                return [result, null]
+                            })
+        return [data, err];
+    },
+    async bill (payload) {
+        let [data, err] = await fetch(BASE_URL + "/user/bill", {
+                                headers: {
+                                    Authorization: 'Bearer ' + payload.token,
+                                }
+                            })
+                            .then(function(response) {// first then()
+                                if(response.ok)
+                                {
+                                    return response.json();
+                                }
+                                if (response.status === 401) {
+                                    // navigate the user to the login screen
+                                    try {
+                                        AsyncStorage.setItem('isLogged', 'no');
+                                    } catch (e) {
+                                        console.error('(user failed) async storage cant be accessed erro: ', e)
+                                        // saving error
+                                    }
+                                }
+                                return { error: true, message: 'ERROR: ' + response.status, response };
+                            })
+                            .then(async (result) => {
+                                if (result.error) {
+                                    return [null, result]
+                                }
+
+                                return [result, null]
+                            })
+        return [data, err];
+    }, 
     async alarmsRange (payload) {
         let [data, err] = await fetch(BASE_URL + "/alarms/api", {
                                 method: "POST",

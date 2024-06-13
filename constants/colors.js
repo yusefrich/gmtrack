@@ -2,14 +2,17 @@
 const COLORS = {
     white: "#F7F7FF",
     pure: "#FFFFFF",
-    fog: "#dedee5",
+    fog: "#1f2024b3",
     black: "#1E1F24",
-    night: "#151515",
+    night: "#101114",
+    night2: "#1F2024",
+    dawn: '#544C0F',
     primary: "#FBDE04",
     secondary: "#c79d08",
     tertiary: "#333333",
     blue: "#BDD5EA",
-    grey: "#586F6B",
+    grey: "#3E3F4A",
+    tint: "#282A2F",
     day: "#C3C3C7"
 }
 
