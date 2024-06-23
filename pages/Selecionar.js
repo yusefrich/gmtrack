@@ -10,6 +10,7 @@ import {
   ScrollView,
   Modal,
   Pressable,
+  ImageBackground,
 } from 'react-native';
 import GmIcon from '../components/GmIcon';
 import { useFocusEffect } from '@react-navigation/native';
@@ -19,6 +20,7 @@ import ListGroup from '../components/ListGroup';
 import ListButton from '../components/ListButton';
 import { useNavigation } from '@react-navigation/native';
 import api from '../services/api';
+import COLORS from '../constants/colors';
 
 const Selecionar = ({ userData }) => {
   const [devices, setDevices] = useState([]);
@@ -85,35 +87,41 @@ const Selecionar = ({ userData }) => {
   }, [counter, onFocus]);
 
   return (
-    <SafeAreaView style={styles.container}>
-        <View style={{padding: 5, bottom: 10, left: '30%', position: 'absolute', zIndex: 2, backgroundColor: '#eeeeee', borderRadius: 10}}>
-            <Text style={{color: '#333333'}}>Atualizando em {counter}...</Text>
-        </View>
-        <ScrollView>
-          <ListGroup>
-            {devices.map((item)=>{
-                return <ListButton
-                          key={item.imei}
-                          title={item.device.devicename}
-                          subtitle={carStatus(item.accstatus, item.speed) + ` (${new Date(item.acctime * 1000).toUTCString().match(/(\d\d:\d\d:\d\d)/)[0]})`}
-                          custom_icon={
-                            <GmIcon name="carro" size={30} acc={item.accstatus} speed={item.speed} />
-                          }
-                          iconColor="orange"
-                          onPress={()=>navigation.push('Detalhes', { device: item })}>
-                        </ListButton>
-            })}
-            </ListGroup>
-            {/* <Item title='test 1' icon="radio-button-on" /> */}
-            {/* <Item title='test 1' icon="radio-button-on" /> */}
-            {/* <View style={{marginBottom: 15}}></View> */}
-            {/* <Item title='test 1' icon="radio-button-on" /> */}
-        </ScrollView>
-    </SafeAreaView>
+    <ImageBackground source={require("../assets/main-bg.png")} style={styles.splash}>
+      <SafeAreaView style={styles.container}>
+          <View style={{padding: 5, bottom: 10, left: '30%', position: 'absolute', zIndex: 2, backgroundColor: '#eeeeee', borderRadius: 10}}>
+              <Text style={{color: '#333333'}}>Atualizando em {counter}...</Text>
+          </View>
+          <ScrollView>
+            <ListGroup>
+              {devices.map((item)=>{
+                  return <ListButton
+                            key={item.imei}
+                            title={item.device.devicename}
+                            subtitle={carStatus(item.accstatus, item.speed) + ` (${new Date(item.acctime * 1000).toUTCString().match(/(\d\d:\d\d:\d\d)/)[0]})`}
+                            custom_icon={
+                              <GmIcon name="carro" size={30} acc={item.accstatus} speed={item.speed} />
+                            }
+                            iconColor="orange"
+                            onPress={()=>navigation.push('Detalhes', { device: item })}>
+                          </ListButton>
+              })}
+              </ListGroup>
+              {/* <Item title='test 1' icon="radio-button-on" /> */}
+              {/* <Item title='test 1' icon="radio-button-on" /> */}
+              {/* <View style={{marginBottom: 15}}></View> */}
+              {/* <Item title='test 1' icon="radio-button-on" /> */}
+          </ScrollView>
+      </SafeAreaView>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+    splash: {
+      backgroundColor: COLORS.night,
+      height: '100%'
+    },
     container: {
         flex: 1,
         marginStart: '4%',

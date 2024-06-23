@@ -13,6 +13,8 @@ import {
   Alert,
   Platform,
   StyleSheet,
+  Text,
+  TouchableOpacity,
   View,
   useColorScheme,
 } from 'react-native';
@@ -129,6 +131,7 @@ function App(): JSX.Element {
   }
 
   const submitLogin = (payload: any) => {
+    console.log('submit login ', payload)
     setCarrouselData(payload.carrousel)
     setUsername(payload.userData.client.Nome)
     setToken(payload.token)
@@ -143,6 +146,15 @@ function App(): JSX.Element {
         console.error('(logout) async storage cant be accessed erro: ', e)
         // saving error
     }
+  }
+  function NavHeader(props: any) {
+      return <View style={{height: 78, backgroundColor: '#202125', justifyContent: 'space-between'}}>
+        <TouchableOpacity onPress={() => props.navigation.goBack()} style={{backgroundColor: '#C3C3C7', margin: 16, marginLeft: 21, borderRadius: 16, width: 45, padding: 10}}>
+          <GmIcon name="arrow-left" size={24} color={'#FFFFFF'} />
+        </TouchableOpacity>
+      <Text style={{color: '#FFFFFF', fontSize: 15, fontWeight: 'bold', position: 'absolute', left: '50%', top: 30, width: 200, transform: [{translateX: -50}]}}>Minhas Faturas</Text>
+        <View></View>
+      </View>;
   }
   useEffect(() => {
     try {
@@ -264,13 +276,15 @@ function App(): JSX.Element {
               backgroundColor: '#202125',
             }
           }} />
-          <Stack.Screen name="Faturas" children={()=><MinhasFaturas userData={userData} />} options={{
-            title: 'Minhas Faturas',
-            headerTintColor: COLORS.day,
-            headerStyle: {
-              backgroundColor: '#202125',
-            }
-          }} />
+          <Stack.Screen name="Faturas" children={()=><MinhasFaturas userData={userData} />} options={{header: NavHeader}}
+          // options={{
+          //   title: 'Minhas Faturas',
+          //   headerTintColor: COLORS.day,
+          //   headerStyle: {
+          //     backgroundColor: '#202125',
+          //   }
+          // }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
       <Toast />

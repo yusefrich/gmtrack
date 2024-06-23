@@ -13,8 +13,8 @@ const Login = (props) => {
     const [isPasswordShown, setIsPasswordShown] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
     const [loading, setLoading] = useState(false);// 
-    const [email, setEmail] = useState('desenvolvimentoapp');// desenvolvimentoapp 08723289457
-    const [password, setPassword] = useState('desenvolvimento00');//desenvolvimento00 J4mmer$0nqwewq
+    const [email, setEmail] = useState('08723289457');// desenvolvimentoapp 08723289457
+    const [password, setPassword] = useState('J4mmer$0nqwewq');//desenvolvimento00 J4mmer$0nqwewq
 
     const submitLogin = async (payload) => {
         setLoading(true)

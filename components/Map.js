@@ -645,7 +645,7 @@ const Map = (props) => {
                                 <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'white', fontWeight: 'bold'}}>quilometragem: {playbackKm.toFixed(2)} KM</Text>
                             </View>
                             <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                                {(+playbackCourse <= 22 || +playbackCourse > 338) && 
+                                {/* {(+playbackCourse <= 22 || +playbackCourse > 338) && 
                                     <Image
                                         source={require("../assets/carro360/04.png")}
                                         style={{width: 35, height: 35}}
@@ -692,11 +692,11 @@ const Map = (props) => {
                                         source={require("../assets/carro360/03.png")}
                                         style={{width: 35, height: 35}}
                                     />
-                                }
-                                {/* <Image
+                                } */}
+                                <Image
                                     source={playbackCarSpeed <= 0 ? require("../assets/carroparado.png") : require("../assets/carroandando.png")}
                                     style={{width: 35, height: 35, transform: [{ rotate: playbackCourse + 'deg'}]}}
-                                /> */}
+                                />
                             </View>
                         </View>
                     </Marker.Animated>
@@ -741,7 +741,7 @@ const Map = (props) => {
                                     </View>
                                 }
                                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                                    {(+item.course <= 22 || +item.course > 338) && 
+                                    {/* {(+item.course <= 22 || +item.course > 338) && 
                                         <Image
                                             source={require("../assets/carro360/04.png")}
                                             style={{width: 35, height: 35}}
@@ -788,11 +788,11 @@ const Map = (props) => {
                                             source={require("../assets/carro360/05.png")}
                                             style={{width: 35, height: 35}}
                                         />
-                                    }
-                                    {/* <Image
+                                    } */}
+                                    <Image
                                         source={+item.speed <= 0 ? require("../assets/carroparado.png") : require("../assets/carroandando.png")}
                                         style={{width: 35, height: 35, transform: [{ rotate: item.course + 'deg'}]}}
-                                    /> */}
+                                    />
                                 </View>
                             </View>
                         </Marker.Animated>
