@@ -147,14 +147,15 @@ function App(): JSX.Element {
         // saving error
     }
   }
-  function NavHeader(props: any) {
-      return <View style={{height: 78, backgroundColor: '#202125', justifyContent: 'space-between'}}>
-        <TouchableOpacity onPress={() => props.navigation.goBack()} style={{backgroundColor: '#C3C3C7', margin: 16, marginLeft: 21, borderRadius: 16, width: 45, padding: 10}}>
+  function NavHeader(props: any, goBack: boolean, title: string) {
+    return <View style={{height: 78, backgroundColor: '#202125', justifyContent: 'space-between'}}>
+      {goBack &&
+        <TouchableOpacity onPress={() => props.navigation.goBack()} style={{backgroundColor: '#595A5E', margin: 16, zIndex: 10, marginLeft: 21, borderRadius: 16, width: 45, padding: 10}}>
           <GmIcon name="arrow-left" size={24} color={'#FFFFFF'} />
         </TouchableOpacity>
-      <Text style={{color: '#FFFFFF', fontSize: 15, fontWeight: 'bold', position: 'absolute', left: '50%', top: 30, width: 200, transform: [{translateX: -50}]}}>Minhas Faturas</Text>
-        <View></View>
-      </View>;
+      }
+      <Text style={{color: '#FFFFFF', fontSize: 15, fontWeight: 'bold', position: 'absolute', width: '100%', textAlign: 'center', height: '100%', textAlignVertical: 'center'}}>{title.substring(0, 20)} {title.length > 20 && '...'}</Text>
+    </View>;
   }
   useEffect(() => {
     try {
@@ -206,7 +207,8 @@ function App(): JSX.Element {
               name={username}
               options={{
                 tabBarLabel: '',
-                headerTitleAlign: 'center',
+                // headerTitleAlign: 'center',
+                header: (props) => NavHeader(props, true, username),
                 tabBarIcon: ({ color, size, focused }) => (
                     // <Icon name="globe" style={{color: color}} size={size} />
                     <View style={{padding: 10, marginTop: 15, backgroundColor: focused ? COLORS.dawn : COLORS.grey, borderRadius: 15 }}>
@@ -268,22 +270,24 @@ function App(): JSX.Element {
           <Stack.Screen name="Historico" children={()=><DeviceHistory userData={userData} />} />
           <Stack.Screen name="Alarmes" children={()=><DeviceAlarms userData={userData} />} />
           <Stack.Screen name="Alarme" children={()=><AlarmDetail userData={userData} />} />
-          <Stack.Screen name="Chat" children={()=><Chat />} />
-          <Stack.Screen name="Financeiro" children={()=><Financeiro userData={userData} />} options={{
-            title: 'Financeiro',
-            headerTintColor: COLORS.day,
-            headerStyle: {
-              backgroundColor: '#202125',
-            }
-          }} />
-          <Stack.Screen name="Faturas" children={()=><MinhasFaturas userData={userData} />} options={{header: NavHeader}}
-          // options={{
-          //   title: 'Minhas Faturas',
-          //   headerTintColor: COLORS.day,
-          //   headerStyle: {
-          //     backgroundColor: '#202125',
-          //   }
-          // }}
+          <Stack.Screen name="Chat" children={()=><Chat />} options={{header: (props) => NavHeader(props, true, 'Chat')}} />
+          <Stack.Screen name="Financeiro" children={()=><Financeiro userData={userData} />} options={{header: (props) => NavHeader(props, true, 'Financeiro')}}
+            // options={{
+            //   title: 'Financeiro',
+            //   headerTintColor: COLORS.day,
+            //   headerStyle: {
+            //     backgroundColor: '#202125',
+            //   }
+            // }}
+          />
+          <Stack.Screen name="Faturas" children={()=><MinhasFaturas userData={userData} />} options={{header: (props) => NavHeader(props, true, 'Minhas Faturas')}}
+            // options={{
+            //   title: 'Minhas Faturas',
+            //   headerTintColor: COLORS.day,
+            //   headerStyle: {
+            //     backgroundColor: '#202125',
+            //   }
+            // }}
           />
         </Stack.Navigator>
       </NavigationContainer>

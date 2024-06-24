@@ -420,9 +420,9 @@ const Map = (props) => {
             {pinTitle &&
                 <View style={{padding: 5, top: 45, left: 5, position: 'absolute', zIndex: 2}}>
                     <Pressable
-                        style={[styles.whiteButton]}
+                        style={[styles.gmbutton]}
                         onPress={() => {setShowText(!showText)}}>
-                        <GmIcon name="text" size={20} color={showText ? "orange" : "black"} />
+                        <GmIcon name="text" size={20} color={showText ? "orange" : "white"} />
                     </Pressable>
                 </View>
             }
@@ -815,6 +815,14 @@ const styles = StyleSheet.create({
         padding: 7,
         elevation: 2
     },
+    gmbutton: {
+        backgroundColor: '#282A2F',
+        opacity: .8,
+        padding: 15,
+        width: 50,
+        height: 50,
+        borderRadius: 10,
+    }
 })
 const modalStyles = StyleSheet.create({
   //checkbox
