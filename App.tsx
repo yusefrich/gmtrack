@@ -72,6 +72,7 @@ function App(): JSX.Element {
   const [isLogin, setIsLogin] = useMMKVStorage('isLogin', storage, false);
   // const [userData, setUserData] = useState({});
 
+  // const navigation = useNavigation()
   const RNfirebaseConfig = {
     apiKey: "........",
     authDomain: "note-app-rn.firebaseapp.com",
@@ -130,12 +131,13 @@ function App(): JSX.Element {
     return unsubscribe;
   }
 
-  const submitLogin = (payload: any) => {
+  const submitLogin = (payload: any, props: any) => {
     console.log('submit login ', payload)
+    setUserData(payload.userData)
     setCarrouselData(payload.carrousel)
     setUsername(payload.userData.client.Nome)
     setToken(payload.token)
-    setUserData(payload.userData)
+    props.navigation.push('Main')
   }
   const logout = () => {
     setUserData({})
@@ -171,13 +173,13 @@ function App(): JSX.Element {
   })
   const TabNav = () => (
       <>
-        {!isLogin && Object.keys(userData).length === 0 &&
+        {/* {!isLogin && Object.keys(userData).length === 0 &&
           <Welcome onLogin={()=>setIsLogin(true)} />
         }
         {isLogin && Object.keys(userData).length === 0 &&
           <Login submit={(value: any)=>submitLogin(value)} tokenFcm={tokenFcm} />
-        }
-        {Object.keys(userData).length >= 1 &&
+        } */}
+        {/* {Object.keys(userData).length >= 1 && */}
           <Tab.Navigator 
               screenOptions={{
                 tabBarActiveTintColor: COLORS.primary,
@@ -254,7 +256,7 @@ function App(): JSX.Element {
               children={()=><User userData={userData} onExit={()=>logout()} />}
             /> */}
           </Tab.Navigator>
-        }
+        {/* } */}
       </>
   );
 
@@ -263,6 +265,8 @@ function App(): JSX.Element {
     <>
       <NavigationContainer>
         <Stack.Navigator>
+          <Stack.Screen name="Welcome" options={{headerShown: false}} children={()=><Welcome />} />
+          <Stack.Screen name="Login" options={{headerShown: false}} children={(props)=><Login submit={(value: any)=>submitLogin(value, props)} tokenFcm={tokenFcm} />} />
           <Stack.Screen name="Main" options={{headerShown: false}} component={TabNav} />
           <Stack.Screen name="Detalhes" children={()=><DeviceDetails userData={userData} />} />
           <Stack.Screen name="Comandos" children={()=><DeviceTerminal userData={userData} />} />

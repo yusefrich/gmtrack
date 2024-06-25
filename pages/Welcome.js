@@ -4,10 +4,11 @@ import React from 'react'
 // import { LinearGradient } from "expo-linear-gradient";
 import LinearGradient from 'react-native-linear-gradient';
 import COLORS from '../constants/colors';
+import { useNavigation } from '@react-navigation/native';
 import Button from '../components/Button';
 
 const Welcome = (props) => {
-
+    const navigation = useNavigation();
     return (
             // <LinearGradient
             //     style={{
@@ -107,7 +108,7 @@ const Welcome = (props) => {
                         <Button
                             title="Iniciar"
                             textColor="#404E4D"
-                            onPress={props.onLogin}
+                            onPress={()=>navigation.push('Login')}
                             background={COLORS.primary}
                             style={{
                                 marginTop: 22,
