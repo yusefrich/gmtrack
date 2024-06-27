@@ -224,6 +224,7 @@ function App(): JSX.Element {
               name="Selecionar"
               options={{
                 tabBarLabel: '',
+                header: (props) => NavHeader(props, true, 'Selecionar'),
                 tabBarIcon: ({ color, size, focused }) => (
                     // <Icon name="list" style={{color: color}} size={size} />
                     <View style={{padding: 10, marginTop: 15, backgroundColor: focused ? COLORS.dawn : COLORS.grey, borderRadius: 15 }}>
@@ -268,7 +269,7 @@ function App(): JSX.Element {
           <Stack.Screen name="Welcome" options={{headerShown: false}} children={()=><Welcome />} />
           <Stack.Screen name="Login" options={{headerShown: false}} children={(props)=><Login submit={(value: any)=>submitLogin(value, props)} tokenFcm={tokenFcm} />} />
           <Stack.Screen name="Main" options={{headerShown: false}} component={TabNav} />
-          <Stack.Screen name="Detalhes" children={()=><DeviceDetails userData={userData} />} />
+          <Stack.Screen name="Detalhes" options={{header: (props) => NavHeader(props, true, 'Detalhes')}} children={()=><DeviceDetails userData={userData} />} />
           <Stack.Screen name="Comandos" children={()=><DeviceTerminal userData={userData} />} />
           <Stack.Screen name="Centralizar" children={()=><DeviceMap userData={userData} />} />
           <Stack.Screen name="Historico" children={()=><DeviceHistory userData={userData} />} />

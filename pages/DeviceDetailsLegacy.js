@@ -11,7 +11,6 @@ import {
   ScrollView,
   Modal,
   Pressable,
-  ImageBackground,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
@@ -42,53 +41,39 @@ const DeviceDetails = ({ userData }) => {
   );
 
   return (
-    <ImageBackground source={require("../assets/main-bg.png")} style={styles.splash}>
-      <SafeAreaView style={styles.container}>
-          <ScrollView>
-            <View style={styles.row}>
-              <HomeButton active subTitle="Rastrear" custom_icon={<GmIcon name="marker" size={24} color={COLORS.dawn} />}/>
-              <HomeButton subTitle="Histórico" custom_icon={<GmIcon name="historico" size={24} color={COLORS.day} />} onPress={()=>navigation.push('Financeiro')} />
-              <HomeButton subTitle="Dados do veículo" custom_icon={<GmIcon name="pasta" size={24} color={COLORS.day} />} />
-            </View>
-            <HomeButton active title="Alarmes" custom_icon={<GmIcon name="sino" size={24} color={COLORS.dawn} />} onPress={()=>navigation.push('Faturas')} block/>
-            <HomeButton title="Cerca" custom_icon={<GmIcon name="cerca" size={24} color={COLORS.day} />} block/>
-            <HomeButton title="Compartilhar Localização" custom_icon={<GmIcon name="compartilhar" size={24} color={COLORS.day} />} block/>
-            {/* <ListGroup>
-              {devices.map((item)=>{
-                  return <ListButton
-                            key={item.imei}
-                            title={item.device.devicename}
-                            subtitle={carStatus(item.accstatus, item.speed) + ` (${new Date(item.acctime * 1000).toUTCString().match(/(\d\d:\d\d:\d\d)/)[0]})`}
-                            custom_icon={
-                              <GmIcon name="carro" size={30} acc={item.accstatus} speed={item.speed} />
-                            }
-                            iconColor="orange"
-                            onPress={()=>navigation.push('Detalhes', { device: item })}>
-                          </ListButton>
-              })}
-              </ListGroup> */}
-              {/* <Item title='test 1' icon="radio-button-on" /> */}
-              {/* <Item title='test 1' icon="radio-button-on" /> */}
-              {/* <View style={{marginBottom: 15}}></View> */}
-              {/* <Item title='test 1' icon="radio-button-on" /> */}
-          </ScrollView>
-      </SafeAreaView>
-    </ImageBackground>
+    <SafeAreaView style={styles.container}>
+        <ScrollView>
+          <ListGroup>
+            <ListButton title={"IMEI - " + route.params.device.device.imei} icon="barcode" endicon="copy" iconColor="orange" onPress={()=>Clipboard.setString(route.params.device.device.imei)}></ListButton>
+          </ListGroup>
+          <View style={styles.row}>
+            <HomeButton icon="navigate" white title="Rastrear" />
+            <HomeButton icon="play" white title="Histórico" onPress={()=>navigation.push('Historico', { device: route.params.device.device })}/>
+            <HomeButton icon="paper" white title="Detalhe" />
+            <HomeButton custom_icon={<GmIcon name="terminal" size={30} color={COLORS.primary} />} white title="Comando" />
+          </View>
+          <ListGroup>
+            <ListButton title="Detalhe" icon="document" iconColor="orange"></ListButton>
+            <ListButton title="Comando" icon="wifi" iconColor="orange"></ListButton>
+            <ListButton title="Histórico de comando" icon="folder-open" iconColor="orange"></ListButton>
+            <ListButton title="Alarmes" icon="alarm" iconColor="orange" onPress={()=>navigation.push('Alarmes', { device: route.params.device.device })}></ListButton>
+            <ListButton title="Alerta de cerca" icon="grid" iconColor="orange"></ListButton>
+            <ListButton title="Compartilhar localização" icon="share" iconColor="orange"></ListButton>
+          </ListGroup>
+          <ListGroup>
+            <ListButton title="Configurações" icon="cog" iconColor="orange"></ListButton>
+          </ListGroup>
 
+          {/* <Item title='test 1' icon="radio-button-on" /> */}
+          {/* <Item title='test 1' icon="radio-button-on" /> */}
+          {/* <View style={{marginBottom: 15}}></View> */}
+          {/* <Item title='test 1' icon="radio-button-on" /> */}
+        </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-    splash: {
-      backgroundColor: COLORS.night,
-      height: '100%'
-    },
-    row: {
-      flex: 1,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginBottom: 10
-    },
     container: {
         flex: 1,
         marginStart: '4%',

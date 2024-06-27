@@ -10,6 +10,11 @@ import Boleto from '../assets/icons/boleto.svg';
 import Monitor from '../assets/icons/monitor.svg';
 import Selecionar from '../assets/icons/selecionar.svg';
 import Home from '../assets/icons/home.svg';
+import Cerca from '../assets/icons/cerca.svg';
+import Compartilhar from '../assets/icons/compartilhar.svg';
+import Historico from '../assets/icons/historico.svg';
+import Pasta from '../assets/icons/pasta.svg';
+import Sino from '../assets/icons/sino.svg';
 import Warning from '../assets/icons/warning.svg';
 import Paper from '../assets/icons/paper.svg';
 import ChevronRight from '../assets/icons/chevron-right.svg';
@@ -63,6 +68,27 @@ const GmIcon = (props) => {
                 <Home width={size} height={size} style={{color: color}} />
                 // <Image source={require('../assets/icons/home.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
             }
+            {iconName === 'cerca' &&
+                <Cerca width={size} height={size} style={{color: color}} />
+                // <Image source={require('../assets/icons/home.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+            }
+            {iconName === 'compartilhar' &&
+                <Compartilhar width={size} height={size} style={{color: color}} />
+                // <Image source={require('../assets/icons/home.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+            }
+            {iconName === 'historico' &&
+                <Historico width={size} height={size} style={{color: color}} />
+                // <Image source={require('../assets/icons/home.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+            }
+            {iconName === 'pasta' &&
+                <Pasta width={size} height={size} style={{color: color}} />
+                // <Image source={require('../assets/icons/home.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+            }
+            {iconName === 'sino' &&
+                <Sino width={size} height={size} style={{color: color}} />
+                // <Image source={require('../assets/icons/home.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+            }
+
             {iconName === 'traffic' &&
                 <Image source={require('../assets/icons/traffic-light-solid.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
             }

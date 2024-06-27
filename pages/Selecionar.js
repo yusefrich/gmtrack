@@ -93,20 +93,23 @@ const Selecionar = ({ userData }) => {
               <Text style={{color: '#333333'}}>Atualizando em {counter}...</Text>
           </View>
           <ScrollView>
-            <ListGroup>
-              {devices.map((item)=>{
-                  return <ListButton
-                            key={item.imei}
-                            title={item.device.devicename}
-                            subtitle={carStatus(item.accstatus, item.speed) + ` (${new Date(item.acctime * 1000).toUTCString().match(/(\d\d:\d\d:\d\d)/)[0]})`}
-                            custom_icon={
-                              <GmIcon name="carro" size={30} acc={item.accstatus} speed={item.speed} />
-                            }
-                            iconColor="orange"
-                            onPress={()=>navigation.push('Detalhes', { device: item })}>
-                          </ListButton>
-              })}
-              </ListGroup>
+              <View style={{width: '95%'}}>
+              {/* <ListGroup> */}
+                {devices.map((item)=>{
+                    return <ListButton
+                              key={item.imei}
+                              title={item.device.devicename}
+                              subtitle={carStatus(item.accstatus, item.speed)}
+                              time={`${new Date(item.acctime * 1000).toUTCString().match(/(\d\d:\d\d:\d\d)/)[0]}`}
+                              custom_icon={
+                                <GmIcon name="carro" size={30} acc={item.accstatus} speed={item.speed} />
+                              }
+                              iconColor="orange"
+                              onPress={()=>navigation.push('Detalhes', { device: item })}>
+                            </ListButton>
+                })}
+              </View>
+              {/* </ListGroup> */}
               {/* <Item title='test 1' icon="radio-button-on" /> */}
               {/* <Item title='test 1' icon="radio-button-on" /> */}
               {/* <View style={{marginBottom: 15}}></View> */}
