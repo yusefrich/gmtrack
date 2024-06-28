@@ -60,8 +60,8 @@ function Home(params) {
             <Text style={styles.sectionTitle}>Acesso Rápido</Text>
           </View>
           <View style={styles.row}>
-            <HomeButton active subTitle="Rastrear" custom_icon={<GmIcon name="marker" size={24} color={COLORS.dawn} />}/>
-            <HomeButton subTitle="Minhas faturas" custom_icon={<GmIcon name="boleto" size={24} color={COLORS.day} />} onPress={()=>navigation.push('Financeiro')} />
+            <HomeButton active subTitle="Rastrear" custom_icon={<GmIcon name="marker" size={24} color={COLORS.dawn} />} onPress={()=>navigation.push('Second', { screen: 'Monitor' })}/>
+            <HomeButton subTitle="Minhas faturas" custom_icon={<GmIcon name="boleto" size={24} color={COLORS.day} />} onPress={()=>navigation.push('Main' , { screen: 'Financeiro'})} />
             <HomeButton subTitle="Indique um amigo" custom_icon={<GmIcon name="hands" size={24} color={COLORS.day} />} />
             <HomeButton subTitle="Falar pelo 0800" custom_icon={<GmIcon name="wp" size={24} color={COLORS.day} />} />
           </View>

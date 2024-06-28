@@ -48,6 +48,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import GmIcon from './components/GmIcon';
 import Financeiro from './pages/Financeiro';
 import MinhasFaturas from './pages/MinhasFaturas';
+import Fatura from './pages/Fatura';
+import FaturaPix from './pages/FaturaPix';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -181,16 +183,16 @@ function App(): JSX.Element {
         } */}
         {/* {Object.keys(userData).length >= 1 && */}
           <Tab.Navigator 
-              screenOptions={{
-                tabBarActiveTintColor: COLORS.primary,
-                tabBarInactiveTintColor: COLORS.day,
-                tabBarStyle: {
-                  backgroundColor: COLORS.black,
-                  borderColor: COLORS.black,
-                  // elevation: 5,
-                  height: 70
-                }
-              }}>
+            screenOptions={{
+              tabBarActiveTintColor: COLORS.primary,
+              tabBarInactiveTintColor: COLORS.day,
+              tabBarStyle: {
+                backgroundColor: COLORS.black,
+                borderColor: COLORS.black,
+                // elevation: 5,
+                height: 70
+              }
+            }}>
             <Tab.Screen
               name="Entrada"
               options={{
@@ -206,7 +208,86 @@ function App(): JSX.Element {
               children={()=><Home carrousel={carrouselData} loading={false}/>}
             />
             <Tab.Screen
-              name={username}
+              name="Financeiro"
+              options={{
+                tabBarLabel: '',
+                header: (props) => NavHeader(props, true, 'Financeiro'),
+                tabBarIcon: ({ color, size, focused }) => (
+                    // <Icon name="notifications" style={{color: color}} size={size} />
+                    <View style={{padding: 10, marginTop: 15, backgroundColor: focused ? COLORS.dawn : COLORS.grey, borderRadius: 15 }}>
+                      <GmIcon name="dolar" size={size} color={color} />
+                    </View>
+                  ),
+                }}
+              children={()=><Financeiro userData={userData} />} />
+            <Tab.Screen
+              name="Suporte"
+              options={{
+                tabBarLabel: '',
+                tabBarIcon: ({ color, size, focused }) => (
+                    // <Icon name="notifications" style={{color: color}} size={size} />
+                    <View style={{padding: 10, marginTop: 15, backgroundColor: focused ? COLORS.dawn : COLORS.grey, borderRadius: 15 }}>
+                      <GmIcon name="suporte" size={size} color={color} />
+                    </View>
+                  ),
+                }}
+              children={()=><Alarms userData={userData} />} />
+            <Tab.Screen
+              name="Perfil"
+              options={{
+                tabBarLabel: '',
+                tabBarIcon: ({ color, size, focused }) => (
+                    // <Icon name="notifications" style={{color: color}} size={size} />
+                    <View style={{padding: 10, marginTop: 15, backgroundColor: focused ? COLORS.dawn : COLORS.grey, borderRadius: 15 }}>
+                      <GmIcon name="eu" size={size} color={color} />
+                    </View>
+                  ),
+                }}
+              children={()=><User userData={userData} onExit={()=>logout()} />} />
+
+            {/* <Tab.Screen
+              name="Eu"
+              options={{
+                tabBarLabel: 'Eu',
+                tabBarIcon: ({ color, size }) => (
+                    <Icon name="person" style={{color: color}} size={size} />
+                  ),
+                }}
+              children={()=><User userData={userData} onExit={()=>logout()} />}
+            /> */}
+          </Tab.Navigator>
+        {/* } */}
+      </>
+  );
+  const MonitorNav = () => (
+      <>
+          <Tab.Navigator 
+            screenOptions={{
+              tabBarActiveTintColor: COLORS.primary,
+              tabBarInactiveTintColor: COLORS.day,
+              tabBarStyle: {
+                backgroundColor: COLORS.black,
+                borderColor: COLORS.black,
+                // elevation: 5,
+                height: 70
+              }
+            }}>
+            <Tab.Screen
+              name="Entrada"
+              options={{
+                headerShown: false,
+                tabBarLabel: '',
+                tabBarIcon: ({ color, size, focused}) => (
+                    // <Icon name="home" style={{color: color}} size={size} />
+                    <View style={{padding: 10, marginTop: 15, backgroundColor: focused ? COLORS.dawn : COLORS.grey, borderRadius: 15 }}>
+                      <GmIcon name="home" size={size} color={color} />
+                    </View>
+                  ),
+                }}
+              children={()=><Home carrousel={carrouselData} loading={false}/>}
+            />
+            <Tab.Screen
+              name="Monitor"
               options={{
                 tabBarLabel: '',
                 // headerTitleAlign: 'center',
@@ -244,22 +325,12 @@ function App(): JSX.Element {
                     </View>
                   ),
                 }}
-
               children={()=><Alarms userData={userData} />} />
-            {/* <Tab.Screen
-              name="Eu"
-              options={{
-                tabBarLabel: 'Eu',
-                tabBarIcon: ({ color, size }) => (
-                    <Icon name="person" style={{color: color}} size={size} />
-                  ),
-                }}
-              children={()=><User userData={userData} onExit={()=>logout()} />}
-            /> */}
           </Tab.Navigator>
         {/* } */}
       </>
   );
+
 
 
   return (
@@ -269,6 +340,7 @@ function App(): JSX.Element {
           <Stack.Screen name="Welcome" options={{headerShown: false}} children={()=><Welcome />} />
           <Stack.Screen name="Login" options={{headerShown: false}} children={(props)=><Login submit={(value: any)=>submitLogin(value, props)} tokenFcm={tokenFcm} />} />
           <Stack.Screen name="Main" options={{headerShown: false}} component={TabNav} />
+          <Stack.Screen name="Second" options={{headerShown: false}} component={MonitorNav} />
           <Stack.Screen name="Detalhes" options={{header: (props) => NavHeader(props, true, 'Detalhes')}} children={()=><DeviceDetails userData={userData} />} />
           <Stack.Screen name="Comandos" children={()=><DeviceTerminal userData={userData} />} />
           <Stack.Screen name="Centralizar" children={()=><DeviceMap userData={userData} />} />
@@ -276,24 +348,15 @@ function App(): JSX.Element {
           <Stack.Screen name="Alarmes" children={()=><DeviceAlarms userData={userData} />} />
           <Stack.Screen name="Alarme" children={()=><AlarmDetail userData={userData} />} />
           <Stack.Screen name="Chat" children={()=><Chat />} options={{header: (props) => NavHeader(props, true, 'Chat')}} />
-          <Stack.Screen name="Financeiro" children={()=><Financeiro userData={userData} />} options={{header: (props) => NavHeader(props, true, 'Financeiro')}}
-            // options={{
-            //   title: 'Financeiro',
-            //   headerTintColor: COLORS.day,
-            //   headerStyle: {
-            //     backgroundColor: '#202125',
-            //   }
-            // }}
-          />
+          {/* <Stack.Screen name="Financeiro" children={()=><Financeiro userData={userData} />} options={{header: (props) => NavHeader(props, true, 'Financeiro')}}
+          /> */}
           <Stack.Screen name="Faturas" children={()=><MinhasFaturas userData={userData} />} options={{header: (props) => NavHeader(props, true, 'Minhas Faturas')}}
-            // options={{
-            //   title: 'Minhas Faturas',
-            //   headerTintColor: COLORS.day,
-            //   headerStyle: {
-            //     backgroundColor: '#202125',
-            //   }
-            // }}
           />
+          <Stack.Screen name="Fatura" children={()=><Fatura userData={userData} />} options={{header: (props) => NavHeader(props, true, 'Detalhe da fatura')}}
+          />
+          <Stack.Screen name="FaturaPix" children={()=><FaturaPix userData={userData} />} options={{header: (props) => NavHeader(props, true, 'Detalhe da fatura')}}
+          />
+
         </Stack.Navigator>
       </NavigationContainer>
       <Toast />

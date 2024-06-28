@@ -17,6 +17,11 @@ import Pasta from '../assets/icons/pasta.svg';
 import Sino from '../assets/icons/sino.svg';
 import Warning from '../assets/icons/warning.svg';
 import Paper from '../assets/icons/paper.svg';
+import Dolar from '../assets/icons/dolar.svg';
+import Suporte from '../assets/icons/suporte.svg';
+import Eu from '../assets/icons/eu.svg';
+import Card from '../assets/icons/card.svg';
+import Pix from '../assets/icons/pix.svg';
 import ChevronRight from '../assets/icons/chevron-right.svg';
 import LoopPayment from '../assets/icons/loop-payment.svg';
 
@@ -86,6 +91,26 @@ const GmIcon = (props) => {
             }
             {iconName === 'sino' &&
                 <Sino width={size} height={size} style={{color: color}} />
+                // <Image source={require('../assets/icons/home.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+            }
+            {iconName === 'dolar' &&
+                <Dolar width={size} height={size} style={{color: color}} />
+                // <Image source={require('../assets/icons/home.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+            }
+            {iconName === 'eu' &&
+                <Eu width={size} height={size} style={{color: color}} />
+                // <Image source={require('../assets/icons/home.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+            }
+            {iconName === 'suporte' &&
+                <Suporte width={size} height={size} style={{color: color}} />
+                // <Image source={require('../assets/icons/home.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+            }
+            {iconName === 'card' &&
+                <Card width={size} height={size} style={{color: color}} />
+                // <Image source={require('../assets/icons/home.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+            }
+            {iconName === 'pix' &&
+                <Pix width={size} height={size} style={{color: color}} />
                 // <Image source={require('../assets/icons/home.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
             }
 

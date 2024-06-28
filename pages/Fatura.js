@@ -24,30 +24,14 @@ import COLORS from '../constants/colors';
 import HomeButton from '../components/HomeButton';
 import GmButton from '../components/GmButton';
 
-const MinhasFaturas = ({ userData }) => {
+const Fatura = ({ userData }) => {
   const [bills, setBills] = useState([]);
   const [onFocus, setOnFocus] = useState(false);
   const [counter, setCounter] = useState(10);
   const [currentTimeout, setCurrentTimeout] = useState(null);
   const navigation = useNavigation();
+  // const route = useRoute();
 
-  const fetchBills = async () => {
-    console.log('fetching user track')
-      const [data, err] = await api.bills(userData)
-      console.log('bills', data.data.length)
-      console.log('err', err)
-      if (err) {
-          Toast.show({
-              type: 'error',
-              text1: 'Erro ao monitorar veiculos: ' + err.message
-          });
-          console.error('detal error => ', err);
-          return
-      }
-      // console.log('cars => ', data);
-      // console.log('devices => ' + JSON.stringify(data));
-      setBills(data.data)
-  }
   const getPeriod = (data) => {
     const date = new Date(data)
     // console.log(data)
@@ -68,7 +52,7 @@ const MinhasFaturas = ({ userData }) => {
       React.useCallback(() => {
           console.log('on focus')
           setOnFocus(true)
-          fetchBills();
+          // fetchBills();
           return () => {
             setOnFocus(false)
           };
@@ -79,29 +63,36 @@ const MinhasFaturas = ({ userData }) => {
     <ImageBackground source={require("../assets/main-bg.png")} style={styles.splash}>
       <SafeAreaView style={styles.container}>
           <ScrollView>
-              {bills.map((item)=>{
-                return(
-                  <TouchableOpacity style={[{padding: 20, marginRight: 20, marginBottom: 15, borderRadius: 20, borderLeftWidth: 20}, item.Pago === '1' ? styles.cardSuccess : vencido(item.Vencimento) ? styles.cardDanger :  styles.cardInfo]} onPress={()=>navigation.push('Fatura', { bill: item })}>
-                    <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
-                      <View>
-                        <Text style={{color: 'white', fontWeight: '400', marginLeft: 5, fontSize: 15, textTransform: 'uppercase'}}>{getPeriod(item.Vencimento)}</Text>
-                        <Text style={[{fontWeight: '700', marginLeft: 5, fontSize: 25}, item.Pago === '1' ? {color: '#39CC59'} : vencido(item.Vencimento) ? {color: '#E68D8D'} :  {color: '#9FA9C2'}]}>R$ {+item.ValorDuplicata}</Text>
-                      </View>
-                      <View>
-                        <View style={{flex: 1, flexDirection: 'row'}}>
-                          <View>
-                            <Text style={{color: COLORS.day, fontWeight: '400', marginLeft: 5, fontSize: 15}}>Vencimento</Text>
-                            <Text style={[{fontWeight: '700', marginLeft: 5, fontSize: 20}, item.Pago === '1' ? {color: '#39CC59'} : vencido(item.Vencimento) ? {color: '#E68D8D'} :  {color: '#9FA9C2'}]}>{formattedDate(item.Vencimento)}</Text>
-                          </View>
-                          <View style={{marginLeft: 10}}>
-                            <GmButton  solid custom_icon={<GmIcon name="chevron-rigth" size={24} color={COLORS.day} />}  />
-                          </View>
-                        </View>
-                      </View>
+            <Text style={{color: 'white', fontWeight: '400', marginLeft: 5, fontSize: 15, textTransform: 'uppercase', textAlign: 'center', marginBottom: 20}}>JUNHO 2024</Text>
+            <View style={[{padding: 20, marginRight: 20, marginBottom: 15, borderRadius: 20, borderLeftWidth: 0}, styles.cardInfo]}>
+              <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
+                <View>
+                  <Text style={[{fontWeight: '700', marginLeft: 5, fontSize: 35}, {color: '#9FA9C2'}]}>R$ 99</Text>
+                </View>
+                <View>
+                  <View style={{flex: 1, flexDirection: 'row'}}>
+                    <View>
+                      <Text style={{color: COLORS.day, fontWeight: '400', marginLeft: 5, fontSize: 15}}>Vencimento</Text>
+                      <Text style={[{fontWeight: '700', marginLeft: 5, fontSize: 20}, {color: '#9FA9C2'}]}>10/06</Text>
                     </View>
-                  </TouchableOpacity>
-                )
-              })}
+                  </View>
+                </View>
+              </View>
+            </View>
+            <Text style={{color: 'white', fontWeight: '400', marginLeft: 5, fontSize: 15, textTransform: 'uppercase', marginBottom: 20}}>Código de barras</Text>
+            <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
+              <Text style={{color: 'white', fontWeight: '400', marginLeft: 5, fontSize: 15, maxWidth: 300, textTransform: 'uppercase', marginBottom: 20}}>12312312345-1 12312312345-1 12312312345-1 12312312345-1</Text>
+              <TouchableOpacity style={{padding: 10, paddingRight: 30}}>
+                <GmIcon name="paper" size={24} color={COLORS.day} />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.row}>
+              <View style={{marginRight: 10}}>
+                <HomeButton active subTitle="Pagar com pix" custom_icon={<GmIcon name="pix" size={24} color={COLORS.dawn} />} onPress={()=>navigation.push('FaturaPix')}/>
+              </View>
+              <HomeButton subTitle="Pagar com cartão" custom_icon={<GmIcon name="card" size={24} color={COLORS.day} />} onPress={()=>navigation.push('FaturaPix')} />
+            </View>
+
             {/* <View style={{backgroundColor: '#62464680', padding: 20, marginRight: 20, marginBottom: 15, borderRadius: 20, borderLeftColor: '#E03F3F', borderLeftWidth: 20}}>
               <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
                 <View>
@@ -181,6 +172,12 @@ const styles = StyleSheet.create({
         marginStart: '4%',
         marginTop: StatusBar.currentHeight,
     },
+    row: {
+      flex: 1,
+      flexDirection: 'row',
+      // justifyContent: 'space-between',
+      marginBottom: 10
+    },
     item: {
         backgroundColor: '#eeeeee',
         height: 40,
@@ -251,4 +248,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default MinhasFaturas;
+export default Fatura;
