@@ -29,10 +29,10 @@ const HomeButton = (props) => {
           {!block &&
             <View style={{alignItems: 'center'}}>
               {subTitle && 
-                <Text style={{color: COLORS.white, fontSize: 12, maxWidth: 85, textAlign: 'center'}}>{subTitle}</Text>
+                <Text style={{color: props.color ? props.color : 'white', fontSize: 12, maxWidth: 85, textAlign: 'center'}}>{subTitle}</Text>
               }
               {title &&
-                <Text style={styles.buttonTitle}>{title}</Text>
+                <Text style={[styles.buttonTitle, {color: props.color ? props.color : 'white'}]}>{title}</Text>
               }
             </View>
           }
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
   buttonTitle: {
     fontSize: 15,
     fontWeight: '400',
-    color: COLORS.white,
+    // color: COLORS.white,
     lineHeight: 22,
   },
   buttonTitleBlock: {

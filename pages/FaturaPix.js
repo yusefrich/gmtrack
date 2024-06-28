@@ -61,97 +61,48 @@ const FaturaPix = ({ userData }) => {
       }, [])
   );
   return (
-    <ImageBackground source={require("../assets/main-bg.png")} style={styles.splash}>
+    <View style={styles.splash}>
       <SafeAreaView style={styles.container}>
           <ScrollView>
             <Text style={{color: 'white', fontWeight: '400', marginLeft: 5, fontSize: 15, textTransform: 'uppercase', textAlign: 'center', marginBottom: 20}}>JUNHO 2024</Text>
-            <View style={[{padding: 20, marginRight: 20, marginBottom: 15, borderRadius: 20, borderLeftWidth: 0}, styles.cardInfo]}>
-              <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
-                <View>
-                  <Text style={[{fontWeight: '700', marginLeft: 5, fontSize: 35}, {color: '#9FA9C2'}]}>R$ 99</Text>
-                </View>
-                <View>
-                  <View style={{flex: 1, flexDirection: 'row'}}>
-                    <View>
-                      <Text style={{color: COLORS.day, fontWeight: '400', marginLeft: 5, fontSize: 15}}>Vencimento</Text>
-                      <Text style={[{fontWeight: '700', marginLeft: 5, fontSize: 20}, {color: '#9FA9C2'}]}>10/06</Text>
-                    </View>
-                  </View>
-                </View>
+            <View style={{backgroundColor: 'white', borderRadius: 20, color: 'black', marginRight: 20, padding: 20, paddingTop: 20, paddingBottom: 20}}>
+              <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 10}}>
+                <Text style={{color: 'black', fontWeight: '400', marginLeft: 5, fontSize: 18}}>Data</Text>
+                <Text style={[{fontWeight: '700', marginLeft: 5, fontSize: 18}, {color: 'black'}]}>10/06</Text>
               </View>
-              <Image source={require('../assets/qr.png')} style={[{width: "100%", height: 400, resizeMode: 'contain'}]} />
-            </View>
-            <Text style={{color: 'white', fontWeight: '400', marginLeft: 5, fontSize: 15, textTransform: 'uppercase', marginBottom: 20}}>Pix copia e cola</Text>
-            <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
-              <Text style={{color: 'white', fontWeight: '400', marginLeft: 5, fontSize: 15, maxWidth: 300, textTransform: 'uppercase', marginBottom: 20}}>12312312345-1 12312312345-1 12312312345-1 12312312345-1</Text>
-              <TouchableOpacity style={{padding: 10, paddingRight: 30}}>
-                <GmIcon name="paper" size={24} color={COLORS.day} />
-              </TouchableOpacity>
-            </View>
+              <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 10}}>
+                <Text style={{color: 'black', fontWeight: '400', marginLeft: 5, fontSize: 18}}>Hora</Text>
+                <Text style={[{fontWeight: '700', marginLeft: 5, fontSize: 18}, {color: 'black'}]}>10:50 am</Text>
+              </View>
+              <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 10}}>
+                <Text style={{color: 'black', fontWeight: '400', marginLeft: 5, fontSize: 18}}>Serviço</Text>
+                <Text style={[{fontWeight: '700', marginLeft: 5, fontSize: 18}, {color: 'black'}]}>R$ 49,90</Text>
+              </View>
+              <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 10}}>
+                <Text style={{color: 'black', fontWeight: '400', marginLeft: 5, fontSize: 18}}>Multa</Text>
+                <Text style={[{fontWeight: '700', marginLeft: 5, fontSize: 18}, {color: 'black'}]}>R$ 0,00</Text>
+              </View>
+              <View style={{borderBottomWidth: 3, margin: 10, borderColor: '#C7C7C7'}}></View>
+              <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 30}}>
+                <Text style={{color: 'black', fontWeight: '400', marginLeft: 5, fontSize: 20}}>Total</Text>
+                <Text style={[{fontWeight: '700', marginLeft: 5, fontSize: 20}, {color: 'black'}]}>R$ 49,90</Text>
+              </View>
+              <Image source={require('../assets/qr.png')} style={[{width: "100%", height: 300, resizeMode: 'contain'}]} />
+              <Text style={{color: 'black', fontWeight: '400', marginLeft: 5, fontSize: 15, textTransform: 'uppercase', marginBottom: 10}}>Pix Copia e cola</Text>
+              <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
+                <Text style={{color: 'black', fontWeight: '400', marginLeft: 5, fontSize: 15, maxWidth: 300, textTransform: 'uppercase', marginBottom: 20}}>12312312345-1 12312312345-1 12312312345-1 12312312345-1</Text>
+                <TouchableOpacity style={{padding: 10, paddingRight: 13}}>
+                  <GmIcon name="paper" size={24} color={COLORS.night} />
+                </TouchableOpacity>
+              </View>
 
-            {/* <View style={{backgroundColor: '#62464680', padding: 20, marginRight: 20, marginBottom: 15, borderRadius: 20, borderLeftColor: '#E03F3F', borderLeftWidth: 20}}>
-              <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
-                <View>
-                  <Text style={{color: 'white', fontWeight: '400', marginLeft: 5, fontSize: 15}}>MAIO 2024</Text>
-                  <Text style={{color: '#E68D8D', fontWeight: '700', marginLeft: 5, fontSize: 25}}>R$ 49,90</Text>
-                </View>
-                <View>
-                  <View style={{flex: 1, flexDirection: 'row'}}>
-                    <View>
-                      <Text style={{color: '#E68D8D', fontWeight: '400', marginLeft: 5, fontSize: 15}}>Vencido</Text>
-                      <Text style={{color: '#E68D8D', fontWeight: '700', marginLeft: 5, fontSize: 20}}>20/05</Text>
-                    </View>
-                    <View style={{marginLeft: 10}}>
-                      <GmButton  solid custom_icon={<GmIcon name="chevron-rigth" size={24} color={COLORS.day} />}  />
-                    </View>
-                  </View>
-                </View>
-              </View>
             </View>
-            <View style={{backgroundColor: '#46624780', padding: 20, marginRight: 20, marginBottom: 15, borderRadius: 20, borderLeftColor: '#39CC59', borderLeftWidth: 20}}>
-              <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
-                <View>
-                  <Text style={{color: 'white', fontWeight: '400', marginLeft: 5, fontSize: 15}}>MAIO 2024</Text>
-                  <Text style={{color: '#9FC2A2', fontWeight: '700', marginLeft: 5, fontSize: 25}}>R$ 49,90</Text>
-                </View>
-                <View>
-                  <View style={{flex: 1, flexDirection: 'row'}}>
-                    <View>
-                      <Text style={{color: '#39CC59', fontWeight: '400', marginLeft: 5, fontSize: 15}}>Pago em</Text>
-                      <Text style={{color: '#39CC59', fontWeight: '700', marginLeft: 5, fontSize: 20}}>20/05</Text>
-                    </View>
-                    <View style={{marginLeft: 10}}>
-                      <GmButton  solid custom_icon={<GmIcon name="chevron-rigth" size={24} color={COLORS.day} />}  />
-                    </View>
-                  </View>
-                </View>
-              </View>
-            </View> */}
-
-            {/* <HomeButton active title="Minhas faturas" custom_icon={<GmIcon name="boleto" size={24} color={COLORS.dawn} />} block/>
-            <HomeButton title="Pagamento automático" custom_icon={<GmIcon name="loop-payment" size={24} color={COLORS.day} />} block/>
-            <HomeButton title="Nota fiscal" custom_icon={<GmIcon name="paper" size={24} color={COLORS.day} />} block/> */}
-            {/* <ListGroup>
-              {devices.map((item)=>{
-                  return <ListButton
-                            key={item.imei}
-                            title={item.device.devicename}
-                            subtitle={carStatus(item.accstatus, item.speed) + ` (${new Date(item.acctime * 1000).toUTCString().match(/(\d\d:\d\d:\d\d)/)[0]})`}
-                            custom_icon={
-                              <GmIcon name="carro" size={30} acc={item.accstatus} speed={item.speed} />
-                            }
-                            iconColor="orange"
-                            onPress={()=>navigation.push('Detalhes', { device: item })}>
-                          </ListButton>
-              })}
-              </ListGroup> */}
-              {/* <Item title='test 1' icon="radio-button-on" /> */}
-              {/* <Item title='test 1' icon="radio-button-on" /> */}
-              {/* <View style={{marginBottom: 15}}></View> */}
-              {/* <Item title='test 1' icon="radio-button-on" /> */}
+            <TouchableOpacity onPress={() => navigation.goBack()} style={{width: 'auto', height: 50, backgroundColor: COLORS.primary, borderRadius: 8, marginBottom: 50, marginTop: 20, marginRight: 20}}>
+              <Text style={{textAlign: 'center', marginTop: 10, fontSize: 18, fontWeight: '700', color: 'black'}}>Voltar</Text>
+            </TouchableOpacity>
           </ScrollView>
       </SafeAreaView>
-    </ImageBackground>
+    </View>
   );
 };
 

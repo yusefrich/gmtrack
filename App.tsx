@@ -11,6 +11,7 @@ import React, { useEffect, useState } from 'react';
 import Icon from 'react-native-ionicons'
 import {
   Alert,
+  ImageBackground,
   Platform,
   StyleSheet,
   Text,
@@ -151,6 +152,18 @@ function App(): JSX.Element {
         // saving error
     }
   }
+  function GmNavHeader(props: any, goBack: boolean, title: string) {
+    return <View style={{height: 78, backgroundColor: '#202125', justifyContent: 'space-between'}}>
+      <ImageBackground source={require("./assets/main-bg.png")} style={{backgroundColor: COLORS.primary, borderBottomLeftRadius: 30, borderBottomRightRadius: 30}}>
+        {goBack &&
+          <TouchableOpacity onPress={() => props.navigation.goBack()} style={{backgroundColor: COLORS.primary, margin: 16, zIndex: 10, marginLeft: 21, borderRadius: 16, width: 45, padding: 10}}>
+            <GmIcon name="arrow-left" size={24} color={'black'} />
+          </TouchableOpacity>
+        }
+        <Text style={{color: '#FFFFFF', fontSize: 15, fontWeight: 'bold', position: 'absolute', width: '100%', textAlign: 'center', height: '100%', textAlignVertical: 'center'}}>{title.substring(0, 20)} {title.length > 20 && '...'}</Text>
+      </ImageBackground>
+    </View>;
+  }
   function NavHeader(props: any, goBack: boolean, title: string) {
     return <View style={{height: 78, backgroundColor: '#202125', justifyContent: 'space-between'}}>
       {goBack &&
@@ -175,13 +188,6 @@ function App(): JSX.Element {
   })
   const TabNav = () => (
       <>
-        {/* {!isLogin && Object.keys(userData).length === 0 &&
-          <Welcome onLogin={()=>setIsLogin(true)} />
-        }
-        {isLogin && Object.keys(userData).length === 0 &&
-          <Login submit={(value: any)=>submitLogin(value)} tokenFcm={tokenFcm} />
-        } */}
-        {/* {Object.keys(userData).length >= 1 && */}
           <Tab.Navigator 
             screenOptions={{
               tabBarActiveTintColor: COLORS.primary,
@@ -236,6 +242,7 @@ function App(): JSX.Element {
               name="Perfil"
               options={{
                 tabBarLabel: '',
+                header: (props) => GmNavHeader(props, true, 'Perfil'),
                 tabBarIcon: ({ color, size, focused }) => (
                     // <Icon name="notifications" style={{color: color}} size={size} />
                     <View style={{padding: 10, marginTop: 15, backgroundColor: focused ? COLORS.dawn : COLORS.grey, borderRadius: 15 }}>
@@ -318,6 +325,7 @@ function App(): JSX.Element {
               name="Mensagem de alarme"
               options={{
                 tabBarLabel: '',
+                header: (props) => NavHeader(props, true, 'Notificação de alarmes'),
                 tabBarIcon: ({ color, size, focused }) => (
                     // <Icon name="notifications" style={{color: color}} size={size} />
                     <View style={{padding: 10, marginTop: 15, backgroundColor: focused ? COLORS.dawn : COLORS.grey, borderRadius: 15 }}>
@@ -352,9 +360,9 @@ function App(): JSX.Element {
           /> */}
           <Stack.Screen name="Faturas" children={()=><MinhasFaturas userData={userData} />} options={{header: (props) => NavHeader(props, true, 'Minhas Faturas')}}
           />
-          <Stack.Screen name="Fatura" children={()=><Fatura userData={userData} />} options={{header: (props) => NavHeader(props, true, 'Detalhe da fatura')}}
+          <Stack.Screen name="Fatura" children={()=><Fatura userData={userData} />} options={{headerShown: false}}
           />
-          <Stack.Screen name="FaturaPix" children={()=><FaturaPix userData={userData} />} options={{header: (props) => NavHeader(props, true, 'Detalhe da fatura')}}
+          <Stack.Screen name="FaturaPix" children={()=><FaturaPix userData={userData} />} options={{headerShown: false}}
           />
 
         </Stack.Navigator>

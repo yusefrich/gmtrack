@@ -22,6 +22,7 @@ import Suporte from '../assets/icons/suporte.svg';
 import Eu from '../assets/icons/eu.svg';
 import Card from '../assets/icons/card.svg';
 import Pix from '../assets/icons/pix.svg';
+import Key from '../assets/icons/key.svg';
 import ChevronRight from '../assets/icons/chevron-right.svg';
 import LoopPayment from '../assets/icons/loop-payment.svg';
 
@@ -111,6 +112,10 @@ const GmIcon = (props) => {
             }
             {iconName === 'pix' &&
                 <Pix width={size} height={size} style={{color: color}} />
+                // <Image source={require('../assets/icons/home.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+            }
+            {iconName === 'key' &&
+                <Key width={size} height={size} style={{color: color}} />
                 // <Image source={require('../assets/icons/home.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
             }
 
