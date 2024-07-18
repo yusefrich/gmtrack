@@ -24,7 +24,7 @@ import COLORS from '../constants/colors';
 import HomeButton from '../components/HomeButton';
 import GmInfo from '../components/GmInfo';
 
-const Financeiro = ({ userData }) => {
+const PagamentoAuto = ({ userData }) => {
   const navigation = useNavigation();
 
   return (
@@ -38,10 +38,16 @@ const Financeiro = ({ userData }) => {
               </View>
               <Text style={{color: 'white'}}>Aqui você pode baixar sua fatura, baixar sua nota fiscal e ainda cadastra seu cartão de credito para  pagamento automático</Text>
             </View> */}
-            <GmInfo title="Você sabia?" text="Aqui você pode baixar sua fatura, baixar sua nota fiscal e ainda cadastra seu cartão de credito para  pagamento automático" />
-            <HomeButton title="Minhas faturas" gm_icon="boleto" onPress={()=>navigation.push('Faturas')} block/>
-            <HomeButton title="Pagamento automático" gm_icon="loop-payment" onPress={()=>navigation.push('PagamentoAuto')} block/>
-            <HomeButton title="Nota fiscal" gm_icon="paper" onPress={()=>navigation.push('Notas')} block/>
+            <GmInfo title="Você sabia?" text="Aqui você pode cadastrar o seu cartão de crédito e ativar o pagamento automático da sua fatura." />
+            <View>
+              <TouchableOpacity style={{borderWidth: 2, borderRadius: 12, borderColor: 'white', borderStyle: 'dashed', flexDirection: 'row', justifyContent: 'center', paddingVertical: 30, marginRight: 20}}>
+                <GmIcon name="creditcard" size={35} color="white" />
+              </TouchableOpacity>
+              <Text style={{color: 'white'}}>Adicionar nova forma de pagamento</Text>
+            </View>
+            {/* <HomeButton title="Minhas faturas" gm_icon="boleto" onPress={()=>navigation.push('Faturas')} block/>
+            <HomeButton title="Pagamento automático" gm_icon="loop-payment" block/>
+            <HomeButton title="Nota fiscal" gm_icon="paper" onPress={()=>navigation.push('Notas')} block/> */}
             {/* <ListGroup>
               {devices.map((item)=>{
                   return <ListButton
@@ -146,4 +152,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Financeiro;
+export default PagamentoAuto;

@@ -11,6 +11,7 @@ import {
   Modal,
   Pressable,
   ImageBackground,
+  ActivityIndicator,
 } from 'react-native';
 import GmIcon from '../components/GmIcon';
 import { useFocusEffect } from '@react-navigation/native';
@@ -27,13 +28,15 @@ import GmButton from '../components/GmButton';
 const MinhasFaturas = ({ userData }) => {
   const [bills, setBills] = useState([]);
   const [onFocus, setOnFocus] = useState(false);
-  const [counter, setCounter] = useState(10);
+  const [loading, setLoading] = useState(false);
   const [currentTimeout, setCurrentTimeout] = useState(null);
   const navigation = useNavigation();
 
   const fetchBills = async () => {
     console.log('fetching user track')
+    setLoading(true);
       const [data, err] = await api.bills(userData)
+      setLoading(false)
       console.log('bills', data.data.length)
       console.log('err', err)
       if (err) {
@@ -79,6 +82,9 @@ const MinhasFaturas = ({ userData }) => {
     <ImageBackground source={require("../assets/main-bg.png")} style={styles.splash}>
       <SafeAreaView style={styles.container}>
           <ScrollView>
+              {loading &&
+                <ActivityIndicator name="loading" color={COLORS.day} size="small" />
+              }
               {bills.map((item)=>{
                 return(
                   <TouchableOpacity style={[{padding: 20, marginRight: 20, marginBottom: 15, borderRadius: 20, borderLeftWidth: 20}, item.Pago === '1' ? styles.cardSuccess : vencido(item.Vencimento) ? styles.cardDanger :  styles.cardInfo]} onPress={()=>navigation.push('Fatura', { bill: item })}>

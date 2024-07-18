@@ -25,6 +25,16 @@ import Pix from '../assets/icons/pix.svg';
 import Key from '../assets/icons/key.svg';
 import ChevronRight from '../assets/icons/chevron-right.svg';
 import LoopPayment from '../assets/icons/loop-payment.svg';
+import Central from '../assets/icons/central.svg';
+import Chat from '../assets/icons/chat.svg';
+import Email from '../assets/icons/email.svg';
+import Jobs from '../assets/icons/jobs.svg';
+import Social from '../assets/icons/social.svg';
+import Loading from '../assets/icons/loading.svg';
+import Check from '../assets/icons/check.svg';
+import CheckBig from '../assets/icons/checkbig.svg';
+import MasterCard from '../assets/icons/mastercard.svg';
+import CreditCard from '../assets/icons/creditcard.svg';
 
 const GmIcon = (props) => {
     const iconName = props.name;
@@ -78,6 +88,22 @@ const GmIcon = (props) => {
                 <Cerca width={size} height={size} style={{color: color}} />
                 // <Image source={require('../assets/icons/home.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
             }
+            {iconName === 'check' &&
+                <Check width={size} height={size} style={{color: color}} />
+                // <Image source={require('../assets/icons/home.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+            }
+            {iconName === 'check-big' &&
+                <CheckBig width={size} height={size} style={{color: color}} />
+                // <Image source={require('../assets/icons/home.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+            }
+            {iconName === 'mastercard' &&
+                <MasterCard width={size} height={size} style={{color: color}} />
+                // <Image source={require('../assets/icons/home.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+            }
+            {iconName === 'creditcard' &&
+                <CreditCard width={size} height={size} style={{color: color}} />
+                // <Image source={require('../assets/icons/home.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+            }
             {iconName === 'compartilhar' &&
                 <Compartilhar width={size} height={size} style={{color: color}} />
                 // <Image source={require('../assets/icons/home.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
@@ -117,6 +143,26 @@ const GmIcon = (props) => {
             {iconName === 'key' &&
                 <Key width={size} height={size} style={{color: color}} />
                 // <Image source={require('../assets/icons/home.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+            }
+            {iconName === 'central' &&
+                <Central width={size} height={size} style={{color: color}} />
+                // <Image source={require('../assets/icons/home.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+            }
+            {iconName === 'chat' &&
+                <Chat width={size} height={size} style={{color: color}} />
+                // <Image source={require('../assets/icons/home.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+            }
+            {iconName === 'email' &&
+                <Email width={size} height={size} style={{color: color}} />
+            }
+            {iconName === 'jobs' &&
+                <Jobs width={size} height={size} style={{color: color}} />
+            }
+            {iconName === 'social' &&
+                <Social width={size} height={size} style={{color: color}} />
+            }
+            {iconName === 'loading' &&
+                <Loading width={size} height={size} style={{color: color}} />
             }
 
             {iconName === 'traffic' &&

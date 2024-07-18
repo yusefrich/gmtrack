@@ -51,6 +51,11 @@ import Financeiro from './pages/Financeiro';
 import MinhasFaturas from './pages/MinhasFaturas';
 import Fatura from './pages/Fatura';
 import FaturaPix from './pages/FaturaPix';
+import Suporte from './pages/Suporte';
+import Notas from './pages/Notas';
+import NotaFiscal from './pages/NotaFiscal';
+import PagamentoAuto from './pages/PagamentoAuto';
+import CentralDeAjuda from './pages/CentralDeAjuda';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -230,6 +235,7 @@ function App(): JSX.Element {
               name="Suporte"
               options={{
                 tabBarLabel: '',
+                header: (props) => GmNavHeader(props, true, 'Suporte'),
                 tabBarIcon: ({ color, size, focused }) => (
                     // <Icon name="notifications" style={{color: color}} size={size} />
                     <View style={{padding: 10, marginTop: 15, backgroundColor: focused ? COLORS.dawn : COLORS.grey, borderRadius: 15 }}>
@@ -237,7 +243,7 @@ function App(): JSX.Element {
                     </View>
                   ),
                 }}
-              children={()=><Alarms userData={userData} />} />
+              children={()=><Suporte userData={userData} />} />
             <Tab.Screen
               name="Perfil"
               options={{
@@ -358,7 +364,15 @@ function App(): JSX.Element {
           <Stack.Screen name="Chat" children={()=><Chat />} options={{header: (props) => NavHeader(props, true, 'Chat')}} />
           {/* <Stack.Screen name="Financeiro" children={()=><Financeiro userData={userData} />} options={{header: (props) => NavHeader(props, true, 'Financeiro')}}
           /> */}
-          <Stack.Screen name="Faturas" children={()=><MinhasFaturas userData={userData} />} options={{header: (props) => NavHeader(props, true, 'Minhas Faturas')}}
+          <Stack.Screen name="CentralDeAjuda" children={()=><CentralDeAjuda userData={userData} />} options={{header: (props) => GmNavHeader(props, true, 'Central de ajuda')}}
+          />
+          <Stack.Screen name="Faturas" children={()=><MinhasFaturas userData={userData} />} options={{header: (props) => GmNavHeader(props, true, 'Minhas Faturas')}}
+          />
+          <Stack.Screen name="Notas" children={()=><Notas userData={userData} />} options={{header: (props) => GmNavHeader(props, true, 'Notas Fiscais')}}
+          />
+          <Stack.Screen name="PagamentoAuto" children={()=><PagamentoAuto userData={userData} />} options={{header: (props) => GmNavHeader(props, true, 'Pagamento Automático')}}
+          />
+          <Stack.Screen name="NotaFiscal" children={()=><NotaFiscal userData={userData} />} options={{headerShown: false}}
           />
           <Stack.Screen name="Fatura" children={()=><Fatura userData={userData} />} options={{headerShown: false}}
           />

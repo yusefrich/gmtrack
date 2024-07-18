@@ -65,7 +65,7 @@ const FaturaPix = ({ userData }) => {
       <SafeAreaView style={styles.container}>
           <ScrollView>
             <Text style={{color: 'white', fontWeight: '400', marginLeft: 5, fontSize: 15, textTransform: 'uppercase', textAlign: 'center', marginBottom: 20}}>JUNHO 2024</Text>
-            <View style={{backgroundColor: 'white', borderRadius: 20, color: 'black', marginRight: 20, padding: 20, paddingTop: 20, paddingBottom: 20}}>
+            <View style={{backgroundColor: '#EDEDED', borderRadius: 20, color: 'black', marginRight: 20, padding: 20, paddingTop: 20, paddingBottom: 20}}>
               <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 10}}>
                 <Text style={{color: 'black', fontWeight: '400', marginLeft: 5, fontSize: 18}}>Data</Text>
                 <Text style={[{fontWeight: '700', marginLeft: 5, fontSize: 18}, {color: 'black'}]}>10/06</Text>

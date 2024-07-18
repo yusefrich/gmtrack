@@ -5,6 +5,7 @@ import ListGroup from '../components/ListGroup';
 import ListButton from '../components/ListButton';
 import COLORS from '../constants/colors';
 import GmIcon from '../components/GmIcon';
+import { useNavigation } from '@react-navigation/native';
 
 const Item = ({title, icon}) => (
   <TouchableOpacity style={styles.item} activeOpacity={0.85}>
@@ -19,6 +20,7 @@ const Item = ({title, icon}) => (
 const colorBg = COLORS.primary.replace('#', '')
 export default UserProfileView = ({userData, onExit}) => {
 
+const navigation = useNavigation();
 return (
     <ImageBackground source={require("../assets/main-bg.png")} style={styles.splash}>
         <ScrollView>
@@ -84,7 +86,20 @@ return (
                     </View>
                 </TouchableOpacity>
             </View>
-
+            <View style={{height: 80, margin: 14}}>
+                <TouchableOpacity style={{flex: 1, flexDirection: 'row', backgroundColor: COLORS.black, borderRadius: 20, padding: 15}} onPress={()=>navigation.push('Login')}>
+                    <View style={{backgroundColor: COLORS.grey, width: 45, height: 45, borderRadius: 50, padding: 8, marginTop: 3, marginRight: 10}}>
+                        <GmIcon name="eu" size={30} color={COLORS.day} />
+                    </View>
+                    <View style={{marginRight: 'auto'}}>
+                        <Text style={{fontSize: 18, fontWeight: '700', color: 'white'}}>Sair</Text>
+                        <Text style={{fontSize: 15, fontWeight: '400', color: 'white'}}>Entrar com um novo usuario.</Text>
+                    </View>
+                    <View style={{backgroundColor: COLORS.grey, width: 40, height: 40, borderRadius: 10, padding: 8, marginTop: 5}}>
+                        <GmIcon name="arrow-right" size={25} color={COLORS.day} />
+                    </View>
+                </TouchableOpacity>
+            </View>
             {/* <View style={styles.body}>
                 <ListGroup>
                     <ListButton title='Mensagem' icon="mail"></ListButton>

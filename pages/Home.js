@@ -60,10 +60,10 @@ function Home(params) {
             <Text style={styles.sectionTitle}>Acesso Rápido</Text>
           </View>
           <View style={styles.row}>
-            <HomeButton active subTitle="Rastrear" custom_icon={<GmIcon name="marker" size={24} color={COLORS.dawn} />} onPress={()=>navigation.push('Second', { screen: 'Monitor' })}/>
-            <HomeButton subTitle="Minhas faturas" custom_icon={<GmIcon name="boleto" size={24} color={COLORS.day} />} onPress={()=>navigation.push('Main' , { screen: 'Financeiro'})} />
-            <HomeButton subTitle="Indique um amigo" custom_icon={<GmIcon name="hands" size={24} color={COLORS.day} />} />
-            <HomeButton subTitle="Falar pelo 0800" custom_icon={<GmIcon name="wp" size={24} color={COLORS.day} />} />
+            <HomeButton subTitle="Rastrear" gm_icon="marker" onPress={()=>navigation.push('Second', { screen: 'Monitor' })}/>
+            <HomeButton subTitle="Minhas faturas" gm_icon="boleto" onPress={()=>navigation.push('Main' , { screen: 'Financeiro'})} />
+            <HomeButton subTitle="Indique um amigo" gm_icon="hands" />
+            <HomeButton subTitle="Falar pelo 0800" gm_icon="wp" />
           </View>
           <View style={styles.sectionContainer}>
             <Text style={styles.sectionTitle}>Destaques</Text>
@@ -79,6 +79,9 @@ function Home(params) {
                 scrollAnimationDuration={1000}
                 // mode={'vertical-stack'}
                 pagingEnabled={true}
+                panGestureHandlerProps={{
+                  activeOffsetX: [-10, 10],
+                }}
                 modeConfig={{
                   snapDirection: 'left',
                   stackInterval: 8,
