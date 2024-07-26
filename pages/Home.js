@@ -18,7 +18,7 @@ import {
 import Icon from 'react-native-ionicons';
 import Carousel from 'react-native-reanimated-carousel';
 import COLORS from '../constants/colors';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import HomeButton from '../components/HomeButton';
 import GmIcon from '../components/GmIcon';
 import GmButton from '../components/GmButton';
@@ -38,7 +38,15 @@ function Home(params) {
     // console.log('url ', url)
     await Linking.openURL(url);
   }
-
+    useFocusEffect(
+        React.useCallback(() => {
+            let isActive = true;
+            
+            return () => {
+                isActive = false;
+            };
+        }, [])
+    );
   return (
     <ImageBackground source={require("../assets/main-bg.png")} style={styles.splash}>
       <ScrollView style={styles.scrollContainer}>

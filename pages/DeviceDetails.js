@@ -46,11 +46,11 @@ const DeviceDetails = ({ userData }) => {
       <SafeAreaView style={styles.container}>
           <ScrollView>
             <View style={styles.row}>
-              <HomeButton active subTitle="Rastrear" custom_icon={<GmIcon name="marker" size={24} color={COLORS.dawn} />}/>
-              <HomeButton subTitle="Histórico" custom_icon={<GmIcon name="historico" size={24} color={COLORS.day} />} onPress={()=>navigation.push('Financeiro')} />
+              <HomeButton active subTitle="Rastrear" custom_icon={<GmIcon name="marker" size={24} color={COLORS.day} />} onPress={()=>navigation.push('Second', { screen: 'Monitor' })}/>
+              <HomeButton subTitle="Histórico" custom_icon={<GmIcon name="historico" size={24} color={COLORS.day} />} onPress={()=>navigation.push('Historico', { device: route.params.device.device })} />
               <HomeButton subTitle="Dados do veículo" custom_icon={<GmIcon name="pasta" size={24} color={COLORS.day} />} />
             </View>
-            <HomeButton active title="Alarmes" custom_icon={<GmIcon name="sino" size={24} color={COLORS.dawn} />} onPress={()=>navigation.push('Faturas')} block/>
+            <HomeButton active title="Alarmes" custom_icon={<GmIcon name="sino" size={24} color={COLORS.day} />} onPress={()=>navigation.push('Faturas')} block/>
             <HomeButton title="Cerca" custom_icon={<GmIcon name="cerca" size={24} color={COLORS.day} />} block/>
             <HomeButton title="Compartilhar Localização" custom_icon={<GmIcon name="compartilhar" size={24} color={COLORS.day} />} block/>
             {/* <ListGroup>
@@ -82,12 +82,6 @@ const styles = StyleSheet.create({
     splash: {
       backgroundColor: COLORS.night,
       height: '100%'
-    },
-    row: {
-      flex: 1,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginBottom: 10
     },
     container: {
         flex: 1,
@@ -156,7 +150,7 @@ const styles = StyleSheet.create({
     row: {
       flex: 1,
       flexDirection: 'row',
-      justifyContent: 'space-between',
+      justifyContent: 'space-around',
       width: '95%',
       marginBottom: 10
     },

@@ -35,6 +35,19 @@ import Check from '../assets/icons/check.svg';
 import CheckBig from '../assets/icons/checkbig.svg';
 import MasterCard from '../assets/icons/mastercard.svg';
 import CreditCard from '../assets/icons/creditcard.svg';
+import Poi from '../assets/icons/poi.svg';
+import ChevronUp from '../assets/icons/chevron-up.svg';
+import ChevronDown from '../assets/icons/chevron-down.svg';
+import Plus from '../assets/icons/plus.svg';
+import Minus from '../assets/icons/minus.svg';
+import Center from '../assets/icons/center.svg';
+import TextIcon from '../assets/icons/text.svg';
+import Refresh from '../assets/icons/refresh.svg';
+import Traffic from '../assets/icons/traffic.svg';
+import MapsIcon from '../assets/icons/maps.svg';
+import Fence from '../assets/icons/fence.svg';
+import Street from '../assets/icons/street.svg';
+import Loc from '../assets/icons/loc.svg';
 
 const GmIcon = (props) => {
     const iconName = props.name;
@@ -62,6 +75,9 @@ const GmIcon = (props) => {
             }
             {iconName === 'marker' &&
                 <Marker width={size} height={size} style={{color: color}} />
+            }
+            {iconName === 'center' &&
+                <Center width={size} height={size} style={{color: color}} />
             }
             {iconName === 'boleto' &&
                 <Boleto width={size} height={size} style={{color: color}} />
@@ -161,21 +177,35 @@ const GmIcon = (props) => {
             {iconName === 'social' &&
                 <Social width={size} height={size} style={{color: color}} />
             }
+            {iconName === 'chevron-up' &&
+                <ChevronUp width={size} height={size} style={{color: color}} />
+            }
+            {iconName === 'chevron-down' &&
+                <ChevronDown width={size} height={size} style={{color: color}} />
+            }
+            {iconName === 'plus' &&
+                <Plus width={size} height={size} style={{color: color}} />
+            }
+            {iconName === 'refresh' &&
+                <Refresh width={size} height={size} style={{color: color}} />
+            }
+            {iconName === 'minus' &&
+                <Minus width={size} height={size} style={{color: color}} />
+            }
             {iconName === 'loading' &&
                 <Loading width={size} height={size} style={{color: color}} />
             }
-
             {iconName === 'traffic' &&
-                <Image source={require('../assets/icons/traffic-light-solid.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+                <Traffic width={size} height={size} style={{color: color}} />
             }
             {iconName === 'map' &&
-                <Image source={require('../assets/icons/clone-regular.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+                <MapsIcon width={size} height={size} style={{color: color}} />
             }
             {iconName === 'text' &&
-                <Image source={require('../assets/icons/text.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+                <TextIcon width={size} height={size} style={{color: color}} />
             }
             {iconName === 'poi' &&
-                <Image source={require('../assets/icons/poi.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+                <Poi width={size} height={size} style={{color: color}} />
             }
             {iconName === 'arrow-left' &&
                 <Image source={require('../assets/icons/chevron-left-solid.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
@@ -187,13 +217,13 @@ const GmIcon = (props) => {
                 <Image source={require('../assets/icons/rotate-solid.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
             }
             {iconName === 'loc' &&
-                <Image source={require('../assets/icons/location-arrow-solid.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+                <Loc width={size} height={size} style={{color: color}} />
             }
             {iconName === 'street' &&
-                <Image source={require('../assets/icons/street-view-solid.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+                <Street width={size} height={size} style={{color: color}} />
             }
             {iconName === 'fence' &&
-                <Image source={require('../assets/icons/xmarks-lines-solid.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />
+                <Fence width={size} height={size} style={{color: color}} />
             }
             {iconName === 'terminal' &&
                 <Image source={require('../assets/icons/terminal-solid.png')} style={[{width: size, height: size, resizeMode: 'contain'}, color ? { tintColor: color } : { tintColor: 'black' }]} />

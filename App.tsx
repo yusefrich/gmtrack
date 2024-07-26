@@ -7,7 +7,7 @@ import 'react-native-gesture-handler';
  */
 
 // import {GEOCODING_KEY} from '@env'
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Icon from 'react-native-ionicons'
 import {
   Alert,
@@ -56,6 +56,9 @@ import Notas from './pages/Notas';
 import NotaFiscal from './pages/NotaFiscal';
 import PagamentoAuto from './pages/PagamentoAuto';
 import CentralDeAjuda from './pages/CentralDeAjuda';
+// import Geolocation from '@react-native-community/geolocation';
+
+// Geolocation.setRNConfiguration(config);
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -79,6 +82,7 @@ function App(): JSX.Element {
   const [token, setToken] = useState('');
   const [isLogin, setIsLogin] = useMMKVStorage('isLogin', storage, false);
   // const [userData, setUserData] = useState({});
+  const monitorRef = useRef();
 
   // const navigation = useNavigation()
   const RNfirebaseConfig = {
@@ -169,14 +173,19 @@ function App(): JSX.Element {
       </ImageBackground>
     </View>;
   }
-  function NavHeader(props: any, goBack: boolean, title: string) {
-    return <View style={{height: 78, backgroundColor: '#202125', justifyContent: 'space-between'}}>
+  function NavHeader(props: any, goBack: boolean, title: string, refresh: boolean) {
+    return <View style={{height: 78, backgroundColor: '#202125', justifyContent: 'space-between', flexDirection: 'row'}}>
       {goBack &&
         <TouchableOpacity onPress={() => props.navigation.goBack()} style={{backgroundColor: '#595A5E', margin: 16, zIndex: 10, marginLeft: 21, borderRadius: 16, width: 45, padding: 10}}>
           <GmIcon name="arrow-left" size={24} color={'#FFFFFF'} />
         </TouchableOpacity>
       }
       <Text style={{color: '#FFFFFF', fontSize: 15, fontWeight: 'bold', position: 'absolute', width: '100%', textAlign: 'center', height: '100%', textAlignVertical: 'center'}}>{title.substring(0, 20)} {title.length > 20 && '...'}</Text>
+      {refresh &&
+        <TouchableOpacity onPress={() => monitorRef?.current?.refreshMap()} style={{backgroundColor: '#595A5E', margin: 16, zIndex: 10, marginLeft: 21, borderRadius: 16, width: 45, padding: 10}}>
+          <GmIcon name="refresh" size={24} color={'#FFFFFF'} />
+        </TouchableOpacity>
+      }
     </View>;
   }
   useEffect(() => {
@@ -222,7 +231,7 @@ function App(): JSX.Element {
               name="Financeiro"
               options={{
                 tabBarLabel: '',
-                header: (props) => NavHeader(props, true, 'Financeiro'),
+                header: (props) => NavHeader(props, true, 'Financeiro', false),
                 tabBarIcon: ({ color, size, focused }) => (
                     // <Icon name="notifications" style={{color: color}} size={size} />
                     <View style={{padding: 10, marginTop: 15, backgroundColor: focused ? COLORS.dawn : COLORS.grey, borderRadius: 15 }}>
@@ -304,7 +313,7 @@ function App(): JSX.Element {
               options={{
                 tabBarLabel: '',
                 // headerTitleAlign: 'center',
-                header: (props) => NavHeader(props, true, username),
+                header: (props) => NavHeader(props, true, username, true),
                 tabBarIcon: ({ color, size, focused }) => (
                     // <Icon name="globe" style={{color: color}} size={size} />
                     <View style={{padding: 10, marginTop: 15, backgroundColor: focused ? COLORS.dawn : COLORS.grey, borderRadius: 15 }}>
@@ -312,13 +321,13 @@ function App(): JSX.Element {
                     </View>
                   ),
                 }}
-              children={()=><Monitor userData={userData} />}
+              children={()=><Monitor innerRef={monitorRef} userData={userData} />}
             />
             <Tab.Screen
               name="Selecionar"
               options={{
                 tabBarLabel: '',
-                header: (props) => NavHeader(props, true, 'Selecionar'),
+                header: (props) => NavHeader(props, true, 'Selecionar', false),
                 tabBarIcon: ({ color, size, focused }) => (
                     // <Icon name="list" style={{color: color}} size={size} />
                     <View style={{padding: 10, marginTop: 15, backgroundColor: focused ? COLORS.dawn : COLORS.grey, borderRadius: 15 }}>
@@ -331,7 +340,7 @@ function App(): JSX.Element {
               name="Mensagem de alarme"
               options={{
                 tabBarLabel: '',
-                header: (props) => NavHeader(props, true, 'Notificação de alarmes'),
+                header: (props) => NavHeader(props, true, 'Notificação de alarmes', false),
                 tabBarIcon: ({ color, size, focused }) => (
                     // <Icon name="notifications" style={{color: color}} size={size} />
                     <View style={{padding: 10, marginTop: 15, backgroundColor: focused ? COLORS.dawn : COLORS.grey, borderRadius: 15 }}>
@@ -355,13 +364,13 @@ function App(): JSX.Element {
           <Stack.Screen name="Login" options={{headerShown: false}} children={(props)=><Login submit={(value: any)=>submitLogin(value, props)} tokenFcm={tokenFcm} />} />
           <Stack.Screen name="Main" options={{headerShown: false}} component={TabNav} />
           <Stack.Screen name="Second" options={{headerShown: false}} component={MonitorNav} />
-          <Stack.Screen name="Detalhes" options={{header: (props) => NavHeader(props, true, 'Detalhes')}} children={()=><DeviceDetails userData={userData} />} />
+          <Stack.Screen name="Detalhes" options={{header: (props) => NavHeader(props, true, 'Detalhes', false)}} children={()=><DeviceDetails userData={userData} />} />
           <Stack.Screen name="Comandos" children={()=><DeviceTerminal userData={userData} />} />
           <Stack.Screen name="Centralizar" children={()=><DeviceMap userData={userData} />} />
           <Stack.Screen name="Historico" children={()=><DeviceHistory userData={userData} />} />
           <Stack.Screen name="Alarmes" children={()=><DeviceAlarms userData={userData} />} />
           <Stack.Screen name="Alarme" children={()=><AlarmDetail userData={userData} />} />
-          <Stack.Screen name="Chat" children={()=><Chat />} options={{header: (props) => NavHeader(props, true, 'Chat')}} />
+          <Stack.Screen name="Chat" children={()=><Chat />} options={{header: (props) => NavHeader(props, true, 'Chat', false)}} />
           {/* <Stack.Screen name="Financeiro" children={()=><Financeiro userData={userData} />} options={{header: (props) => NavHeader(props, true, 'Financeiro')}}
           /> */}
           <Stack.Screen name="CentralDeAjuda" children={()=><CentralDeAjuda userData={userData} />} options={{header: (props) => GmNavHeader(props, true, 'Central de ajuda')}}

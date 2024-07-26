@@ -60,7 +60,7 @@ const Alarms = ({ userData }) => {
     <ImageBackground source={require("../assets/main-bg.png")} style={styles.splash}>
       <SafeAreaView style={styles.container}>
           <ScrollView>
-            <View style={{height: 80, margin: 14}}>
+            {/* <View style={{height: 80, margin: 14}}>
                 <TouchableOpacity style={{flex: 1, flexDirection: 'row', backgroundColor: COLORS.dawn, borderRadius: 20, padding: 15}}>
                     <View style={{backgroundColor: COLORS.primary, width: 45, height: 45, borderRadius: 50, padding: 8, marginTop: 3, marginRight: 10}}>
                         <GmIcon name="key" size={30} color="#00FF00" />
@@ -81,29 +81,39 @@ const Alarms = ({ userData }) => {
                       </View>
                     </View>
                 </TouchableOpacity>
-            </View>
-            <View style={{height: 80, margin: 14}}>
-                <TouchableOpacity style={{flex: 1, flexDirection: 'row', backgroundColor: COLORS.black, borderRadius: 20, padding: 15}}>
-                    <View style={{backgroundColor: COLORS.grey, width: 45, height: 45, borderRadius: 50, padding: 8, marginTop: 3, marginRight: 10}}>
-                        <GmIcon name="key" size={30} color="#E03F3F" />
-                    </View>
-                    <View style={{marginRight: 'auto'}}>
-                        <Text style={{fontSize: 18, fontWeight: '700', color: 'white'}}>Ignição Desligada</Text>
-                        <Text style={{fontSize: 15, fontWeight: '600', color: '#7C7A80'}}>Toyota Hilux</Text>
-                    </View>
-                    <View>
-                      <View style={{flex: 1, flexDirection: 'row'}}>
-                        <View style={{marginTop: 8, marginRight: 3}}>
-                          <Text style={{fontSize: 13, fontWeight: '700', color: '#7C7A80'}}>28/05/2024</Text>
-                          <Text style={{fontSize: 10, fontWeight: '600', color: '#7C7A80'}}>18h 29m 50s</Text>
-                        </View>
-                        <View style={{backgroundColor: COLORS.grey, width: 40, height: 40, borderRadius: 10, padding: 8, marginTop: 5}}>
-                            <GmIcon name="arrow-right" size={25} color={COLORS.day} />
-                        </View>
-                      </View>
-                    </View>
-                </TouchableOpacity>
-            </View>
+            </View> */}
+                {alarms.map((item)=>{
+                    return <View style={{height: 80, margin: 14}}>
+                      <TouchableOpacity style={{flex: 1, flexDirection: 'row', backgroundColor: COLORS.black, borderRadius: 20, padding: 15}}>
+                          <View style={{backgroundColor: COLORS.grey, width: 45, height: 45, borderRadius: 50, padding: 8, marginTop: 3, marginRight: 10}}>
+                            {item?.type == 'Motor desligado' &&
+                              <GmIcon name="key" size={30} color="#E03F3F" />
+                            }
+                            {item?.type == 'Motor ligado' &&
+                              <GmIcon name="key" size={30} color="#00FF00" />
+                            }
+                          </View>
+                          <View style={{marginRight: 'auto'}}>
+                              <Text style={{fontSize: 18, fontWeight: '700', color: 'white'}}>{item?.type}</Text>
+                              <Text style={{fontSize: 15, fontWeight: '600', color: '#7C7A80'}}>{item?.device.devicename.substring(0, 17)} {item?.device.devicename.length > 17 && '...'}</Text>
+                          </View>
+                          <View>
+                            <View style={{flex: 1, flexDirection: 'row'}}>
+                              <View style={{marginTop: 8, marginRight: 3}}>
+                                <Text style={{fontSize: 13, fontWeight: '700', color: '#7C7A80'}}>{item?.gps_time.split(' ')[0]}</Text>
+                                <Text style={{fontSize: 13, fontWeight: '700', color: '#7C7A80'}}>{item?.gps_time.split(' ')[1]}</Text>
+                                {/* <Text style={{fontSize: 10, fontWeight: '600', color: '#7C7A80'}}>18h 29m 50s</Text> */}
+                              </View>
+                              <View style={{backgroundColor: COLORS.grey, width: 40, height: 40, borderRadius: 10, padding: 8, marginTop: 5}}>
+                                  <GmIcon name="arrow-right" size={25} color={COLORS.day} />
+                              </View>
+                            </View>
+                          </View>
+                      </TouchableOpacity>
+                  </View>
+                })}
+
+            
 
               {/* <ListGroup>
                 {alarms.map((item)=>{

@@ -62,7 +62,7 @@ const Suporte = ({ userData }) => {
             <View style={styles.row}>
               <HomeButton subTitle="Central de ajuda" gm_icon="central" onPress={()=>navigation.push('CentralDeAjuda', { screen: 'Monitor' })}/>
               <HomeButton subTitle="Falar pelo 0800" gm_icon="wp" onPress={()=>setCallModal(false)} />
-              <HomeButton subTitle="Chat" gm_icon="chat" onPress={()=>navigation.push('Main' , { screen: 'Financeiro'})} />
+              <HomeButton subTitle="Chat" gm_icon="chat" onPress={()=>navigation.push('Chat')} />
             </View>
             <View style={styles.row}>
               <HomeButton subTitle="E-mail" gm_icon="email" onPress={()=>navigation.push('Second', { screen: 'Monitor' })}/>

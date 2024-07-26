@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import Icon from 'react-native-ionicons'
 import COLORS from '../constants/colors'
 import { useNavigation } from '@react-navigation/native';
+import Geolocation from 'react-native-geolocation-service';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import GmIcon from './GmIcon';
 import Geocoder from 'react-native-geocoding';
@@ -36,13 +37,18 @@ const Map = (props) => {
     // const [pins, setPins] = useState(props.pins);
     const [mapType, setMapType] = useState('standard');
     const [showText, setShowText] = useState(false);
+    const [fineLocationPermission, setFineLocationPermission] = useState(false);
     const [info, setInfo] = useState({pin: null, status: false, location: null});
     const [hasTraffic, setHasTraffic] = useState(false);
     const [focusPin, setFocusPin] = useState(null);
     const [showPoi, setShowPoi] = useState(false);
     // const [counter, setCounter] = useState(10);
+    const [zoom, setZoom] = useState(5);
+    const MIN_ZOOM_LEVEL = 3;
+    const MAX_ZOOM_LEVEL = 20;
     const navigation = useNavigation();
-    const markerRef = useRef()
+    const markerRef = useRef();
+    const mapRef = useRef(null);
 
     const showInfo = (pin) => {
         if (!pin || !pin.device) {
@@ -58,6 +64,84 @@ const Map = (props) => {
                 .catch(error => console.warn(error));
         }
     }
+    const centerMap = () => {
+        if (!focusPin) {
+            setFocusPin({ pin: pins[0], index: 0 })
+            setInfo({pin: pins[0], status: true, location: null})
+            Geocoder.from(pins[0].latitude, pins[0].longitude)
+                .then(json => {
+                    setInfo({pin: pins[0], status: true, location: json.results[0].formatted_address})
+                })
+                .catch(error => console.warn(error));
+
+            setRegion({
+                latitude: pins[0].latitude,
+                longitude: pins[0].longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421
+            });
+
+            return
+        }
+
+        mapRef?.current?.animateToRegion({
+            latitude: pins[focusPin.index].latitude,
+            longitude: pins[focusPin.index].longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421
+        }, 100);
+        setRegion({
+            latitude: pins[focusPin.index].latitude,
+            longitude: pins[focusPin.index].longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421
+        });
+    }
+    const handleZoom = (isZoomIn = false) => {
+        let currentZoomLevel = zoom;
+        // if zoomlevel set to max value and user click on minus icon, first decrement the level before checking threshold value
+        if (!isZoomIn && currentZoomLevel === MAX_ZOOM_LEVEL) {
+            currentZoomLevel -= 1;
+        } 
+        // if zoomlevel set to min value and user click on plus icon, first increment the level before checking threshold value
+        else if (isZoomIn && currentZoomLevel === MIN_ZOOM_LEVEL) {
+            currentZoomLevel += 1;
+        }
+        if (
+            currentZoomLevel >= MAX_ZOOM_LEVEL ||
+            currentZoomLevel <= MIN_ZOOM_LEVEL
+        ) {
+            return;
+        }
+    
+        currentZoomLevel = isZoomIn ? currentZoomLevel + 1 : currentZoomLevel - 1;
+        const zoomedInRegion = {
+            ...mapViewCurrentRegion,
+            latitudeDelta: getLatLongDelta(
+                currentZoomLevel,
+                mapViewCurrentRegion.latitude
+            )[1],
+            longitudeDelta: getLatLongDelta(
+                currentZoomLevel,
+                mapViewCurrentRegion.latitude
+            )[0]
+        };
+    
+        setRegion(zoomedInRegion);
+        setZoom(currentZoomLevel);
+        mapRef?.current?.animateToRegion(zoomedInRegion, 100);
+
+    }
+    const getLatLongDelta = (zoom , latitude) => {
+        const LONGITUDE_DELTA = Math.exp(Math.log(360) - zoom * Math.LN2);
+        const ONE_LATITUDE_DEGREE_IN_METERS = 111.32 * 1000;
+        const accurateRegion =
+        LONGITUDE_DELTA *
+        (ONE_LATITUDE_DEGREE_IN_METERS * Math.cos(latitude * (Math.PI / 180)));
+        const LATITUDE_DELTA = accurateRegion / ONE_LATITUDE_DEGREE_IN_METERS;
+
+        return [LONGITUDE_DELTA, LATITUDE_DELTA];
+    };
 
     const openTerminal = () => {
         console.log('opening terminal')
@@ -295,6 +379,7 @@ const Map = (props) => {
         const porc = (playbackPos * 100) / playback.route.length
         return porc + '%'
     }
+
     useEffect(() => {
         // console.log('useEffect being called', pins)
         // setPins(props.pins)
@@ -378,6 +463,7 @@ const Map = (props) => {
                 </View>
             }
             {playback &&
+            <>
                 <View style={{padding: 5, top: 10, left: 10, width: '82%', height: 40, position: 'absolute', zIndex: 2, backgroundColor: '#33333395', borderRadius: 10}}>
                     <View style={{flex: 1, flexDirection: 'row', position: 'relative'}}>
                         <Pressable style={{padding: 5, paddingLeft: 10}} onPress={() => setPausePlayback(!pausePlayback)}>
@@ -394,8 +480,6 @@ const Map = (props) => {
                         </View>
                     </View>
                 </View>
-            }
-            {playback &&
                 <View style={{padding: 5, top: 55, right: 5, position: 'absolute', zIndex: 2}}>
                     <Pressable
                         style={[styles.transparentButton, { backgroundColor: 'rgba(0, 0, 0, .8)' }]}
@@ -406,9 +490,7 @@ const Map = (props) => {
                         <Text style={{color: '#ffffff', paddingHorizontal: 2}}>{speeds[currentPlaybackSpeed]}x</Text>
                     </Pressable>
                 </View>
-            }
-            {playback &&
-                <View style={{padding: 5, top: 95, right: 5, position: 'absolute', zIndex: 2}}>
+                 <View style={{padding: 5, top: 95, right: 5, position: 'absolute', zIndex: 2}}>
                     <Pressable
                         style={[styles.transparentButton, { backgroundColor: 'rgba(0, 0, 0, .8)' }]}
                         onPress={() => showFilter()}>
@@ -416,9 +498,10 @@ const Map = (props) => {
                         <Icon name="funnel" style={{color: '#ffffff', paddingHorizontal: 1}} size={20} />
                     </Pressable>
                 </View>
+            </>
             }
             {pinTitle &&
-                <View style={{padding: 5, top: 45, left: 5, position: 'absolute', zIndex: 2}}>
+                <View style={{padding: 5, bottom: 250, left: 5, position: 'absolute', zIndex: 2}}>
                     <Pressable
                         style={[styles.gmbutton]}
                         onPress={() => {setShowText(!showText)}}>
@@ -426,27 +509,41 @@ const Map = (props) => {
                     </Pressable>
                 </View>
             }
-            <View style={{padding: 5, top: 85, left: 5, position: 'absolute', zIndex: 2}}>
+            <View style={{padding: 5, bottom: 190, left: 5, position: 'absolute', zIndex: 2}}>
                 <Pressable
-                    style={[styles.whiteButton]}
+                    style={[styles.gmbutton]}
                     onPress={() => setShowPoi(!showPoi)}>
-                    <GmIcon name="poi" size={20} color={showPoi ? "orange" : "black"} />
+                    <GmIcon name="poi" size={20} color={showPoi ? "orange" : "white"} />
                 </Pressable>
             </View>
-            {refresh &&
-                <View style={{padding: 5, top: 55, right: 5, position: 'absolute', zIndex: 2}}>
-                    <Pressable
-                        style={[styles.transparentButton, {backgroundColor: 'rgba(0, 0, 0, .8)'}]}
-                        onPress={() => props.refreshCb()}>
-                        <GmIcon name="rotate" size={20} color="white" />
-                        {/* <Icon name="navigate" style={hasTraffic ? {color: COLORS.black} : {color: COLORS.gray}} size={25} /> */}
-                    </Pressable>
-                </View>
-            }
+            <View style={{padding: 5, bottom: 130, left: 5, position: 'absolute', zIndex: 2}}>
+                <Pressable
+                    style={[styles.gmbutton]}
+                    onPress={() => centerMap()}
+                >
+                    <GmIcon name="center" size={20} color={showPoi ? "orange" : "white"} />
+                </Pressable>
+            </View>
+            <View style={{padding: 5, bottom: 70, left: 5, position: 'absolute', zIndex: 2}}>
+                <Pressable
+                    style={[styles.gmbutton]}
+                    onPress={() => handleZoom(true)}>
+                    <GmIcon name="plus" size={20} color={showPoi ? "orange" : "white"} />
+                </Pressable>
+            </View>
+            <View style={{padding: 5, bottom: 10, left: 5, position: 'absolute', zIndex: 2}}>
+                <Pressable
+                    style={[styles.gmbutton]}
+                    onPress={() => handleZoom()}
+                >
+                    <GmIcon name="minus" size={20} color={showPoi ? "orange" : "white"} />
+                </Pressable>
+            </View>
+
             {switcTraffic && 
-                <View style={{padding: 5, top: 95, right: 5, position: 'absolute', zIndex: 2}}>
+                <View style={{padding: 5, top: 0, right: 5, position: 'absolute', zIndex: 2}}>
                     <Pressable
-                        style={[styles.transparentButton, {backgroundColor: 'rgba(0, 0, 0, .8)' }]}
+                        style={[styles.gmbutton]}
                         onPress={() => setHasTraffic(!hasTraffic)}>
                         <GmIcon name="traffic" size={20} color={hasTraffic ? "orange" : "white"} />
                         {/* <Icon name="navigate" style={hasTraffic ? {color: COLORS.black} : {color: COLORS.gray}} size={25} /> */}
@@ -454,48 +551,70 @@ const Map = (props) => {
                 </View>
             }
             {switchMapType && 
-                <View style={{padding: 5, top: 135, right: 5, position: 'absolute', zIndex: 2}}>
+                <View style={{padding: 5, top: 55, right: 5, position: 'absolute', zIndex: 2}}>
                     <Pressable
-                        style={[styles.transparentButton, { backgroundColor: 'rgba(0, 0, 0, .8)' }]}
+                        style={[styles.gmbutton]}
                         onPress={() => mapType === 'hybrid' ? setMapType('standard') : setMapType('hybrid')}>
                         <GmIcon name="map" size={20} color={mapType === 'hybrid' ? "orange" : "white"} />
                     </Pressable>
                 </View>
             }
             {info.status && 
-                <View style={{padding: 5, top: 175, right: 5, position: 'absolute', zIndex: 2}}>
+                <View style={{padding: 5, top: 110, right: 5, position: 'absolute', zIndex: 2}}>
                     <Pressable
-                        style={[styles.transparentButton, { backgroundColor: 'rgba(0, 0, 0, .8)' }]}
+                        style={[styles.gmbutton]}
                         onPress={() => addFence()}>
                         <GmIcon name="fence" size={20} color="white" />
                     </Pressable>
                 </View>
             }
             {info.status &&
-                <View style={{padding: 5, top: 215, right: 5, position: 'absolute', zIndex: 2}}>
+                <View style={{padding: 5, top: 165, right: 5, position: 'absolute', zIndex: 2}}>
                     <Pressable
-                        style={[styles.transparentButton, { backgroundColor: 'rgba(0, 0, 0, .8)' }]}
+                        style={[styles.gmbutton]}
                         onPress={() => openStreetView(info.pin.latitude, info.pin.longitude)}>
                         <GmIcon name="street" size={20} color="white" />
                     </Pressable>
                 </View>
             }
             {info.status && 
-                <View style={{padding: 5, bottom: 105, right: 5, position: 'absolute', zIndex: 2}}>
+                <View style={{padding: 5, top: 220, right: 5, position: 'absolute', zIndex: 2}}>
                     <Pressable
-                        style={[styles.transparentButton, {backgroundColor: 'rgba(0, 0, 0, .8)'}]}
+                        style={[styles.gmbutton]}
+                        onPress={()=>navigation.push('Comandos', { device: info.pin.device })}>
+                        <GmIcon name="terminal" size={20} color="white" />
+                        {/* <Icon name="navigate" style={hasTraffic ? {color: COLORS.black} : {color: COLORS.gray}} size={25} /> */}
+                    </Pressable>
+                </View>
+            }
+            {info.status && 
+                <View style={{padding: 5, top: 275, right: 5, position: 'absolute', zIndex: 2}}>
+                    <Pressable
+                        style={[styles.gmbutton]}
                         onPress={() => openGoogleMaps(info.pin.latitude, info.pin.longitude)}>
                         <GmIcon name="loc" size={20} color="white" />
                         {/* <Icon name="navigate" style={hasTraffic ? {color: COLORS.black} : {color: COLORS.gray}} size={25} /> */}
                     </Pressable>
                 </View>
             }
-            {info.status && 
-                <View style={{padding: 5, bottom: 155, right: 5, position: 'absolute', zIndex: 2}}>
+
+            {pins && pins.length > 1 &&
+                <View style={[{padding: 5, right: 5, position: 'absolute', zIndex: 2}, info.status ? {top: 330} : {top: 110}]}>
                     <Pressable
-                        style={[styles.transparentButton, {backgroundColor: 'rgba(0, 0, 0, .8)'}]}
-                        onPress={()=>navigation.push('Comandos', { device: info.pin.device })}>
-                        <GmIcon name="terminal" size={20} color="white" />
+                        style={[styles.gmbutton]}
+                        onPress={() => updateFocusPin('prev')}>
+                        <GmIcon name="chevron-up" size={20} color="white" />
+                        {/* <Icon name="navigate" style={hasTraffic ? {color: COLORS.black} : {color: COLORS.gray}} size={25} /> */}
+                    </Pressable>
+                </View>
+            }
+
+            {pins && pins.length > 1 &&
+                <View style={[{padding: 5, right: 5, position: 'absolute', zIndex: 2}, info.status ? {top: 385} : {top: 165}]}>
+                    <Pressable
+                        style={[styles.gmbutton]}
+                        onPress={() => updateFocusPin('next')}>
+                        <GmIcon name="chevron-down" size={20} color="white" />
                         {/* <Icon name="navigate" style={hasTraffic ? {color: COLORS.black} : {color: COLORS.gray}} size={25} /> */}
                     </Pressable>
                 </View>
@@ -507,7 +626,7 @@ const Map = (props) => {
                 </View>
             }
 
-            {pins && pins.length > 1 &&
+            {/* {pins && pins.length > 1 &&
                 <View style={{padding: 5, top: '50%', left: 5, position: 'absolute', zIndex: 2}}>
                     <Pressable
                         style={[styles.whiteButton]}
@@ -524,7 +643,7 @@ const Map = (props) => {
                         <GmIcon name="arrow-right" size={20} color="black" />
                     </Pressable>
                 </View>
-            }
+            } */}
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -563,17 +682,19 @@ const Map = (props) => {
                     Platform.OS === 'android' ?
                     PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then(()=>{
                         console.log('Usuario aceitou')
+                        setFineLocationPermission(true);
                     })
                     : ''
                 }}
+                ref={mapRef}
                 onRegionChange={(region)=>onRegionChange(region)}
-                showsUserLocation={true}
+                showsUserLocation={false}
                 mapType={mapType}
                 mode="TRANSIT"
                 style={playback || alarm ? {width, height: height - 100} : {width: width, height: height - 150}}
                 region={region}
                 showsTraffic={hasTraffic}
-                zoomControlEnabled={true}
+                zoomControlEnabled={false}
                 rotateEnabled={false}
                 minZoomLevel={9}
                 loadingEnabled={true}
@@ -727,12 +848,11 @@ const Map = (props) => {
                         >
                             <View style={{position: 'relative', overflow: 'visible'}}>
                                 {info.status && info.pin.device.id === item.device.id &&
-                                    <View style={{backgroundColor: '#33333390', borderColor: '#333333', borderWidth: 1, borderRadius: 5, height: 110}}>
-                                        <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'white', fontWeight: 'bold'}}>{item.device.devicename}({item.device.devicetype})</Text>
-                                        <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'white', fontWeight: 'bold'}}>tempo: {item.gpstime}</Text>
-                                        <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'white', fontWeight: 'bold'}}>course: {item.course} deg</Text>
-                                        <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'white', fontWeight: 'bold'}}>estado: {+item.speed <= 0 ? 'Parado' : 'Em movimento'}</Text>
-                                        <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'white', fontWeight: 'bold'}}>motor: {+item.speed <= 0 ? 'Ligado' : 'Desligado'}</Text>
+                                    <View style={{backgroundColor: '#33333390', borderColor: '#333333', borderWidth: 0, borderRadius: 5, height: 110}}>
+                                        <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'white', fontWeight: 'bold', maxWidth: 250}}>{item.device.devicename}({item.device.devicetype})</Text>
+                                        <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 0, color: 'white', fontWeight: 'bold'}}>Estado: {+item.speed <= 0 ? 'Parado' : 'Em movimento'}</Text>
+                                        <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 0, color: 'white', fontWeight: 'bold'}}>Tempo: {item.gpstime}</Text>
+                                        <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 0, color: 'white', fontWeight: 'bold'}}>Ignição: {+item.accstatus <= 0 ? 'Desligado' : 'Ligado'}</Text>
                                     </View>
                                 }
                                 {showText &&
@@ -790,7 +910,7 @@ const Map = (props) => {
                                         />
                                     } */}
                                     <Image
-                                        source={+item.speed <= 0 ? require("../assets/carroparado.png") : require("../assets/carroandando.png")}
+                                        source={+item.accstatus <= 0 ? require("../assets/carroparado.png") : require("../assets/carroandando.png")}
                                         style={{width: 35, height: 35, transform: [{ rotate: item.course + 'deg'}]}}
                                     />
                                 </View>

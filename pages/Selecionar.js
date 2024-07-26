@@ -21,6 +21,7 @@ import ListButton from '../components/ListButton';
 import { useNavigation } from '@react-navigation/native';
 import api from '../services/api';
 import COLORS from '../constants/colors';
+import CarListButton from '../components/CarListButton';
 
 const Selecionar = ({ userData }) => {
   const [devices, setDevices] = useState([]);
@@ -45,19 +46,6 @@ const Selecionar = ({ userData }) => {
       // console.log('cars => ', data);
       // console.log('devices => ' + JSON.stringify(data));
       setDevices(data)
-  }
-  const carStatus = (acc, speed) => {
-    switch (acc) {
-      case 0:
-        return 'Parado'
-      case 1:
-        if (speed > 0) {
-          return 'Em movimento'
-        }
-        return 'Motor Ligado'
-      default:
-        return 'Sem sinal'
-    }
   }
   useFocusEffect(
       React.useCallback(() => {
@@ -96,17 +84,18 @@ const Selecionar = ({ userData }) => {
               <View style={{width: '95%'}}>
               {/* <ListGroup> */}
                 {devices.map((item)=>{
-                    return <ListButton
+                    return <CarListButton
                               key={item.imei}
+                              item={item}
                               title={item.device.devicename}
-                              subtitle={carStatus(item.accstatus, item.speed)}
+                              subtitle={item.device.platenumber}
                               time={`${new Date(item.acctime * 1000).toUTCString().match(/(\d\d:\d\d:\d\d)/)[0]}`}
                               custom_icon={
                                 <GmIcon name="carro" size={30} acc={item.accstatus} speed={item.speed} />
                               }
                               iconColor="orange"
                               onPress={()=>navigation.push('Detalhes', { device: item })}>
-                            </ListButton>
+                            </CarListButton>
                 })}
               </View>
               {/* </ListGroup> */}

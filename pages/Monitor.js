@@ -6,7 +6,7 @@
  */
 
 // import React from 'react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 import {
   StyleSheet,
   Dimensions,
@@ -17,7 +17,7 @@ import {
 import MapView, { AnimatedRegion, Marker } from 'react-native-maps';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Icon from 'react-native-ionicons'
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
 import { Text } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { Platform } from 'react-native';
@@ -30,13 +30,14 @@ import api from '../services/api';
 
 const {width, height} = Dimensions.get('screen');
 
-const Monitor = ({ userData }) => {
+const Monitor = ({ userData, innerRef }) => {
     const [region, setRegion] = useState(null);
     const [pins, setPins] = useState([]);
     const [mapKey, setMapKey] = useState(1);
     const [counter, setCounter] = useState(10);
     const [currentTimeout, setCurrentTimeout] = useState(null);
     const [hasTraffic, setHasTraffic] = useState(false);
+    const route = useRoute();
 
     const fetchTrack = async () => {
         const [data, err] = await api.userTrack(userData)
@@ -74,10 +75,16 @@ const Monitor = ({ userData }) => {
         setPins(elements)
         // props.submit({userData: responseData, token: responseData.token, carrousel: rresponseData.data})
     }
+    useImperativeHandle(innerRef, () => ({
+        refreshMap: () => {
+            clearTimeout(currentTimeout);
+            setCounter(0);
+        },
+    }));
     useFocusEffect(
         React.useCallback(() => {
             let isActive = true;
-            // console.log('data ', userData)
+            console.log('data ', route);
             fetchTrack()
             // Geolocation.getCurrentPosition(info => {
             //     setRegion({
