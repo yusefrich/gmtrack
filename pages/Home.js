@@ -6,7 +6,7 @@
  */
 
 import React, { useState } from 'react';
-import { Alert, ImageBackground, Linking, TouchableOpacity } from 'react-native';
+import { Alert, ImageBackground, Linking, TouchableOpacity, Share } from 'react-native';
 import { ScrollView } from 'react-native';
 import { Text } from 'react-native';
 import {
@@ -33,7 +33,25 @@ function Home(params) {
 
   const navigation = useNavigation();
   const width = Dimensions.get('window').width;
-
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message:
+          'Olá amigo | Vem pra gmtrack com meu link de indicação https://gmtrack.com.br/',
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      Alert.alert(error.message);
+    }
+  };
   const openUrl = async (url) => {
     // console.log('url ', url)
     await Linking.openURL(url);
@@ -61,7 +79,7 @@ function Home(params) {
               <Text style={styles.headerTitle}>Gmtrack</Text>
             </View>
           </View>
-          <GmButton custom_icon={<GmIcon name="alertas" size={24} color={COLORS.day} />}  />
+          <GmButton custom_icon={<GmIcon name="alertas" size={24} color={COLORS.day} />} onPress={()=>navigation.push('Second', { screen: 'Mensagem de alarme' })} />
         </View>
         <View style={styles.container}>
           <View style={styles.sectionContainer}>
@@ -70,8 +88,8 @@ function Home(params) {
           <View style={styles.row}>
             <HomeButton subTitle="Rastrear" gm_icon="marker" onPress={()=>navigation.push('Second', { screen: 'Monitor' })}/>
             <HomeButton subTitle="Minhas faturas" gm_icon="boleto" onPress={()=>navigation.push('Main' , { screen: 'Financeiro'})} />
-            <HomeButton subTitle="Indique um amigo" gm_icon="hands" />
-            <HomeButton subTitle="Falar pelo 0800" gm_icon="wp" />
+            <HomeButton subTitle="Indique um amigo" gm_icon="hands" onPress={()=>onShare()} />
+            <HomeButton subTitle="Falar pelo 0800" gm_icon="wp" onPress={()=>params?.onPopupModal('wp')} />
           </View>
           <View style={styles.sectionContainer}>
             <Text style={styles.sectionTitle}>Destaques</Text>

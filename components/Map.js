@@ -464,7 +464,7 @@ const Map = (props) => {
             }
             {playback &&
             <>
-                <View style={{padding: 5, top: 10, left: 10, width: '82%', height: 40, position: 'absolute', zIndex: 2, backgroundColor: '#33333395', borderRadius: 10}}>
+                <View style={{padding: 5, top: 10, left: 10, width: '95%', height: 40, position: 'absolute', zIndex: 2, backgroundColor: '#33333395', borderRadius: 10}}>
                     <View style={{flex: 1, flexDirection: 'row', position: 'relative'}}>
                         <Pressable style={{padding: 5, paddingLeft: 10}} onPress={() => setPausePlayback(!pausePlayback)}>
                             {!pausePlayback &&
@@ -691,7 +691,7 @@ const Map = (props) => {
                 showsUserLocation={false}
                 mapType={mapType}
                 mode="TRANSIT"
-                style={playback || alarm ? {width, height: height - 100} : {width: width, height: height - 150}}
+                style={playback || alarm ? {width, height: height - 100} : {width: width, height: height - 120}}
                 region={region}
                 showsTraffic={hasTraffic}
                 zoomControlEnabled={false}
@@ -849,7 +849,7 @@ const Map = (props) => {
                             <View style={{position: 'relative', overflow: 'visible'}}>
                                 {info.status && info.pin.device.id === item.device.id &&
                                     <View style={{backgroundColor: '#33333390', borderColor: '#333333', borderWidth: 0, borderRadius: 5, height: 110}}>
-                                        <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'white', fontWeight: 'bold', maxWidth: 250}}>{item.device.devicename}({item.device.devicetype})</Text>
+                                        <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 5, color: 'white', fontWeight: 'bold', maxWidth: 250}}>{item.device.devicename}</Text>
                                         <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 0, color: 'white', fontWeight: 'bold'}}>Estado: {+item.speed <= 0 ? 'Parado' : 'Em movimento'}</Text>
                                         <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 0, color: 'white', fontWeight: 'bold'}}>Tempo: {item.gpstime}</Text>
                                         <Text style={{margin: 0, paddingHorizontal: 5, paddingTop: 0, color: 'white', fontWeight: 'bold'}}>Ignição: {+item.accstatus <= 0 ? 'Desligado' : 'Ligado'}</Text>

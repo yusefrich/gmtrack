@@ -10,7 +10,9 @@ const COLORS = {
     primary: "#FBDE04",
     secondary: "#c79d08",
     tertiary: "#333333",
+    success: "#39CC59",
     blue: "#BDD5EA",
+    tempest: "#454652",
     grey: "#3E3F4A",
     tint: "#282A2F",
     day: "#C3C3C7"

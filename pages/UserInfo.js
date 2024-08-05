@@ -12,6 +12,7 @@ import {
   Modal,
   Pressable,
   ImageBackground,
+  Image,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
@@ -24,7 +25,7 @@ import HomeButton from '../components/HomeButton';
 import GmIcon from '../components/GmIcon';
 import COLORS from '../constants/colors';
 
-const DeviceDetails = ({ userData }) => {
+const UserInfo = ({ userData }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const route = useRoute();
   const navigation = useNavigation();
@@ -45,14 +46,50 @@ const DeviceDetails = ({ userData }) => {
     <ImageBackground source={require("../assets/main-bg.png")} style={styles.splash}>
       <SafeAreaView style={styles.container}>
           <ScrollView>
-            <View style={styles.row}>
+            {userData &&
+            <>
+              <Text style={{color: 'white', fontWeight: '800', marginLeft: 5, marginBottom: 10}}>Nome</Text>
+              <View style={{marginRight: 20, marginBottom: 10}}>
+                <View style={styles.bgDetailList}></View>
+                <View style={{flex: 1, flexDirection: 'row', padding: 20, justifyContent: 'space-between'}}>
+                  <Text style={{color: 'white', fontWeight: '500'}}>{userData.client.Nome}</Text>
+                </View>
+              </View>
+              <Text style={{color: 'white', fontWeight: '800', marginLeft: 5, marginBottom: 10}}>Documento</Text>
+              <View style={{marginRight: 20, marginBottom: 10}}>
+                <View style={styles.bgDetailList}></View>
+                <View style={{flex: 1, flexDirection: 'row', padding: 20, justifyContent: 'space-between'}}>
+                  <Text style={{color: 'white', fontWeight: '500'}}>{userData.client.CGCCPF}</Text>
+                </View>
+              </View>
+              <Text style={{color: 'white', fontWeight: '800', marginLeft: 5, marginBottom: 10}}>Telefone 1</Text>
+              <View style={{marginRight: 20, marginBottom: 10}}>
+                <View style={styles.bgDetailList}></View>
+                <View style={{flex: 1, flexDirection: 'row', padding: 20, justifyContent: 'space-between'}}>
+                  <Text style={{color: 'white', fontWeight: '500'}}>{userData.client.Fone1}</Text>
+                </View>
+              </View>
+              <Text style={{color: 'white', fontWeight: '800', marginLeft: 5, marginBottom: 10}}>Telefone 2</Text>
+              <View style={{marginRight: 20, marginBottom: 10}}>
+                <View style={styles.bgDetailList}></View>
+                <View style={{flex: 1, flexDirection: 'row', padding: 20, justifyContent: 'space-between'}}>
+                  <Text style={{color: 'white', fontWeight: '500'}}>{userData.client.Fone2}</Text>
+                </View>
+              </View>
+              <Text style={{color: 'white', fontWeight: '800', marginLeft: 5, marginBottom: 10}}>Email</Text>
+              <View style={{marginRight: 20, marginBottom: 10}}>
+                <View style={styles.bgDetailList}></View>
+                <View style={{flex: 1, flexDirection: 'row', padding: 20, justifyContent: 'space-between'}}>
+                  <Text style={{color: 'white', fontWeight: '500'}}>{userData.client.Email}</Text>
+                </View>
+              </View>
+            </>
+            }
+            {/* <View style={styles.row}>
               <HomeButton active subTitle="Rastrear" custom_icon={<GmIcon name="marker" size={24} color={COLORS.day} />} onPress={()=>navigation.push('Second', { screen: 'Monitor' })}/>
               <HomeButton subTitle="Histórico" custom_icon={<GmIcon name="historico" size={24} color={COLORS.day} />} onPress={()=>navigation.push('Historico', { device: route.params.device.device })} />
-              <HomeButton subTitle="Dados do veículo" custom_icon={<GmIcon name="pasta" size={24} color={COLORS.day} />} onPress={()=>navigation.push('Info', { device: route.params.device.device })}/>
-            </View>
-            <HomeButton active title="Alarmes" custom_icon={<GmIcon name="sino" size={24} color={COLORS.day} />} onPress={()=>navigation.push('Faturas')} block/>
-            <HomeButton title="Cerca" custom_icon={<GmIcon name="fence" size={24} color={COLORS.day} />} block/>
-            <HomeButton title="Compartilhar Localização" custom_icon={<GmIcon name="compartilhar" size={24} color={COLORS.day} />} block/>
+              <HomeButton subTitle="Dados do veículo" custom_icon={<GmIcon name="pasta" size={24} color={COLORS.day} />} />
+            </View> */}
             {/* <ListGroup>
               {devices.map((item)=>{
                   return <ListButton
@@ -82,6 +119,22 @@ const styles = StyleSheet.create({
     splash: {
       backgroundColor: COLORS.night,
       height: '100%'
+    },
+    bgDetail: {
+        backgroundColor: COLORS.primary,
+        opacity: .2,
+        borderRadius: 16,
+        position: 'absolute',
+        width: '100%',
+        height: '100%'
+    },
+    bgDetailList: {
+        backgroundColor: COLORS.grey,
+        opacity: 1,
+        borderRadius: 10,
+        position: 'absolute',
+        width: '100%',
+        height: '100%'
     },
     container: {
         flex: 1,
@@ -165,4 +218,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default DeviceDetails;
+export default UserInfo;

@@ -48,6 +48,17 @@ import MapsIcon from '../assets/icons/maps.svg';
 import Fence from '../assets/icons/fence.svg';
 import Street from '../assets/icons/street.svg';
 import Loc from '../assets/icons/loc.svg';
+import Userdata from '../assets/icons/userdata.svg';
+import Contract from '../assets/icons/contract.svg';
+import Policy from '../assets/icons/policy.svg';
+import Password from '../assets/icons/password.svg';
+import Info from '../assets/icons/info.svg';
+import Facebook from '../assets/icons/facebook.svg';
+import Instagram from '../assets/icons/instagram.svg';
+import Tiktok from '../assets/icons/tiktok.svg';
+import Youtube from '../assets/icons/youtube.svg';
+import Gupy from '../assets/icons/gupy.svg';
+import Linkedin from '../assets/icons/linkedin.svg';
 
 const GmIcon = (props) => {
     const iconName = props.name;
@@ -60,6 +71,39 @@ const GmIcon = (props) => {
         <>
             {iconName === 'chevron-rigth' &&
                 <ChevronRight width={size} height={size} style={{color: color}} />
+            }
+            {iconName === 'facebook' &&
+                <Facebook width={size} height={size} style={{color: color}} />
+            }
+            {iconName === 'instagram' &&
+                <Instagram width={size} height={size} style={{color: color}} />
+            }
+            {iconName === 'tiktok' &&
+                <Tiktok width={size} height={size} style={{color: color}} />
+            }
+            {iconName === 'youtube' &&
+                <Youtube width={size} height={size} style={{color: color}} />
+            }
+            {iconName === 'gupy' &&
+                <Gupy width={size} height={size} style={{color: color}} />
+            }
+            {iconName === 'linkedin' &&
+                <Linkedin width={size} height={size} style={{color: color}} />
+            }
+            {iconName === 'policy' &&
+                <Policy width={size} height={size} style={{color: color}} />
+            }
+            {iconName === 'info' &&
+                <Info width={size} height={size} style={{color: color}} />
+            }
+            {iconName === 'password' &&
+                <Password width={size} height={size} style={{color: color}} />
+            }
+            {iconName === 'userdata' &&
+                <Userdata width={size} height={size} style={{color: color}} />
+            }
+            {iconName === 'contract' &&
+                <Contract width={size} height={size} style={{color: color}} />
             }
             {iconName === 'warning' &&
                 <Warning width={size} height={size} style={{color: color}} />

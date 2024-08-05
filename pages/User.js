@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, ImageBackground } from 'react-native'
 import Icon from 'react-native-ionicons'
 import ListGroup from '../components/ListGroup';
@@ -6,6 +6,7 @@ import ListButton from '../components/ListButton';
 import COLORS from '../constants/colors';
 import GmIcon from '../components/GmIcon';
 import { useNavigation } from '@react-navigation/native';
+import GmListItem from '../components/GmListItem';
 
 const Item = ({title, icon}) => (
   <TouchableOpacity style={styles.item} activeOpacity={0.85}>
@@ -18,11 +19,12 @@ const Item = ({title, icon}) => (
   </TouchableOpacity>
 );
 const colorBg = COLORS.primary.replace('#', '')
-export default UserProfileView = ({userData, onExit}) => {
+export default UserProfileView = ({userData, onExit, onModal}) => {
 
 const navigation = useNavigation();
 return (
     <ImageBackground source={require("../assets/main-bg.png")} style={styles.splash}>
+
         <ScrollView>
             <View style={styles.container}>
             <View style={styles.header}>
@@ -44,7 +46,29 @@ return (
                 </View>
             </View>
 
-            <View style={{height: 80, margin: 14}}>
+            <View style={{margin: 14, marginBottom: 5}}>
+                <GmListItem iconName="userdata" title="Meus dados" subtitle="Visualize e edite seus dados" onPress={()=>navigation.push('UserInfo')} />
+            </View>
+            <View style={{margin: 14, marginBottom: 5}}>
+                <GmListItem iconName="alertas" title="Minhas notificações" subtitle="Acompanhe suas notificações" onPress={()=>navigation.push('Second', { screen: 'Mensagem de alarme' })}/>
+            </View>
+            <View style={{margin: 14, marginBottom: 5}}>
+                <GmListItem iconName="contract" title="Meu contrato" subtitle="Leia seu contrato e confira seu plano" onPress={() => onModal('contract')}/>
+            </View>
+            <View style={{margin: 14, marginBottom: 5}}>
+                <GmListItem iconName="policy" title="Política de Privacidade" subtitle="Veja nossa política e termos de uso" onPress={() => onModal('terms')}/>
+            </View>
+            <View style={{margin: 14, marginBottom: 5}}>
+                <GmListItem iconName="password" title="Alterar senha" subtitle="Faça a alteração da sua senha" />
+            </View>
+            <View style={{margin: 14, marginBottom: 5}}>
+                <GmListItem iconName="info" title="Sobre" subtitle="Sobre desenvolvimento" onPress={() => onModal('about')}/>
+            </View>
+            <View style={{margin: 14, marginBottom: 25}}>
+                <GmListItem iconName="eu" title="Sair" subtitle="Login em uma nova conta" />
+            </View>
+
+            {/* <View style={{height: 80, margin: 14}}>
                 <TouchableOpacity style={{flex: 1, flexDirection: 'row', backgroundColor: COLORS.dawn, borderRadius: 20, padding: 15}}>
                     <View style={{backgroundColor: COLORS.primary, width: 45, height: 45, borderRadius: 50, padding: 8, marginTop: 3, marginRight: 10}}>
                         <GmIcon name="eu" size={30} color={COLORS.dawn} />
@@ -99,23 +123,6 @@ return (
                         <GmIcon name="arrow-right" size={25} color={COLORS.day} />
                     </View>
                 </TouchableOpacity>
-            </View>
-            {/* <View style={styles.body}>
-                <ListGroup>
-                    <ListButton title='Mensagem' icon="mail"></ListButton>
-                </ListGroup>
-                <ListGroup>
-                    <ListButton title='Relatorios gerados' icon="stats"></ListButton>
-                    <ListButton title='Programar para relatório' icon="list-box"></ListButton>
-                    <ListButton title='Cerca' icon="analytics"></ListButton>
-                    <ListButton title='POI' icon="locate"></ListButton>
-                </ListGroup>
-                <ListGroup>
-                    <ListButton title='Geral' icon="cog"></ListButton>
-                </ListGroup>
-                <ListGroup>
-                    <ListButton title='Sair' icon="exit" onPress={onExit}></ListButton>
-                </ListGroup>
             </View> */}
             </View>
         </ScrollView>

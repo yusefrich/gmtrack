@@ -12,7 +12,11 @@ import Icon from 'react-native-ionicons'
 import {
   Alert,
   ImageBackground,
+  Linking,
+  Modal,
   Platform,
+  Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -56,6 +60,12 @@ import Notas from './pages/Notas';
 import NotaFiscal from './pages/NotaFiscal';
 import PagamentoAuto from './pages/PagamentoAuto';
 import CentralDeAjuda from './pages/CentralDeAjuda';
+import DeviceInfo from './pages/DeviceInfo';
+import UserInfo from './pages/UserInfo';
+import SwipeModal, { SwipeModalPublicMethods } from '@birdwingo/react-native-swipe-modal';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import RedesSociais from './pages/RedesSociais';
+import Vagas from './pages/Vagas';
 // import Geolocation from '@react-native-community/geolocation';
 
 // Geolocation.setRNConfiguration(config);
@@ -75,6 +85,9 @@ Geocoder.init(process.env.GEOCODING_KEY, {language : "pt"})
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [userData, setUserData] = useState({});
+  const [currentModal, setCurrentModal] = useState('');
+  const [currentPopupModal, setCurrentPopupModal] = useState('');
+  const [popupModalVisible, setPopupModalVisible] = useState(false);
   const [isLogged, setIsLogged] = useState(false);
   const [username, setUsername] = useState('Monitor');
   const [tokenFcm, setTokenFcm] = useState('');
@@ -83,6 +96,7 @@ function App(): JSX.Element {
   const [isLogin, setIsLogin] = useMMKVStorage('isLogin', storage, false);
   // const [userData, setUserData] = useState({});
   const monitorRef = useRef();
+  const modalRef = useRef<SwipeModalPublicMethods>(null);
 
   // const navigation = useNavigation()
   const RNfirebaseConfig = {
@@ -99,6 +113,16 @@ function App(): JSX.Element {
     app = firebase.initializeApp(RNfirebaseConfig )
   } else {
     app = firebase.app()
+  }
+  const setModal = (val: String) => {
+    // console.log('modal working: ' + val);
+    setCurrentModal(val);
+    modalRef.current?.show();
+  }
+  const setPopupModal = (val: String) => {
+    // console.log('modal working: ' + val);
+    setCurrentPopupModal(val);
+    setPopupModalVisible(true);
   }
 
   const getIsLogged = async () => {
@@ -225,7 +249,7 @@ function App(): JSX.Element {
                     </View>
                   ),
                 }}
-              children={()=><Home carrousel={carrouselData} loading={false}/>}
+              children={()=><Home carrousel={carrouselData} loading={false} onPopupModal={(type: String)=>setPopupModal(type)}/>}
             />
             <Tab.Screen
               name="Financeiro"
@@ -252,7 +276,7 @@ function App(): JSX.Element {
                     </View>
                   ),
                 }}
-              children={()=><Suporte userData={userData} />} />
+              children={()=><Suporte userData={userData} onPopupModal={(type: String)=>setPopupModal(type)}/>} />
             <Tab.Screen
               name="Perfil"
               options={{
@@ -265,7 +289,7 @@ function App(): JSX.Element {
                     </View>
                   ),
                 }}
-              children={()=><User userData={userData} onExit={()=>logout()} />} />
+              children={()=><User userData={userData} onExit={()=>logout()} onModal={(type: String)=>setModal(type)} />} />
 
             {/* <Tab.Screen
               name="Eu"
@@ -306,7 +330,7 @@ function App(): JSX.Element {
                     </View>
                   ),
                 }}
-              children={()=><Home carrousel={carrouselData} loading={false}/>}
+              children={()=><Home carrousel={carrouselData} loading={false} onPopupModal={(type: String)=>setPopupModal(type)}/>}
             />
             <Tab.Screen
               name="Monitor"
@@ -357,7 +381,92 @@ function App(): JSX.Element {
 
 
   return (
-    <>
+    <GestureHandlerRootView>
+        <SwipeModal ref={modalRef} style={{zIndex: 100, borderTopEndRadius: 10, borderTopStartRadius: 10}} maxHeight={500} bg={COLORS.grey}>
+              <ScrollView>
+                {currentModal === 'contract' &&
+                  <View style={{margin: 10}}>
+                      <Text style={{textAlign: 'center', fontWeight: '700', fontSize: 20, color: 'white', marginBottom: 20}}>Seu Contrato</Text>
+                      <Text style={{color: 'white'}}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa cumque vitae error eligendi voluptatem necessitatibus mollitia. Similique commodi quis aspernatur rerum doloremque, accusantium molestiae voluptates et. Animi eligendi officia cum.</Text>
+                  </View>
+                }
+                {currentModal === 'terms' &&
+                  <View style={{margin: 10}}>
+                      <Text style={{textAlign: 'center', fontWeight: '700', fontSize: 20, color: 'white', marginBottom: 20}}>Política de Privacidade da GMTRACK</Text>
+                      <Text style={{color: 'white'}}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa cumque vitae error eligendi voluptatem necessitatibus mollitia. Similique commodi quis aspernatur rerum doloremque, accusantium molestiae voluptates et. Animi eligendi officia cum.</Text>
+                  </View>
+                }
+                {currentModal === 'about' &&
+                  <View style={{margin: 10}}>
+                      <Text style={{textAlign: 'center', fontWeight: '700', fontSize: 20, color: 'white', marginBottom: 20}}>Sobre o aplicativo</Text>
+                      <Text style={{color: 'white'}}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa cumque vitae error eligendi voluptatem necessitatibus mollitia. Similique commodi quis aspernatur rerum doloremque, accusantium molestiae voluptates et. Animi eligendi officia cum.</Text>
+                  </View>
+                }
+
+              </ScrollView>
+        </SwipeModal>
+        <Modal
+            animationType="slide"
+            transparent={true}
+            visible={popupModalVisible}
+            onRequestClose={() => {
+                // Alert.alert('Modal has been closed.');
+                setPopupModalVisible(!popupModalVisible);
+            }}
+        >
+            <View style={modalStyles.centeredView}>
+                  <View style={modalStyles.modalView}>
+                    {currentPopupModal == 'wp' &&
+                      <> 
+                        <View style={{alignItems: 'center', marginBottom: 10}}>
+                          <GmIcon name="wp" size={50} color="white" />
+                        </View>
+                        <Text style={modalStyles.modalText}>Toque no botão abaixo</Text>
+                        <Text style={modalStyles.modalText}>para falar com a nossa</Text>
+                        <Text style={modalStyles.modalText}>central de atendimento!</Text>
+                        <Text style={[modalStyles.modalText, {fontSize: 30, textAlign: 'center'}]}>0800 083 8080</Text>
+                      </>
+                    }
+                    {currentPopupModal == 'email' &&
+                      <> 
+                        <View style={{alignItems: 'center', marginBottom: 10}}>
+                          <GmIcon name="wp" size={50} color="white" />
+                        </View>
+                        <Text style={modalStyles.modalText}>Toque no botão abaixo</Text>
+                        <Text style={modalStyles.modalText}>para enviar um email para nossa</Text>
+                        <Text style={modalStyles.modalText}>central de atendimento!</Text>
+                        <Text style={[modalStyles.modalText, {fontSize: 30, textAlign: 'center'}]}>contato@gmtrack.com</Text>
+                      </>
+                    }
+                    <View style={{alignSelf: 'center', paddingTop: 20, width: 150, flexDirection: 'column'}}>
+
+                        {currentPopupModal == 'wp' &&
+                          <Pressable
+                              style={[modalStyles.button, modalStyles.buttonActive, {marginBottom: 10}]}
+                              onPress={() => { Linking.openURL(`tel:08000838080`)}}
+                              >
+                              <Text style={modalStyles.textStyle}>Ligar</Text>
+                          </Pressable>
+                        }
+                        {currentPopupModal == 'email' &&
+                          <Pressable
+                              style={[modalStyles.button, modalStyles.buttonActive, {marginBottom: 10}]}
+                              onPress={() => { Linking.openURL(`mailto:contato@gmtrack.com`)}}
+                              >
+                              <Text style={modalStyles.textStyle}>Enviar</Text>
+                          </Pressable>
+                        }
+                        <Pressable
+                            style={[modalStyles.button, modalStyles.buttonClose]}
+                            onPress={() => { setPopupModalVisible(false) }}
+                            >
+                            <Text style={modalStyles.textStyle}>Cancelar</Text>
+                        </Pressable>
+                    </View>
+                  </View>
+            </View>
+        </Modal>
+
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen name="Welcome" options={{headerShown: false}} children={()=><Welcome />} />
@@ -365,12 +474,16 @@ function App(): JSX.Element {
           <Stack.Screen name="Main" options={{headerShown: false}} component={TabNav} />
           <Stack.Screen name="Second" options={{headerShown: false}} component={MonitorNav} />
           <Stack.Screen name="Detalhes" options={{header: (props) => NavHeader(props, true, 'Detalhes', false)}} children={()=><DeviceDetails userData={userData} />} />
+          <Stack.Screen name="Info" options={{header: (props) => NavHeader(props, true, 'Dados do veículo', false)}} children={()=><DeviceInfo userData={userData} />} />
+          <Stack.Screen name="UserInfo" options={{header: (props) => NavHeader(props, true, 'Meus Dados', false)}} children={()=><UserInfo userData={userData} />} />
           <Stack.Screen name="Comandos" children={()=><DeviceTerminal userData={userData} />} />
           <Stack.Screen name="Centralizar" children={()=><DeviceMap userData={userData} />} />
-          <Stack.Screen name="Historico" children={()=><DeviceHistory userData={userData} />} />
+          <Stack.Screen name="Historico" children={()=><DeviceHistory userData={userData} />} options={{header: (props) => NavHeader(props, true, 'Historico', false)}}/>
           <Stack.Screen name="Alarmes" children={()=><DeviceAlarms userData={userData} />} />
           <Stack.Screen name="Alarme" children={()=><AlarmDetail userData={userData} />} />
           <Stack.Screen name="Chat" children={()=><Chat />} options={{header: (props) => NavHeader(props, true, 'Chat', false)}} />
+          <Stack.Screen name="RedesSociais" children={()=><RedesSociais userData={userData} />} options={{header: (props) => NavHeader(props, true, 'Redes Sociais', false)}} />
+          <Stack.Screen name="Vagas" children={()=><Vagas userData={userData} />} options={{header: (props) => NavHeader(props, true, 'Vagas de emprego', false)}} />
           {/* <Stack.Screen name="Financeiro" children={()=><Financeiro userData={userData} />} options={{header: (props) => NavHeader(props, true, 'Financeiro')}}
           /> */}
           <Stack.Screen name="CentralDeAjuda" children={()=><CentralDeAjuda userData={userData} />} options={{header: (props) => GmNavHeader(props, true, 'Central de ajuda')}}
@@ -391,7 +504,7 @@ function App(): JSX.Element {
         </Stack.Navigator>
       </NavigationContainer>
       <Toast />
-    </>
+    </GestureHandlerRootView>
   );
 }
 
@@ -411,6 +524,75 @@ const styles = StyleSheet.create({
   },
   highlight: {
     fontWeight: '700',
+  },
+});
+const modalStyles = StyleSheet.create({
+  //checkbox
+  dateButton: {
+    padding: 10,
+    backgroundColor: '#7C7A80',
+    borderRadius: 20,
+    elevation: 2
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    marginBottom: 5,
+  },
+  checkbox: {
+    alignSelf: 'center',
+  },
+  label: {
+    color: COLORS.white,
+    margin: 8,
+  },
+  //modal
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: COLORS.tempest,
+    borderRadius: 20,
+    padding: 15,
+    // alignItems: 'flex-start',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    paddingHorizontal: 30,
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 10,
+    padding: 10,
+    paddingHorizontal: 13,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: '#fafafa',
+  },
+  buttonClose: {
+    backgroundColor: '#B3B0B8',
+  },
+  buttonActive: {
+    backgroundColor: COLORS.primary,
+  },
+  textStyle: {
+    color: COLORS.black,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  modalText: {
+    // marginBottom: 15,
+    color: 'white',
+    fontWeight: '700',
+    textAlign: 'center',
   },
 });
 

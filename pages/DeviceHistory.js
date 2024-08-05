@@ -125,8 +125,9 @@ const DeviceHistory = ({ userData }) => {
         setModalVisible(false)
         const rawPlayback = []
         const rawStops = []
-        data.data.split(';').forEach(e => {
-            // if (rawPlayback[rawPlayback.length - 1].latitude !== parseFloat(e.split(',')[1]) && rawPlayback[rawPlayback.length - 1].longitude !== parseFloat(e.split(',')[0]))
+        const dataSplit = data.data.split(';');
+        for (let i = 0; i < dataSplit.length; i++) {
+            const e = dataSplit[i];
             rawPlayback.push({
                 latitude: parseFloat(e.split(',')[1]),
                 longitude: parseFloat(e.split(',')[0]),
@@ -134,14 +135,14 @@ const DeviceHistory = ({ userData }) => {
                 speed: +e.split(',')[3],
                 course: e.split(',')[4]
             })
-            if (e.split(',')[3] <= 0) {
+            if (dataSplit[i - 1] && dataSplit[i - 1].split(',')[3] <= 0 && e.split(',')[3] <= 0 && dataSplit[i + 1] && dataSplit[i + 1].split(',')[3] <= 0) {
                 rawStops.push({
                     latitude: parseFloat(e.split(',')[1]),
                     longitude: parseFloat(e.split(',')[0]),
                     speed: +e.split(',')[3]
                 })
             }
-        })
+        }
         setStops(rawStops)
         console.log('raw', {
             token: userData.token,
@@ -242,33 +243,36 @@ const DeviceHistory = ({ userData }) => {
             transparent={true}
             visible={modalVisible}
             onRequestClose={() => {
-                Alert.alert('Modal has been closed.');
+                // Alert.alert('Modal has been closed.');
                 setModalVisible(!modalVisible);
             }}
         >
             <View style={modalStyles.centeredView}>
                 <View style={modalStyles.modalView}>
-                    <Text style={modalStyles.modalText}>Selecione o periodo!</Text>
-                    <View style={modalStyles.checkboxContainer}>
-                        <CheckBox
-                            value={checkboxKey === 'ontem'}
-                            onValueChange={(newValue) => newValue ? setDateTime('ontem') : setDateTime('')}
-                            style={modalStyles.checkbox}
-                        />
-                        <Text style={modalStyles.label}>Ontem</Text>
-                    </View>
+                    <Text style={modalStyles.modalText}>Definir tempo de reprodução</Text>
                     <View style={modalStyles.checkboxContainer}>
                         <CheckBox
                             value={checkboxKey === 'hoje'}
                             onValueChange={(newValue) => newValue ? setDateTime('hoje') : setDateTime('')}
+                            tintColors={{ true: COLORS.success, false: '#7C7A80' }}
                             style={modalStyles.checkbox}
                         />
                         <Text style={modalStyles.label}>Hoje</Text>
                     </View>
                     <View style={modalStyles.checkboxContainer}>
                         <CheckBox
+                            value={checkboxKey === 'ontem'}
+                            onValueChange={(newValue) => newValue ? setDateTime('ontem') : setDateTime('')}
+                            tintColors={{ true: COLORS.success, false: '#7C7A80' }}
+                            style={modalStyles.checkbox}
+                        />
+                        <Text style={modalStyles.label}>Ontem</Text>
+                    </View>
+                    <View style={modalStyles.checkboxContainer}>
+                        <CheckBox
                             value={checkboxKey === 'hora'}
                             onValueChange={(newValue) => newValue ? setDateTime('hora') : setDateTime('')}
+                            tintColors={{ true: COLORS.success, false: '#7C7A80' }}
                             style={modalStyles.checkbox}
                         />
                         <Text style={modalStyles.label}>Ultima hora</Text>
@@ -277,23 +281,24 @@ const DeviceHistory = ({ userData }) => {
                         <CheckBox
                             value={checkboxKey === 'custom'}
                             onValueChange={(newValue) => newValue ? setDateTime('custom') : setDateTime('')}
+                            tintColors={{ true: COLORS.success, false: '#7C7A80' }}
                             style={modalStyles.checkbox}
                         />
                         <Text style={modalStyles.label}>Selecionar período</Text>
                     </View>
                     <View style={checkboxKey !== 'custom' ? { height: 0, overflow: 'hidden'} : {}}>
                         <View style={modalStyles.checkboxContainer}>
-                            <Text style={modalStyles.label}>Hora inicial</Text>
+                            <Text style={modalStyles.label}>início</Text>
                             <Pressable style={modalStyles.dateButton} title="Open" onPress={() => setStartDayOpen(true)}>
-                                <Text style={{color: COLORS.black}}>
+                                <Text style={{color: COLORS.white}}>
                                     {startDate.toLocaleString('af-ZA')}
                                 </Text>
                             </Pressable>
                         </View>
                         <View style={modalStyles.checkboxContainer}>
-                            <Text style={[modalStyles.label, {paddingEnd: 10}]}>Hora final</Text>
+                            <Text style={[modalStyles.label, {paddingEnd: 10}]}>Fim</Text>
                             <Pressable style={modalStyles.dateButton} title="Open" onPress={() => setEndDate(true)}>
-                                <Text style={{color: COLORS.black}}>
+                                <Text style={{color: COLORS.white}}>
                                     {endDate.toLocaleString('af-ZA')}
                                 </Text>
                             </Pressable>
@@ -324,18 +329,18 @@ const DeviceHistory = ({ userData }) => {
                             setEndDayOpen(false)
                         }}
                     />
-                    <View style={{alignSelf: 'center', paddingTop: 20, flexDirection: 'row'}}>
+                    <View style={{alignSelf: 'center', paddingTop: 20, width: 150, flexDirection: 'column'}}>
                         <Pressable
-                            style={[modalStyles.button, modalStyles.buttonClose, {marginRight: 10}]}
-                            onPress={() => { setModalVisible(!modalVisible);fetchPlayback() }}
-                            >
-                            <Text style={modalStyles.textStyle}>Cancelar</Text>
-                        </Pressable>
-                        <Pressable
-                            style={[modalStyles.button, modalStyles.buttonActive]}
+                            style={[modalStyles.button, modalStyles.buttonActive, {marginBottom: 10}]}
                             onPress={() => { fetchPlayback() }}
                             >
                             <Text style={modalStyles.textStyle}>Reproduzir</Text>
+                        </Pressable>
+                        <Pressable
+                            style={[modalStyles.button, modalStyles.buttonClose]}
+                            onPress={() => { setModalVisible(!modalVisible);fetchPlayback() }}
+                            >
+                            <Text style={modalStyles.textStyle}>Cancelar</Text>
                         </Pressable>
                     </View>
                 </View>
@@ -360,8 +365,8 @@ const modalStyles = StyleSheet.create({
   //checkbox
   dateButton: {
     padding: 10,
-    backgroundColor: COLORS.primary,
-    borderRadius: 10,
+    backgroundColor: '#7C7A80',
+    borderRadius: 20,
     elevation: 2
   },
   checkboxContainer: {
@@ -372,7 +377,7 @@ const modalStyles = StyleSheet.create({
     alignSelf: 'center',
   },
   label: {
-    color: COLORS.black,
+    color: COLORS.white,
     margin: 8,
   },
   //modal
@@ -384,7 +389,7 @@ const modalStyles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    backgroundColor: 'white',
+    backgroundColor: COLORS.tempest,
     borderRadius: 20,
     padding: 15,
     alignItems: 'flex-start',
@@ -393,12 +398,13 @@ const modalStyles = StyleSheet.create({
       width: 0,
       height: 2,
     },
+    paddingHorizontal: 30,
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
   },
   button: {
-    borderRadius: 100,
+    borderRadius: 10,
     padding: 10,
     paddingHorizontal: 13,
     elevation: 2,
@@ -407,17 +413,20 @@ const modalStyles = StyleSheet.create({
     backgroundColor: '#fafafa',
   },
   buttonClose: {
-    backgroundColor: COLORS.white,
+    backgroundColor: '#B3B0B8',
   },
   buttonActive: {
     backgroundColor: COLORS.primary,
   },
   textStyle: {
     color: COLORS.black,
+    fontWeight: '600',
     textAlign: 'center',
   },
   modalText: {
     marginBottom: 15,
+    color: 'white',
+    fontWeight: '700',
     textAlign: 'center',
   },
 });

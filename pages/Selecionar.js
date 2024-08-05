@@ -81,7 +81,7 @@ const Selecionar = ({ userData }) => {
               <Text style={{color: '#333333'}}>Atualizando em {counter}...</Text>
           </View>
           <ScrollView>
-              <View style={{width: '95%'}}>
+              <View style={{width: '96%'}}>
               {/* <ListGroup> */}
                 {devices.map((item)=>{
                     return <CarListButton

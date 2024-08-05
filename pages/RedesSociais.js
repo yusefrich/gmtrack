@@ -11,6 +11,7 @@ import {
   Modal,
   Pressable,
   ImageBackground,
+  Linking,
 } from 'react-native';
 import GmIcon from '../components/GmIcon';
 import { useFocusEffect } from '@react-navigation/native';
@@ -23,7 +24,7 @@ import api from '../services/api';
 import COLORS from '../constants/colors';
 import HomeButton from '../components/HomeButton';
 
-const Suporte = ({ userData, onPopupModal }) => {
+const RedesSociais = ({ userData }) => {
   const navigation = useNavigation();
   const [callModal, setCallModal] = useState(false);
   return (
@@ -35,39 +36,16 @@ const Suporte = ({ userData, onPopupModal }) => {
                 <GmIcon name="warning" size={20} color={COLORS.primary} />
                 <Text style={{color: 'white', fontWeight: '700', marginLeft: 5, fontSize: 15}}>Você sabia?</Text>
               </View>
-              <Text style={{color: 'white'}}>Você pode falar ou solicitar que alguém da nossa equipe fale com você sempre que precisar!</Text>
+              <Text style={{color: 'white'}}>Você pode acompanhar todas as novidades da GMTRACK pelas nossas redes sociais!</Text>
             </View>
             <View style={styles.row}>
-              <HomeButton subTitle="Central de ajuda" gm_icon="central" onPress={()=>navigation.push('CentralDeAjuda', { screen: 'Monitor' })}/>
-              <HomeButton subTitle="Falar pelo 0800" gm_icon="wp" onPress={()=>onPopupModal('wp')} />
-              <HomeButton subTitle="Chat" gm_icon="chat" onPress={()=>navigation.push('Chat')} />
+              <HomeButton subTitle="Facebook" gm_icon="facebook" onPress={()=>{ Linking.openURL(`https://www.facebook.com`) }}/>
+              <HomeButton subTitle="Instagram" gm_icon="instagram" onPress={()=>{ Linking.openURL(`https://www.instagram.com`) }} />
             </View>
             <View style={styles.row}>
-              <HomeButton subTitle="E-mail" gm_icon="email" onPress={()=>onPopupModal('email')}/>
-              <HomeButton subTitle="Redes sociais" gm_icon="social" onPress={()=>navigation.push('RedesSociais')}/>
-              <HomeButton subTitle="Vagas de emprego" gm_icon="jobs" onPress={()=>navigation.push('Vagas')} />
+              <HomeButton subTitle="Tiktok" gm_icon="tiktok" onPress={()=>{ Linking.openURL(`https://www.tiktok.com`) }}/>
+              <HomeButton subTitle="Youtube" gm_icon="youtube" onPress={()=>{ Linking.openURL(`https://www.youtube.com`) }} />
             </View>
-            {/* <HomeButton active title="Minhas faturas" custom_icon={<GmIcon name="boleto" size={24} color={COLORS.dawn} />} onPress={()=>navigation.push('Faturas')} block/>
-            <HomeButton title="Pagamento automático" custom_icon={<GmIcon name="loop-payment" size={24} color={COLORS.day} />} block/>
-            <HomeButton title="Nota fiscal" custom_icon={<GmIcon name="paper" size={24} color={COLORS.day} />} block/> */}
-            {/* <ListGroup>
-              {devices.map((item)=>{
-                  return <ListButton
-                            key={item.imei}
-                            title={item.device.devicename}
-                            subtitle={carStatus(item.accstatus, item.speed) + ` (${new Date(item.acctime * 1000).toUTCString().match(/(\d\d:\d\d:\d\d)/)[0]})`}
-                            custom_icon={
-                              <GmIcon name="carro" size={30} acc={item.accstatus} speed={item.speed} />
-                            }
-                            iconColor="orange"
-                            onPress={()=>navigation.push('Detalhes', { device: item })}>
-                          </ListButton>
-              })}
-              </ListGroup> */}
-              {/* <Item title='test 1' icon="radio-button-on" /> */}
-              {/* <Item title='test 1' icon="radio-button-on" /> */}
-              {/* <View style={{marginBottom: 15}}></View> */}
-              {/* <Item title='test 1' icon="radio-button-on" /> */}
           </ScrollView>
       </SafeAreaView>
     </ImageBackground>
@@ -224,4 +202,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Suporte;
+export default RedesSociais;
